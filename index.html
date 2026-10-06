@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Hub &bull; Split View Portal 2026</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #2563eb;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --highlight: #3b82f6;
+            --cash-color: #059669;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+        }
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* Top Navigation Header */
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-brand h1 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .header-stats-strip {
+            display: flex;
+            gap: 14px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .stat-badge b {
+            color: #38bdf8;
+            font-size: 0.88rem;
+        }
+        .stat-top-deal {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .stat-top-deal b {
+            color: #34d399;
+        }
+
+        /* Controls Strip with Mode Toggle */
+        .controls-strip {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            z-index: 90;
+            flex-shrink: 0;
+        }
+        .control-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Mode Switcher Pill */
+        .mode-toggle-group {
+            display: flex;
+            background: #f1f5f9;
+            padding: 3px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .mode-btn {
+            border: none;
+            background: transparent;
+            padding: 6px 14px;
+            border-radius: 9px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mode-btn:hover {
+            color: var(--text-main);
+        }
+        .mode-btn.active {
+            background: white;
+            color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .mode-btn.active.mode-cash {
+            color: #047857;
+            border-left: 3px solid #059669;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .sort-select {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: #ffffff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Main Split View */
+        .main-split {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 110px);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Left Side: Scrollable Listings */
+        .listings-pane {
+            width: 48%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
+        }
+        .listings-pane::-webkit-scrollbar {
+            width: 8px;
+        }
+        .listings-pane::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .listings-pane::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Property Card */
+        .property-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background-color 0.2s;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .property-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: #93c5fd;
+        }
+        .property-card.active-hover {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3), 0 12px 24px rgba(0,0,0,0.12) !important;
+            background-color: #f8fafc !important;
+            transform: translateY(-3px) scale(1.01);
+        }
+
+        .card-thumb-col {
+            width: 175px;
+            min-height: 100%;
+            position: relative;
+            flex-shrink: 0;
+            background: #e2e8f0;
+        }
+        .card-thumb-col img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .card-badge-type {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(15, 23, 42, 0.88);
+            color: white;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+        .card-badge-year {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(220, 38, 38, 0.88);
+            color: white;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-info-col {
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+        .card-loc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        /* Badges Container */
+        .card-badges-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        /* Deal Badge */
+        .deal-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .deal-a-plus { background: #dcfce7; color: #047857; border: 1px solid #86efac; }
+        .deal-a { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+        .deal-b { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+        .deal-c { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .deal-d { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+        /* Risk Badges */
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .risk-badge-low { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .risk-badge-med { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .risk-badge-high { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .card-meta-row {
+            display: flex;
+            gap: 12px;
+            font-size: 0.78rem;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 8px;
+        }
+        .card-meta-row span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* 3-Tier Price Box */
+        .tier-price-box {
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .tier-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .tier-main-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .tier-main-val {
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+        .tier-breakdown {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border);
+            padding-top: 4px;
+            margin-top: 2px;
+        }
+        .tier-cash-active {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+        .tier-cash-active .tier-main-val {
+            color: #047857;
+        }
+        .tier-low-active {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1e40af;
+        }
+        .tier-low-active .tier-main-val {
+            color: #1d4ed8;
+        }
+        .tier-high-active {
+            background: #faf5ff;
+            border-color: #e9d5ff;
+            color: #6b21a8;
+        }
+        .tier-high-active .tier-main-val {
+            color: #7e22ce;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .card-btn {
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .card-btn-primary {
+            background: var(--primary-light);
+            color: white;
+        }
+        .card-btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .card-btn-sub {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid var(--border);
+        }
+        .card-btn-sub:hover {
+            background: #e2e8f0;
+        }
+
+        /* Right Side: Map Pane */
+        .map-pane {
+            width: 52%;
+            height: 100%;
+            position: relative;
+            background: #e2e8f0;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Leaflet Markers */
+        .price-badge-marker {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 14px;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            white-space: nowrap;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s, box-shadow 0.2s;
+        }
+        .marker-green { background: #059669 !important; border-color: #6ee7b7 !important; }
+        .marker-blue { background: #2563eb !important; border-color: #93c5fd !important; }
+        .marker-purple { background: #7e22ce !important; border-color: #d8b4fe !important; }
+
+        /* Hovered Marker State */
+        .marker-active-highlight {
+            transform: scale(1.4) translateY(-6px) !important;
+            background: #f59e0b !important;
+            border-color: #ffffff !important;
+            color: #0f172a !important;
+            box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.45), 0 16px 28px rgba(0,0,0,0.35) !important;
+            z-index: 999999 !important;
+        }
+
+        /* Popup styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px;
+            padding: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .map-popup {
+            width: 250px;
+            font-size: 0.85rem;
+        }
+        .map-popup img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .popup-title {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 0.9rem;
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+        .popup-loc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .popup-deal-row {
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .popup-turnkey {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .popup-turnkey-label { font-size: 0.65rem; font-weight: 700; color: #065f46; text-transform: uppercase; }
+        .popup-turnkey-val { font-size: 1.05rem; font-weight: 900; color: #047857; }
+        .popup-btn {
+            display: block;
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+        }
+        .popup-btn:hover { background: #1d4ed8; }
+
+        /* Responsive Breakpoint */
+        @media (max-width: 900px) {
+            .main-split {
+                flex-direction: column-reverse;
+                height: auto;
+                overflow: visible;
+            }
+            .listings-pane {
+                width: 100%;
+                height: 50vh;
+            }
+            .map-pane {
+                width: 100%;
+                height: 50vh;
+            }
+            html, body {
+                overflow: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- HEADER -->
+        <header>
+            <div class="header-brand">
+                <h1>🏠 Real Estate Hub &bull; 2026 Restructuring Portfolio</h1>
+            </div>
+            <div class="header-stats-strip">
+                <div class="stat-badge">Ακίνητα: <b id="stat-count">26</b></div>
+                <div class="stat-badge stat-top-deal">🏆 Top Deal: <b>252τ.μ. Κηφισιά (97.2/100 A+)</b></div>
+                <div class="stat-badge">Μέσο Turnkey (Μαύρα): <b style="color:#34d399;" id="stat-avg-cash">€358,175</b></div>
+            </div>
+        </header>
+
+        <!-- CONTROLS STRIP WITH 3 MODES & SMART DEAL SORT -->
+        <div class="controls-strip">
+            <div class="control-section">
+                <!-- Mode Switcher -->
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted);">Σενάριο:</span>
+                <div class="mode-toggle-group">
+                    <button class="mode-btn mode-cash active" data-mode="diy">💵 Μαύρα / Friends</button>
+                    <button class="mode-btn" data-mode="low">📋 Standard Low</button>
+                    <button class="mode-btn" data-mode="high">💎 High-End 2026</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <!-- Filters -->
+                <div class="filter-group" id="filter-buttons">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-right: 4px;">Τύπος:</span>
+                    <button class="filter-btn active" data-filter="all">Όλα (26)</button>
+                    <button class="filter-btn" data-filter="Μονοκατοικία">Μονοκατοικίες</button>
+                    <button class="filter-btn" data-filter="Μεζονέτα">Μεζονέτες</button>
+                    <button class="filter-btn" data-filter="Διαμέρισμα">Διαμερίσματα</button>
+                </div>
+                <!-- Sort -->
+                <div class="filter-group">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-right: 4px;">Ταξινόμηση:</span>
+                    <select id="sort-select" class="sort-select">
+                        <option value="deal_desc" selected>⭐ Smart Deal (Ρίσκο vs Τιμή/τμ)</option>
+                        <option value="turnkey_active_asc">Turnkey Τιμή (Χαμηλότερη)</option>
+                        <option value="turnkey_active_desc">Turnkey Τιμή (Υψηλότερη)</option>
+                        <option value="risk_asc">🛡️ Δείκτης Ρίσκου (Χαμηλότερο 🟢)</option>
+                        <option value="risk_desc">⚠️ Δείκτης Ρίσκου (Υψηλότερο 🔴)</option>
+                        <option value="price_asc">Τιμή Αγοράς (Χαμηλότερη)</option>
+                        <option value="price_desc">Τιμή Αγοράς (Υψηλότερη)</option>
+                        <option value="sqm_desc">Επιφάνεια τ.μ. (Μεγαλύτερα)</option>
+                        <option value="year_asc">Παλαιότητα ('60s πρώτα)</option>
+                        <option value="year_desc">Έτος (Νεότερα)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN SPLIT VIEW -->
+        <div class="main-split">
+            <!-- LEFT LISTINGS -->
+            <div class="listings-pane" id="listings-container"></div>
+
+            <!-- RIGHT MAP -->
+            <div class="map-pane">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const rawProperties = [{"filename": "Πώληση, Διαμέρισμα, 115τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 17245573 | Spitogatos.webarchive", "listing_id": "1117245573", "title": "Πώληση, Διαμέρισμα, 115τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 17245573", "location": "115τ.μ. Κορυδαλλός", "type": "Διαμέρισμα", "price": 360000, "sqm": 115, "year": 2025, "plot_sqm": "115", "courtyard": "", "renov_low": 32200, "renov_high": 58300, "turnkey_low": 421000, "turnkey_high": 447100, "html_report": "Πώληση, Διαμέρισμα, 115τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 17245573 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1117245573", "lat": 37.9913, "lon": 23.6456, "processed_at": "2026-10-05 16:55:00", "renov_diy": 25624, "turnkey_diy": 414424, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Νεόδμητο/πρόσφατο (2025): Ελάχιστο στατικό ρίσκο.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 57.5, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1117245573.jpg"}, {"filename": "Πώληση, Διαμέρισμα, 160τ.μ. Καμίνια – Παλαιά Κοκκινιά, Παλαιά Κοκκινιά | 17601164 | Spitogatos.webarchive", "listing_id": "1117601164", "title": "Πώληση, Διαμέρισμα, 160τ.μ. Καμίνια – Παλαιά Κοκκινιά, Παλαιά Κοκκινιά | 17601164", "location": "160τ.μ. Καμίνια – Παλαιά Κοκκινιά", "type": "Διαμέρισμα", "price": 155000, "sqm": 160, "year": 1960, "plot_sqm": "160", "courtyard": "", "renov_low": 147500, "renov_high": 226500, "turnkey_low": 314900, "turnkey_high": 393900, "html_report": "Πώληση, Διαμέρισμα, 160τ.μ. Καμίνια – Παλαιά Κοκκινιά, Παλαιά Κοκκινιά | 17601164 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1117601164", "lat": 37.955, "lon": 23.6552, "processed_at": "2026-10-05 16:55:00", "renov_diy": 114523, "turnkey_diy": 281923, "risk_score": 3.2, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο εποχής '60s (1960): Παλαιός αντισεισμικός '59, λεία σίδερα, κίνδυνος ενανθράκωσης.\", \"Καλή κάλυψη εικόνων (23+ φωτογραφίες).\"]", "deal_score": 85.7, "deal_grade": "A+", "deal_desc": "Super Deal &bull; Κορυφαία Σχέση Τιμής & Ασφάλειας", "deal_color": "#047857", "thumb": "thumbs/1117601164.jpg"}, {"filename": "Πώληση, Διαμέρισμα, 160τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 20913539 | Spitogatos.webarchive", "listing_id": "1120913539", "title": "Πώληση, Διαμέρισμα, 160τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 20913539", "location": "160τ.μ. Κερατσίνι", "type": "Διαμέρισμα", "price": 260000, "sqm": 160, "year": 1983, "plot_sqm": "160", "courtyard": "", "renov_low": 122500, "renov_high": 188300, "turnkey_low": 403300, "turnkey_high": 469100, "html_report": "Πώληση, Διαμέρισμα, 160τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 20913539 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120913539", "lat": 37.9586, "lon": 23.6244, "processed_at": "2026-10-05 16:55:00", "renov_diy": 95249, "turnkey_diy": 376049, "risk_score": 2.2, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο δεκαετίας '80 (1983): Ανάγκη ριζικής αλλαγής υδραυλικών/ηλεκτρολογικών δικτύων.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 79.2, "deal_grade": "A", "deal_desc": "Πολύ Καλή Επιλογή &bull; Ισχυρή Αξία & Χαμηλό Ρίσκο", "deal_color": "#059669", "thumb": "thumbs/1120913539.jpg"}, {"filename": "Πώληση, Διαμέρισμα, 90τ.μ. Κορυδαλλός, Όριο Άγιας Βαρβάρας | 17965593 | Spitogatos.webarchive", "listing_id": "1117965593", "title": "Πώληση, Διαμέρισμα, 90τ.μ. Κορυδαλλός, Όριο Άγιας Βαρβάρας | 17965593", "location": "90τ.μ. Κορυδαλλός", "type": "Διαμέρισμα", "price": 206000, "sqm": 90, "year": 2004, "plot_sqm": "90", "courtyard": "", "renov_low": 53300, "renov_high": 87700, "turnkey_low": 275780, "turnkey_high": 310180, "html_report": "Πώληση, Διαμέρισμα, 90τ.μ. Κορυδαλλός, Όριο Άγιας Βαρβάρας | 17965593 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1117965593", "lat": 37.9903, "lon": 23.6511, "processed_at": "2026-10-05 16:55:00", "renov_diy": 41893, "turnkey_diy": 264373, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (2004): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 71.1, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1117965593.jpg"}, {"filename": "Πώληση, Διαμέρισμα, 92τ.μ. Νίκαια, Νεάπολη | 20162668 | Spitogatos.webarchive", "listing_id": "1120162668", "title": "Πώληση, Διαμέρισμα, 92τ.μ. Νίκαια, Νεάπολη | 20162668", "location": "92τ.μ. Νίκαια", "type": "Διαμέρισμα", "price": 250000, "sqm": 92, "year": 2005, "plot_sqm": "92", "courtyard": "", "renov_low": 54137, "renov_high": 89057, "turnkey_low": 324137, "turnkey_high": 359057, "html_report": "Πώληση, Διαμέρισμα, 92τ.μ. Νίκαια, Νεάπολη | 20162668 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120162668", "lat": 37.9698, "lon": 23.6378, "processed_at": "2026-10-05 16:55:00", "renov_diy": 42538, "turnkey_diy": 312538, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (2005): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 61.7, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1120162668.jpg"}, {"filename": "Πώληση, Μεζονέτα, 117τ.μ. Κερατσίνι, Ευγένεια | 19492516 | Spitogatos.webarchive", "listing_id": "1119492516", "title": "Πώληση, Μεζονέτα, 117τ.μ. Κερατσίνι, Ευγένεια | 19492516", "location": "117τ.μ. Κερατσίνι", "type": "Μεζονέτα", "price": 245000, "sqm": 117, "year": 2006, "plot_sqm": "117", "courtyard": "", "renov_low": 64637, "renov_high": 106057, "turnkey_low": 329237, "turnkey_high": 370657, "html_report": "Πώληση, Μεζονέτα, 117τ.μ. Κερατσίνι, Ευγένεια | 19492516 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119492516", "lat": 37.9564, "lon": 23.6175, "processed_at": "2026-10-05 16:55:00", "renov_diy": 50634, "turnkey_diy": 315234, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (2006): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 76.1, "deal_grade": "A", "deal_desc": "Πολύ Καλή Επιλογή &bull; Ισχυρή Αξία & Χαμηλό Ρίσκο", "deal_color": "#059669", "thumb": "thumbs/1119492516.jpg"}, {"filename": "Πώληση, Μεζονέτα, 117τ.μ. Νίκαια, Νεάπολη | 19785847 | Spitogatos.webarchive", "listing_id": "1119785847", "title": "Πώληση, Μεζονέτα, 117τ.μ. Νίκαια, Νεάπολη | 19785847", "location": "117τ.μ. Νίκαια", "type": "Μεζονέτα", "price": 375000, "sqm": 117, "year": 2027, "plot_sqm": "117", "courtyard": "", "renov_low": 32557, "renov_high": 58937, "turnkey_low": 437557, "turnkey_high": 463937, "html_report": "Πώληση, Μεζονέτα, 117τ.μ. Νίκαια, Νεάπολη | 19785847 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119785847", "lat": 37.9752, "lon": 23.6408, "processed_at": "2026-10-05 16:55:00", "renov_diy": 25900, "turnkey_diy": 430900, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Νεόδμητο/πρόσφατο (2027): Ελάχιστο στατικό ρίσκο.\", \"Καλή κάλυψη εικόνων (11+ φωτογραφίες).\"]", "deal_score": 55.9, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1119785847.jpg"}, {"filename": "Πώληση, Μεζονέτα, 118τ.μ. Δραπετσώνα, Άγιος Παντελεήμων | 18457264 | Spitogatos.webarchive", "listing_id": "1118457264", "title": "Πώληση, Μεζονέτα, 118τ.μ. Δραπετσώνα, Άγιος Παντελεήμων | 18457264", "location": "118τ.μ. Δραπετσώνα", "type": "Μεζονέτα", "price": 380000, "sqm": 118, "year": 1985, "plot_sqm": "118", "courtyard": "", "renov_low": 95200, "renov_high": 147137, "turnkey_low": 505600, "turnkey_high": 557537, "html_report": "Πώληση, Μεζονέτα, 118τ.μ. Δραπετσώνα, Άγιος Παντελεήμων | 18457264 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1118457264", "lat": 37.9475, "lon": 23.6216, "processed_at": "2026-10-05 16:55:00", "renov_diy": 74198, "turnkey_diy": 484598, "risk_score": 4.4, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο δεκαετίας '80 (1985): Ανάγκη ριζικής αλλαγής υδραυλικών/ηλεκτρολογικών δικτύων.\", \"Πολυεπίπεδη κατασκευή παλαιότερης εποχής, πολλαπλά σημεία θερμογεφυρών.\", \"Ελλιπής φωτογράφιση (5 φωτό): Λείπουν επιμέρους γωνίες ή βοηθητικοί χώροι.\"]", "deal_score": 31.1, "deal_grade": "D", "deal_desc": "Ασύμφορο / High Risk &bull; Υψηλό ρίσκο στατικών/αφανών", "deal_color": "#dc2626", "thumb": "thumbs/1118457264.jpg"}, {"filename": "Πώληση, Μεζονέτα, 120τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 19650060 | Spitogatos.webarchive", "listing_id": "1119650060", "title": "Πώληση, Μεζονέτα, 120τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 19650060", "location": "120τ.μ. Κορυδαλλός", "type": "Μεζονέτα", "price": 410000, "sqm": 120, "year": 2026, "plot_sqm": "120", "courtyard": "", "renov_low": 33100, "renov_high": 59900, "turnkey_low": 475900, "turnkey_high": 502700, "html_report": "Πώληση, Μεζονέτα, 120τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 19650060 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119650060", "lat": 37.9904, "lon": 23.648, "processed_at": "2026-10-05 16:55:00", "renov_diy": 26319, "turnkey_diy": 469119, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Νεόδμητο/πρόσφατο (2026): Ελάχιστο στατικό ρίσκο.\", \"Καλή κάλυψη εικόνων (16+ φωτογραφίες).\"]", "deal_score": 51.3, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1119650060.jpg"}, {"filename": "Πώληση, Μεζονέτα, 125τ.μ. Προάστια Πειραιά, Νίκαια | 18245314 | Spitogatos.webarchive", "listing_id": "1118245314", "title": "Πώληση, Μεζονέτα, 125τ.μ. Προάστια Πειραιά, Νίκαια | 18245314", "location": "125τ.μ. Προάστια Πειραιά", "type": "Μεζονέτα", "price": 320000, "sqm": 125, "year": 2005, "plot_sqm": "125", "courtyard": "", "renov_low": 68000, "renov_high": 111500, "turnkey_low": 413600, "turnkey_high": 457100, "html_report": "Πώληση, Μεζονέτα, 125τ.μ. Προάστια Πειραιά, Νίκαια | 18245314 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1118245314", "lat": 37.9679, "lon": 23.6418, "processed_at": "2026-10-05 16:55:00", "renov_diy": 53228, "turnkey_diy": 398828, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (2005): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 65.9, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1118245314.jpg"}, {"filename": "Πώληση, Μεζονέτα, 160τ.μ. Κηφισιά, Αδάμες (Οικισμός Πελοποννησίων) | 19878423 | Spitogatos.webarchive", "listing_id": "1119878423", "title": "Πώληση, Μεζονέτα, 160τ.μ. Κηφισιά, Αδάμες (Οικισμός Πελοποννησίων) | 19878423", "location": "160τ.μ. Κηφισιά", "type": "Μεζονέτα", "price": 350000, "sqm": 160, "year": 2009, "plot_sqm": "160", "courtyard": "", "renov_low": 82700, "renov_high": 135300, "turnkey_low": 460700, "turnkey_high": 513300, "html_report": "Πώληση, Μεζονέτα, 160τ.μ. Κηφισιά, Αδάμες (Οικισμός Πελοποννησίων) | 19878423 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119878423", "lat": 38.0847, "lon": 23.789, "processed_at": "2026-10-05 16:55:00", "renov_diy": 64560, "turnkey_diy": 442560, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (2009): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 74.6, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1119878423.jpg"}, {"filename": "Πώληση, Μεζονέτα, 252τ.μ. Κηφισιά, Αδάμες (Οικισμός Γράμμος - Φοίνικας) | 15865894 | Spitogatos.webarchive", "listing_id": "1115865894", "title": "Πώληση, Μεζονέτα, 252τ.μ. Κηφισιά, Αδάμες (Οικισμός Γράμμος - Φοίνικας) | 15865894", "location": "252τ.μ. Κηφισιά", "type": "Μεζονέτα", "price": 300000, "sqm": 252, "year": 2009, "plot_sqm": "252", "courtyard": "", "renov_low": 121337, "renov_high": 197857, "turnkey_low": 445337, "turnkey_high": 521857, "html_report": "Πώληση, Μεζονέτα, 252τ.μ. Κηφισιά, Αδάμες (Οικισμός Γράμμος - Φοίνικας) | 15865894 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1115865894", "lat": 38.0829, "lon": 23.7938, "processed_at": "2026-10-05 16:55:00", "renov_diy": 94349, "turnkey_diy": 418349, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (2009): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (22+ φωτογραφίες).\"]", "deal_score": 97.2, "deal_grade": "A+", "deal_desc": "Super Deal &bull; Κορυφαία Σχέση Τιμής & Ασφάλειας", "deal_color": "#047857", "thumb": "thumbs/1115865894.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 120τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 20778863 | Spitogatos.webarchive", "listing_id": "1119897356", "title": "Πώληση, Μεζονέτα, 134τ.μ. Κερατσίνι, Άγιος Γεώργιος | 19897356", "location": "120τ.μ. Κερατσίνι", "type": "Μονοκατοικία", "price": 110000, "sqm": 120, "year": 1976, "plot_sqm": "120", "courtyard": "", "renov_low": 113500, "renov_high": 176500, "turnkey_low": 232300, "turnkey_high": 295300, "html_report": "Πώληση, Μονοκατοικία, 120τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 20778863 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119897356", "lat": 37.964, "lon": 23.6274, "processed_at": "2026-10-05 16:55:00", "renov_diy": 88309, "turnkey_diy": 207109, "risk_score": 3.4, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο δεκαετίας '80 (1976): Ανάγκη ριζικής αλλαγής υδραυλικών/ηλεκτρολογικών δικτύων.\", \"Καλή κάλυψη εικόνων (13+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 85.3, "deal_grade": "A+", "deal_desc": "Super Deal &bull; Κορυφαία Σχέση Τιμής & Ασφάλειας", "deal_color": "#047857", "thumb": "thumbs/1119897356.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 134τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 17657681 | Spitogatos.webarchive", "listing_id": "1117657681", "title": "Πώληση, Μονοκατοικία, 134τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 17657681", "location": "134τ.μ. Κερατσίνι", "type": "Μονοκατοικία", "price": 130000, "sqm": 134, "year": 1960, "plot_sqm": "134", "courtyard": "", "renov_low": 130400, "renov_high": 201500, "turnkey_low": 270800, "turnkey_high": 341900, "html_report": "Πώληση, Μονοκατοικία, 134τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 17657681 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1117657681", "lat": 37.9658, "lon": 23.6226, "processed_at": "2026-10-05 16:55:00", "renov_diy": 102481, "turnkey_diy": 242881, "risk_score": 6.8, "risk_level": "Μέτριο Ρίσκο", "risk_reasons": "[\"Κτίριο εποχής '60s (1960): Παλαιός αντισεισμικός '59, λεία σίδερα, κίνδυνος ενανθράκωσης.\", \"Ανάγκη ενοποίησης / διάνοιξης πλάκας & στατικής ενίσχυσης για εσωτερική σκάλα.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 64.7, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1117657681.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 150τ.μ. Κηφισιά, Νέα Κηφισιά | 15153419 | Spitogatos.webarchive", "listing_id": "1115153419", "title": "Πώληση, Μονοκατοικία, 150τ.μ. Κηφισιά, Νέα Κηφισιά | 15153419", "location": "150τ.μ. Κηφισιά", "type": "Μονοκατοικία", "price": 350000, "sqm": 150, "year": 1975, "plot_sqm": "150", "courtyard": "", "renov_low": 139000, "renov_high": 214000, "turnkey_low": 517000, "turnkey_high": 592000, "html_report": "Πώληση, Μονοκατοικία, 150τ.μ. Κηφισιά, Νέα Κηφισιά | 15153419 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1115153419", "lat": 38.0996, "lon": 23.8082, "processed_at": "2026-10-05 16:55:00", "renov_diy": 107969, "turnkey_diy": 485969, "risk_score": 3.4, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο δεκαετίας '80 (1975): Ανάγκη ριζικής αλλαγής υδραυλικών/ηλεκτρολογικών δικτύων.\", \"Καλή κάλυψη εικόνων (17+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 54.4, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1115153419.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 150τ.μ. Νίκαια, Μητρόπολη | 19576489 | Spitogatos.webarchive", "listing_id": "1119576489", "title": "Πώληση, Μονοκατοικία, 150τ.μ. Νίκαια, Μητρόπολη | 19576489", "location": "150τ.μ. Νίκαια", "type": "Μονοκατοικία", "price": 220000, "sqm": 150, "year": 1923, "plot_sqm": "150", "courtyard": "", "renov_low": 144000, "renov_high": 221500, "turnkey_low": 381600, "turnkey_high": 459100, "html_report": "Πώληση, Μονοκατοικία, 150τ.μ. Νίκαια, Μητρόπολη | 19576489 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119576489", "lat": 37.9684, "lon": 23.6445, "processed_at": "2026-10-05 16:55:00", "renov_diy": 112969, "turnkey_diy": 350569, "risk_score": 7.8, "risk_level": "Υψηλό Ρίσκο", "risk_reasons": "[\"Εξαιρετικά παλαιό κτίριο (1923): Φέρουσα τοιχοποιία, προ-αντισεισμική κατασκευή.\", \"Ανάγκη ενοποίησης / διάνοιξης πλάκας & στατικής ενίσχυσης για εσωτερική σκάλα.\", \"Καλή κάλυψη εικόνων (21+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 48.4, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1119576489.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 180τ.μ. Νίκαια, Νεάπολη | 20002093 | Spitogatos.webarchive", "listing_id": "1120002093", "title": "Πώληση, Μονοκατοικία, 180τ.μ. Νίκαια, Νεάπολη | 20002093", "location": "180τ.μ. Νίκαια", "type": "Μονοκατοικία", "price": 295000, "sqm": 180, "year": 1967, "plot_sqm": "180", "courtyard": "", "renov_low": 169500, "renov_high": 259000, "turnkey_low": 488100, "turnkey_high": 577600, "html_report": "Πώληση, Μονοκατοικία, 180τ.μ. Νίκαια, Νεάπολη | 20002093 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120002093", "lat": 37.9713, "lon": 23.6396, "processed_at": "2026-10-05 16:55:00", "renov_diy": 132631, "turnkey_diy": 451231, "risk_score": 6.8, "risk_level": "Μέτριο Ρίσκο", "risk_reasons": "[\"Κτίριο εποχής '67s (1967): Παλαιός αντισεισμικός '59, λεία σίδερα, κίνδυνος ενανθράκωσης.\", \"Ανάγκη ενοποίησης / διάνοιξης πλάκας & στατικής ενίσχυσης για εσωτερική σκάλα.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 50.5, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1120002093.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 190τ.μ. Μαρούσι, Κοκκινιά | 16949214 | Spitogatos.webarchive", "listing_id": "1116949214", "title": "Πώληση, Μονοκατοικία, 190τ.μ. Μαρούσι, Κοκκινιά | 16949214", "location": "190τ.μ. Μαρούσι", "type": "Μονοκατοικία", "price": 275000, "sqm": 190, "year": 1985, "plot_sqm": "190", "courtyard": "", "renov_low": 142000, "renov_high": 217700, "turnkey_low": 439000, "turnkey_high": 514700, "html_report": "Πώληση, Μονοκατοικία, 190τ.μ. Μαρούσι, Κοκκινιά | 16949214 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1116949214", "lat": 38.0521, "lon": 23.7984, "processed_at": "2026-10-05 16:55:00", "renov_diy": 110282, "turnkey_diy": 407282, "risk_score": 2.7, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο δεκαετίας '80 (1985): Ανάγκη ριζικής αλλαγής υδραυλικών/ηλεκτρολογικών δικτύων.\", \"Καλή κάλυψη εικόνων (14+ φωτογραφίες).\"]", "deal_score": 80.7, "deal_grade": "A", "deal_desc": "Πολύ Καλή Επιλογή &bull; Ισχυρή Αξία & Χαμηλό Ρίσκο", "deal_color": "#059669", "thumb": "thumbs/1116949214.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 300τ.μ. Ηράκλειο, Παλαιό Ηράκλειο | 20635764 | Spitogatos.webarchive", "listing_id": "1120635764", "title": "Πώληση, Μονοκατοικία, 300τ.μ. Ηράκλειο, Παλαιό Ηράκλειο | 20635764", "location": "300τ.μ. Ηράκλειο", "type": "Μονοκατοικία", "price": 360000, "sqm": 300, "year": 1996, "plot_sqm": "300", "courtyard": "", "renov_low": 213500, "renov_high": 325500, "turnkey_low": 602300, "turnkey_high": 714300, "html_report": "Πώληση, Μονοκατοικία, 300τ.μ. Ηράκλειο, Παλαιό Ηράκλειο | 20635764 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120635764", "lat": 38.0604, "lon": 23.7645, "processed_at": "2026-10-05 16:55:00", "renov_diy": 165409, "turnkey_diy": 554209, "risk_score": 1.9, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (1996): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (25+ φωτογραφίες).\"]", "deal_score": 91.2, "deal_grade": "A+", "deal_desc": "Super Deal &bull; Κορυφαία Σχέση Τιμής & Ασφάλειας", "deal_color": "#047857", "thumb": "thumbs/1120635764.jpg"}, {"filename": "Πώληση, Συγκρότημα διαμερισμάτων, 190τ.μ. Μαρούσι, Α.Σ.ΠΑΙ.Τ.Ε. | 20288026 | Spitogatos.webarchive", "listing_id": "1120288026", "title": "Πώληση, Συγκρότημα διαμερισμάτων, 190τ.μ. Μαρούσι, Α.Σ.ΠΑΙ.Τ.Ε. | 20288026", "location": "190τ.μ. Μαρούσι", "type": "Συγκρότημα", "price": 345000, "sqm": 190, "year": 1999, "plot_sqm": "190", "courtyard": "", "renov_low": 142000, "renov_high": 217700, "turnkey_low": 514600, "turnkey_high": 590300, "html_report": "Πώληση, Συγκρότημα διαμερισμάτων, 190τ.μ. Μαρούσι, Α.Σ.ΠΑΙ.Τ.Ε. | 20288026 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120288026", "lat": 38.0524, "lon": 23.8005, "processed_at": "2026-10-05 16:55:00", "renov_diy": 110282, "turnkey_diy": 482882, "risk_score": 1.5, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (1999): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (16+ φωτογραφίες).\"]", "deal_score": 79.2, "deal_grade": "A", "deal_desc": "Πολύ Καλή Επιλογή &bull; Ισχυρή Αξία & Χαμηλό Ρίσκο", "deal_color": "#059669", "thumb": "thumbs/1120288026.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 102τ.μ. Κερατσίνι, Αμφιάλη | 18585218 | Spitogatos.webarchive", "listing_id": "1118585218", "title": "Πώληση, Μονοκατοικία, 102τ.μ. Κερατσίνι, Αμφιάλη | 18585218", "location": "102τ.μ. Κερατσίνι", "type": "Μονοκατοικία", "price": 150000, "sqm": 102, "year": 1960, "plot_sqm": "102", "courtyard": "", "renov_low": 98200, "renov_high": 154000, "turnkey_low": 260200, "turnkey_high": 316000, "html_report": "Πώληση, Μονοκατοικία, 102τ.μ. Κερατσίνι, Αμφιάλη | 18585218 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1118585218", "lat": 37.9674, "lon": 23.6263, "processed_at": "2026-10-05 16:55:00", "renov_diy": 76511, "turnkey_diy": 238511, "risk_score": 4.4, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Κτίριο εποχής '60s (1960): Παλαιός αντισεισμικός '59, λεία σίδερα, κίνδυνος ενανθράκωσης.\", \"Καλή κάλυψη εικόνων (16+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 67.3, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1118585218.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 120τ.μ. Προάστια Πειραιά, Κερατσίνι | 18121660 | Spitogatos.webarchive", "listing_id": "1118121660", "title": "Πώληση, Μονοκατοικία, 120τ.μ. Προάστια Πειραιά, Κερατσίνι | 18121660", "location": "120τ.μ. Προάστια Πειραιά", "type": "Μονοκατοικία", "price": 130000, "sqm": 120, "year": 1993, "plot_sqm": "120", "courtyard": "", "renov_low": 96500, "renov_high": 149100, "turnkey_low": 236900, "turnkey_high": 289500, "html_report": "Πώληση, Μονοκατοικία, 120τ.μ. Προάστια Πειραιά, Κερατσίνι | 18121660 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1118121660", "lat": 37.9579, "lon": 23.6248, "processed_at": "2026-10-05 16:55:00", "renov_diy": 75203, "turnkey_diy": 215603, "risk_score": 1.9, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (1993): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (24+ φωτογραφίες).\"]", "deal_score": 92.2, "deal_grade": "A+", "deal_desc": "Super Deal &bull; Κορυφαία Σχέση Τιμής & Ασφάλειας", "deal_color": "#047857", "thumb": "thumbs/1118121660.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 130τ.μ. Ταμπούρια – Αγία Σοφία, Ταμπούρια | 20840543 | Spitogatos.webarchive", "listing_id": "1120840543", "title": "Πώληση, Μονοκατοικία, 130τ.μ. Ταμπούρια – Αγία Σοφία, Ταμπούρια | 20840543", "location": "130τ.μ. Ταμπούρια – Αγία Σοφία", "type": "Μονοκατοικία", "price": 145000, "sqm": 130, "year": 1935, "plot_sqm": "130", "courtyard": "", "renov_low": 127000, "renov_high": 196500, "turnkey_low": 283600, "turnkey_high": 353100, "html_report": "Πώληση, Μονοκατοικία, 130τ.μ. Ταμπούρια – Αγία Σοφία, Ταμπούρια | 20840543 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120840543", "lat": 37.9541, "lon": 23.6294, "processed_at": "2026-10-05 16:55:00", "renov_diy": 99863, "turnkey_diy": 256463, "risk_score": 9.8, "risk_level": "Υψηλό Ρίσκο", "risk_reasons": "[\"Εξαιρετικά παλαιό κτίριο (1935): Φέρουσα τοιχοποιία, προ-αντισεισμική κατασκευή.\", \"Ανάγκη ενοποίησης / διάνοιξης πλάκας & στατικής ενίσχυσης για εσωτερική σκάλα.\", \"Πολύ περιορισμένη φωτογράφιση (1 φωτό): Απόκρυψη κρίσιμων χώρων/κατάστασης.\", \"Το ισόγειο αναφέρεται ότι χρήζει ανακαίνισης χωρίς πλήρη φωτογραφική απεικόνιση.\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 44.7, "deal_grade": "D", "deal_desc": "Ασύμφορο / High Risk &bull; Υψηλό ρίσκο στατικών/αφανών", "deal_color": "#dc2626", "thumb": "thumbs/1120840543.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 150τ.μ. Κερατσίνι, Κοκκινόβραχος | 20173802 | Spitogatos.webarchive", "listing_id": "1120173802", "title": "Πώληση, Μονοκατοικία, 150τ.μ. Κερατσίνι, Κοκκινόβραχος | 20173802", "location": "150τ.μ. Κερατσίνι", "type": "Μονοκατοικία", "price": 150000, "sqm": 150, "year": 1961, "plot_sqm": "150", "courtyard": "", "renov_low": 144000, "renov_high": 221500, "turnkey_low": 306000, "turnkey_high": 383500, "html_report": "Πώληση, Μονοκατοικία, 150τ.μ. Κερατσίνι, Κοκκινόβραχος | 20173802 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1120173802", "lat": 37.9637, "lon": 23.6201, "processed_at": "2026-10-05 16:55:00", "renov_diy": 112969, "turnkey_diy": 274969, "risk_score": 6.8, "risk_level": "Μέτριο Ρίσκο", "risk_reasons": "[\"Κτίριο εποχής '61s (1961): Παλαιός αντισεισμικός '59, λεία σίδερα, κίνδυνος ενανθράκωσης.\", \"Ανάγκη ενοποίησης / διάνοιξης πλάκας & στατικής ενίσχυσης για εσωτερική σκάλα.\", \"Καλή κάλυψη εικόνων (15+ φωτογραφίες).\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 64.2, "deal_grade": "B", "deal_desc": "Ισορροπημένη Επιλογή &bull; Κανονική Σχέση Ρίσκου/Κόστους", "deal_color": "#d97706", "thumb": "thumbs/1120173802.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 110τ.μ. Νίκαια, Μητρόπολη | 17306078 | Spitogatos.webarchive", "listing_id": "1117306078", "title": "Πώληση, Μονοκατοικία, 110τ.μ. Νίκαια, Μητρόπολη | 17306078", "location": "110τ.μ. Νίκαια, Μητρόπολη", "type": "Μονοκατοικία", "price": 165000, "sqm": 110, "year": 1977, "plot_sqm": "64", "courtyard": "2 ταράτσες, υπόλοιπο υψούν", "renov_low": 111500, "renov_high": 167500, "turnkey_low": 289700, "turnkey_high": 345700, "html_report": "Πώληση, Μονοκατοικία, 110τ.μ. Νίκαια, Μητρόπολη | 17306078 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1117306078", "lat": 37.9682, "lon": 23.6448, "processed_at": "2026-10-06 20:10:00", "renov_diy": 86466, "turnkey_diy": 264666, "risk_score": 6.4, "risk_level": "Μέτριο Ρίσκο", "risk_reasons": "[\"Κτίριο δεκαετίας '80 (1977): Ανάγκη ριζικής αλλαγής υδραυλικών/ηλεκτρολογικών δικτύων.\", \"Πολύ περιορισμένη φωτογράφιση (2 φωτό): Απόκρυψη κρίσιμων χώρων/κατάστασης.\", \"Το ισόγειο αναφέρεται ότι χρήζει ανακαίνισης χωρίς πλήρη φωτογραφική απεικόνιση.\", \"Επαφή θεμελίων με έδαφος εποχής <1985 (υψηλή πιθανότητα ανιούσας υγρασίας).\"]", "deal_score": 54.8, "deal_grade": "C", "deal_desc": "Αυξημένο Ρίσκο &bull; Φθηνό φαινομενικά, απαιτεί προσοχή", "deal_color": "#ea580c", "thumb": "thumbs/1117306078.jpg"}, {"filename": "Πώληση, Μονοκατοικία, 145τ.μ. Προάστια Πειραιά, Νίκαια | 19754555 | Spitogatos.webarchive", "listing_id": "1119754555", "title": "Πώληση, Μονοκατοικία, 145τ.μ. Προάστια Πειραιά, Νίκαια | 19754555", "location": "145τ.μ. Προάστια Πειραιά, Νίκαια", "type": "Μονοκατοικία", "price": 170000, "sqm": 145, "year": 1993, "plot_sqm": "75", "courtyard": "Πίσω αυλή & δώμα 15τμ", "renov_low": 109250, "renov_high": 167100, "turnkey_low": 292850, "turnkey_high": 350700, "html_report": "Πώληση, Μονοκατοικία, 145τ.μ. Προάστια Πειραιά, Νίκαια | 19754555 | Spitogatos.html", "spitogatos_url": "https://www.spitogatos.gr/aggelia/1119754555", "lat": 37.9705, "lon": 23.6395, "processed_at": "2026-10-06 20:10:00", "renov_diy": 87730, "turnkey_diy": 271330, "risk_score": 1.9, "risk_level": "Χαμηλό Ρίσκο", "risk_reasons": "[\"Σύγχρονο κτίριο (1993): Ήπιο ρίσκο, τυπικές φθορές χρήσης.\", \"Καλή κάλυψη εικόνων (19+ φωτογραφίες).\"]", "deal_score": 90.7, "deal_grade": "A+", "deal_desc": "Super Deal &bull; Κορυφαία Σχέση Τιμής & Ασφάλειας", "deal_color": "#047857", "thumb": "thumbs/1119754555.jpg"}];
+
+        let activeMode = 'diy'; // 'diy', 'low', 'high'
+        let currentFilter = 'all';
+        let currentSort = 'deal_desc'; // Default to Smart Deal ranking!
+
+        // Initialize Map
+        const map = L.map('map', { zoomControl: true }).setView([38.00, 23.70], 11);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const markersGroup = L.featureGroup().addTo(map);
+        const markerMap = {};
+
+        function getActiveTurnkey(p) {
+            if (activeMode === 'diy') return p.turnkey_diy;
+            if (activeMode === 'high') return p.turnkey_high;
+            return p.turnkey_low;
+        }
+
+        function formatTurnkeyShort(val) {
+            return '€' + Math.round(val / 1000) + 'k';
+        }
+
+        function getMarkerColorClass(val) {
+            if (val < 300000) return 'marker-green';
+            if (val <= 420000) return 'marker-blue';
+            return 'marker-purple';
+        }
+
+        function getModeTitle() {
+            if (activeMode === 'diy') return '💵 Turnkey Μαύρα/Friends';
+            if (activeMode === 'high') return '💎 Turnkey High-End';
+            return '📋 Turnkey Standard Low';
+        }
+
+        function getRiskBadgeClass(score) {
+            if (score <= 3.5) return 'risk-badge-low';
+            if (score <= 6.9) return 'risk-badge-med';
+            return 'risk-badge-high';
+        }
+
+        function getDealBadgeClass(grade) {
+            if (grade === 'A+') return 'deal-a-plus';
+            if (grade === 'A') return 'deal-a';
+            if (grade === 'B') return 'deal-b';
+            if (grade === 'C') return 'deal-c';
+            return 'deal-d';
+        }
+
+        // Render Map Markers
+        function renderMapMarkers(props) {
+            markersGroup.clearLayers();
+            props.forEach(p => {
+                const val = getActiveTurnkey(p);
+                const label = formatTurnkeyShort(val);
+                const colorCls = getMarkerColorClass(val);
+                
+                const customIcon = L.divIcon({
+                    className: 'custom-leaflet-pin',
+                    html: `<div id="marker-${p.listing_id}" class="price-badge-marker ${colorCls}">${label}</div>`,
+                    iconSize: [60, 24],
+                    iconAnchor: [30, 12]
+                });
+
+                const popupHtml = `
+                    <div class="map-popup">
+                        ${p.thumb ? `<img src="${p.thumb}" alt="${p.title}" />` : ''}
+                        <div class="popup-title">${p.title}</div>
+                        <div class="popup-loc">📍 ${p.location} &bull; ${p.sqm} τ.μ. &bull; Έτος ${p.year}</div>
+                        <div class="popup-deal-row">
+                            <span>⭐ Deal: <b style="color:${p.deal_color}">${p.deal_score}/100 (${p.deal_grade})</b></span>
+                            <span class="risk-badge ${getRiskBadgeClass(p.risk_score)}">🛡️ ${p.risk_score}/10</span>
+                        </div>
+                        <div class="popup-turnkey">
+                            <div class="popup-turnkey-label">${getModeTitle()}</div>
+                            <div class="popup-turnkey-val">€${val.toLocaleString()}</div>
+                            <div style="font-size:0.68rem; color:#15803d; margin-top:2px;">(Αγορά: €${p.price.toLocaleString()} &bull; Ανακαίνιση: €${Math.round((val - p.price*1.08)/1000)}k)</div>
+                        </div>
+                        <a href="${p.html_report}" class="popup-btn">📑 Άνοιγμα Μελέτης</a>
+                    </div>
+                `;
+
+                const marker = L.marker([p.lat, p.lon], { icon: customIcon })
+                    .bindPopup(popupHtml)
+                    .bindTooltip(`<b>${p.title}</b><br>⭐ Deal: ${p.deal_score}/100 (${p.deal_grade})<br>${getModeTitle()}: €${val.toLocaleString()}`, { direction: 'top', offset: [0, -10] });
+
+                marker.on('mouseover', function(e) {
+                    highlightCard(p.listing_id, true);
+                    highlightMarker(p.listing_id, true);
+                });
+
+                marker.on('mouseout', function(e) {
+                    highlightCard(p.listing_id, false);
+                    highlightMarker(p.listing_id, false);
+                });
+
+                markersGroup.addLayer(marker);
+                markerMap[p.listing_id] = marker;
+            });
+
+            if (props.length > 0) {
+                map.fitBounds(markersGroup.getBounds(), { padding: [30, 30] });
+            }
+        }
+
+        // Highlight marker function & bring to top
+        function highlightMarker(lid, isActive) {
+            const el = document.getElementById('marker-' + lid);
+            const marker = markerMap[lid];
+            if (el) {
+                if (isActive) {
+                    el.classList.add('marker-active-highlight');
+                } else {
+                    el.classList.remove('marker-active-highlight');
+                }
+            }
+            if (marker) {
+                if (isActive) {
+                    marker.setZIndexOffset(100000);
+                } else {
+                    marker.setZIndexOffset(0);
+                }
+            }
+        }
+
+        // Highlight and center card
+        function highlightCard(lid, isActive) {
+            const card = document.getElementById('card-' + lid);
+            if (card) {
+                if (isActive) {
+                    document.querySelectorAll('.property-card').forEach(c => c.classList.remove('active-hover'));
+                    card.classList.add('active-hover');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    card.classList.remove('active-hover');
+                }
+            }
+        }
+
+        // Render Left Listings Cards
+        function renderCards(props) {
+            const container = document.getElementById('listings-container');
+            container.innerHTML = '';
+
+            const activeClassMap = {
+                'diy': 'tier-cash-active',
+                'low': 'tier-low-active',
+                'high': 'tier-high-active'
+            };
+
+            props.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.id = 'card-' + p.listing_id;
+                
+                const currentTurnkey = getActiveTurnkey(p);
+                const activeBoxClass = activeClassMap[activeMode];
+                const riskBadgeClass = getRiskBadgeClass(p.risk_score);
+                const dealBadgeClass = getDealBadgeClass(p.deal_grade);
+
+                card.innerHTML = `
+                    <div class="card-thumb-col">
+                        ${p.thumb ? `<img src="${p.thumb}" alt="${p.title}" loading="lazy" />` : '<div style="width:100%;height:100%;background:#cbd5e1;"></div>'}
+                        <span class="card-badge-type">${p.type}</span>
+                        <span class="card-badge-year">${p.year}</span>
+                    </div>
+                    <div class="card-info-col">
+                        <div>
+                            <div class="card-header-row">
+                                <h2 class="card-title">${p.title}</h2>
+                            </div>
+                            <div class="card-loc">📍 ${p.location}</div>
+                            <div class="card-badges-row">
+                                <span class="deal-badge ${dealBadgeClass}">⭐ Deal: ${p.deal_score} (${p.deal_grade})</span>
+                                <span class="risk-badge ${riskBadgeClass}">🛡️ Ρίσκο: ${p.risk_score}/10</span>
+                            </div>
+                            <div class="card-meta-row">
+                                <div>Επιφάνεια: <span>${p.sqm} τ.μ.</span></div>
+                                <div>Αγορά: <span>€${p.price.toLocaleString()}</span></div>
+                                <div>€/τμ: <span>€${Math.round(p.price / p.sqm).toLocaleString()}</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 3-Tier Price Box with Active Mode Highlight -->
+                        <div class="tier-price-box ${activeBoxClass}">
+                            <div class="tier-main">
+                                <span class="tier-main-label">${getModeTitle()}</span>
+                                <span class="tier-main-val">€${currentTurnkey.toLocaleString()}</span>
+                            </div>
+                            <div style="font-size:0.7rem; font-weight:600; opacity:0.85;">
+                                Τελικό κόστος ανά τ.μ.: €${Math.round(currentTurnkey / p.sqm).toLocaleString()} / τ.μ.
+                            </div>
+                            <div class="tier-breakdown">
+                                <span>💵 Μαύρα: <b>€${Math.round(p.turnkey_diy/1000)}k</b></span>
+                                <span>📋 Low: <b>€${Math.round(p.turnkey_low/1000)}k</b></span>
+                                <span>💎 High: <b>€${Math.round(p.turnkey_high/1000)}k</b></span>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="${p.html_report}" class="card-btn card-btn-primary">📑 Μελέτη</a>
+                            <a href="${p.spitogatos_url}" target="_blank" class="card-btn card-btn-sub">🔗 Spitogatos</a>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('mouseenter', () => {
+                    highlightMarker(p.listing_id, true);
+                    const marker = markerMap[p.listing_id];
+                    if (marker) marker.openTooltip();
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    highlightMarker(p.listing_id, false);
+                    const marker = markerMap[p.listing_id];
+                    if (marker) marker.closeTooltip();
+                });
+
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName.toLowerCase() === 'a') return;
+                    const marker = markerMap[p.listing_id];
+                    if (marker) {
+                        map.setView(marker.getLatLng(), 15, { animate: true });
+                        marker.openPopup();
+                    }
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function updateDisplay() {
+            let filtered = rawProperties.filter(p => {
+                if (currentFilter === 'all') return true;
+                return p.type.toLowerCase().includes(currentFilter.toLowerCase());
+            });
+
+            filtered.sort((a, b) => {
+                if (currentSort === 'deal_desc') return b.deal_score - a.deal_score;
+                if (currentSort === 'deal_asc') return a.deal_score - b.deal_score;
+                
+                const valA = getActiveTurnkey(a);
+                const valB = getActiveTurnkey(b);
+                if (currentSort === 'turnkey_active_asc') return valA - valB;
+                if (currentSort === 'turnkey_active_desc') return valB - valA;
+                if (currentSort === 'risk_asc') return a.risk_score - b.risk_score;
+                if (currentSort === 'risk_desc') return b.risk_score - a.risk_score;
+                if (currentSort === 'price_asc') return a.price - b.price;
+                if (currentSort === 'price_desc') return b.price - a.price;
+                if (currentSort === 'sqm_desc') return b.sqm - a.sqm;
+                if (currentSort === 'year_asc') return a.year - b.year;
+                if (currentSort === 'year_desc') return b.year - a.year;
+                return 0;
+            });
+
+            renderCards(filtered);
+            renderMapMarkers(filtered);
+            document.getElementById('stat-count').textContent = filtered.length;
+        }
+
+        // Mode Switcher Buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeMode = btn.getAttribute('data-mode');
+                updateDisplay();
+            });
+        });
+
+        // Filter Buttons
+        document.querySelectorAll('#filter-buttons .filter-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                document.querySelectorAll('#filter-buttons .filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                updateDisplay();
+            });
+        });
+
+        // Sort Select
+        document.getElementById('sort-select').addEventListener('change', e => {
+            currentSort = e.target.value;
+            updateDisplay();
+        });
+
+        // Initial Load
+        updateDisplay();
+    </script>
+</body>
+</html>
