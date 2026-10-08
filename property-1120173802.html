@@ -463,7 +463,68 @@
 
         
     <!-- INTERACTIVE VIEWING CHECKLIST & ON-SITE AUDIT GUIDE -->
-    <div class="card" id="viewing-guide-card" style="border: 2px solid #3b82f6; background: #ffffff;">
+    
+        <!-- 🛡️ Neighborhood & Security Due Diligence Card -->
+        <div class="card" id="neighborhood-security-card" style="border: 2px solid #0284c7; background: #ffffff;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom: 2px solid #f0fdf4; padding-bottom: 10px;">
+                <div>
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-size:0.75rem; text-transform:uppercase; font-weight:800; padding:3px 10px; border-radius:20px;">
+                        📍 Neighborhood & Security Audit &bull; Έρευνα Τοποθεσίας
+                    </span>
+                    <h2 style="margin:6px 0 0 0; border:none; padding:0; color:#0c4a6e; font-size:1.35rem;">
+                        🛡️ Έρευνα Γειτονιάς, Ασφάλειας & Ανάλυση Τιμής («Γιατί είναι τόσο φθηνό/ακριβό;»)
+                    </h2>
+                </div>
+                <div style="background: #0284c7; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 0.88rem;">
+                    Εμπεριστατωμένος Έλεγχος Περιοχής
+                </div>
+            </div>
+
+            <!-- Price Anomaly Box -->
+            <div style="background:#f8fafc; border-left:4px solid #f59e0b; padding:12px 14px; border-radius:8px; margin-bottom:14px;">
+                <h4 style="margin:0 0 6px 0; color:#b45309; font-size:1rem; display:flex; align-items:center; gap:6px;">
+                    <span>⚖️</span> Ανάλυση Τιμής & Πιθανές Παγίδες (Price Anomaly / 'The Catch')
+                </h4>
+                <p style="margin:0; font-size:0.9rem; line-height:1.6; color:#1e293b;">
+                    1.000€/τ.μ. (1961). Χαμηλή τιμή λόγω της τοποθεσίας στον Κοκκινόβραχο (ψηλά στο Κερατσίνι, απότομη κλίση, δύσκολη πρόσβαση) και παλαιότητας.
+                </p>
+            </div>
+
+            <!-- Security & Environmental Grid -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom:14px;">
+                <!-- Crime & Burglary Risk -->
+                <div style="background:#fef2f2; border-left:4px solid #ef4444; padding:12px 14px; border-radius:8px;">
+                    <h4 style="margin:0 0 6px 0; color:#991b1b; font-size:0.95rem; display:flex; align-items:center; gap:6px;">
+                        <span>🚨</span> Κίνδυνος Διαρρήξεων & Εγκληματικότητα
+                    </h4>
+                    <p style="margin:0; font-size:0.87rem; line-height:1.55; color:#334155;">
+                        Μέτριο. Ήσυχο αλλά απομονωμένο σημείο τις βραδινές ώρες.
+                    </p>
+                </div>
+
+                <!-- Encampment & Informal Activity Proximity -->
+                <div style="background:#fefce8; border-left:4px solid #eab308; padding:12px 14px; border-radius:8px;">
+                    <h4 style="margin:0 0 6px 0; color:#854d0e; font-size:0.95rem; display:flex; align-items:center; gap:6px;">
+                        <span>🏘️</span> Δραστηριότητα Περιοχής & Γειτνίαση
+                    </h4>
+                    <p style="margin:0; font-size:0.87rem; line-height:1.55; color:#334155;">
+                        Μέτριο προς Αυξημένο λόγω γειτνίασης με τους πρόποδες του Σχιστού και τις οδούς διαφυγής προς τη λεωφόρο Σχιστού.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Environmental & Infrastructure Risks -->
+            <div style="background:#f0fdf4; border-left:4px solid #10b981; padding:12px 14px; border-radius:8px;">
+                <h4 style="margin:0 0 6px 0; color:#065f46; font-size:0.95rem; display:flex; align-items:center; gap:6px;">
+                    <span>🌊</span> Περιβάλλον, Υποδομές & Φυσικοί Κίνδυνοι
+                </h4>
+                <p style="margin:0; font-size:0.87rem; line-height:1.55; color:#334155;">
+                    Απότομες κλίσεις, έκθεση σε ανέμους, δυσκολία προσέγγισης μεγάλων οχημάτων/ασθενοφόρου/πυροσβεστικής.
+                </p>
+            </div>
+        </div>
+
+        <div class="card" id="viewing-guide-card" style="border: 2px solid #3b82f6; background: #ffffff;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
             <div>
                 <span class="badge" style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:0.75rem; text-transform:uppercase; font-weight:800; padding:3px 10px; border-radius:20px;">
@@ -795,6 +856,56 @@
         </div>
 
         <!-- Feedback & Update Notice -->
+        
+        <div class="viewing-section">
+            <h3 class="viewing-sec-title"><span>🛡️</span> 6. Έλεγχος Γειτονιάς, Ασφάλειας & Προσβασιμότητας</h3>
+            <div class="viewing-items-list">
+                
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_5_0" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Προσβασιμότητα & δρόμος: Επιβεβαίωση συνθηκών ασφαλείας, φωτισμού και προστασίας εισόδου.</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Γείτονες:</strong><br>
+                        <em>«Είναι εύκολη η πρόσβαση με αυτοκίνητο τον χειμώνα σε παγετό ή έντονη βροχή;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="10">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_5_1" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Ασφάλεια περιμετρικά: Έλεγχος όχλησης, θορύβου και ποιότητας ζωής γειτονιάς.</span>
+                    </label>
+                    <span class="item-badge badge-imp">Σημαντικό (+10π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Γείτονες:</strong><br>
+                        <em>«Υπάρχει επαρκής φωτισμός στον δρόμο και αίσθηση ασφάλειας;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            </div>
+        </div>
+
         <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:14px; border-radius:8px; margin-top:20px; font-size:0.86rem; color:#1e40af; line-height:1.6;">
             <strong>📌 Τι κάνετε μετά την αυτοψία;</strong><br>
             Αφού ολοκληρώσετε το viewing και συμπληρώσετε το checklist, μπορείτε να πατήσετε <strong>«Αντιγραφή Σημειώσεων»</strong> και να μου στείλετε το τελικό <strong>Viewing Score</strong> και τις απαντήσεις του μεσίτη. Θα ενημερώσω άμεσα τον δείκτη ρίσκου («Σκελετοί στην Ντουλάπα»), το Smart Deal Score και τον προϋπολογισμό του ακινήτου!
