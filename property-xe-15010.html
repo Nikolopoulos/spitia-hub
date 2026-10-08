@@ -385,6 +385,477 @@
             </table>
         </div>
 
+        
+    <!-- INTERACTIVE VIEWING CHECKLIST & ON-SITE AUDIT GUIDE -->
+    <div class="card" id="viewing-guide-card" style="border: 2px solid #3b82f6; background: #ffffff;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+            <div>
+                <span class="badge" style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:0.75rem; text-transform:uppercase; font-weight:800; padding:3px 10px; border-radius:20px;">
+                    📋 On-Site Due Diligence &bull; Οδηγός Αυτοψίας
+                </span>
+                <h2 style="margin:6px 0 0 0; border:none; padding:0; color:#1e3a8a; font-size:1.4rem;">
+                    🔍 Οδηγός & Checklist Αυτοψίας (Viewing Audit Guide)
+                </h2>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-top:4px;">
+                    Συμπληρώστε το checklist κατά την επίσκεψη στο ακίνητο. Επιλέξτε όσα στοιχεία επιβεβαιώνονται θετικά για να υπολογιστεί το <strong>Viewing Audit Score</strong>.
+                </p>
+            </div>
+            
+            <!-- Live Viewing Score Widget -->
+            <div id="viewing-score-box" style="background:linear-gradient(135deg, #1e3a8a, #3b82f6); color:white; padding:12px 20px; border-radius:14px; text-align:center; min-width:160px; box-shadow:0 4px 12px rgba(37,99,235,0.2);">
+                <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; opacity:0.9;">Viewing Score</div>
+                <div id="viewing-score-val" style="font-size:1.8rem; font-weight:900; line-height:1.2;">0 / 100</div>
+                <div id="viewing-grade-val" style="font-size:0.78rem; font-weight:700; background:rgba(255,255,255,0.2); border-radius:6px; padding:2px 6px; margin-top:4px;">
+                    Εκκρεμεί Αυτοψία
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions & Actions Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:10px 14px; border-radius:8px; margin-bottom:18px; border:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+            <div style="font-size:0.85rem; color:#334155;">
+                💡 <em>Τσεκάρετε τα κουτάκια καθώς εξετάζετε τον χώρο και κάνετε τις αντίστοιχες ερωτήσεις στον μεσίτη.</em>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button type="button" onclick="window.print()" class="chk-action-btn" style="background:#ffffff; color:#1e293b; border:1px solid #cbd5e1;">
+                    🖨️ Εκτύπωση / PDF
+                </button>
+                <button type="button" onclick="exportChecklistNotes()" class="chk-action-btn" style="background:#2563eb; color:white; border:none;">
+                    💾 Αντιγραφή Σημειώσεων
+                </button>
+            </div>
+        </div>
+
+        <!-- Checklist Sections -->
+        <div class="viewing-sections-container">
+            
+        <div class="viewing-section">
+            <h3 class="viewing-sec-title"><span>🏛️</span> 1. Στατική Επάρκεια & Δομικός Σκελετός</h3>
+            <div class="viewing-items-list">
+                
+            <div class="viewing-item" data-points="20">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_0_0" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Αυτοψία στην πλάκα μεταξύ των δύο επιπέδων: Εντοπισμός της βέλτιστης θέσης διάνοιξης οπής (κοπή πλάκας) χωρίς διακοπή κύριων φερόντων δοκών.</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+20π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Υπάρχει διαθέσιμη η αρχική στατική μελέτη/ξυλότυποι του κτιρίου για να υπολογίσει ο πολιτικός μηχανικός την εσωτερική σκάλα;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_0_1" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Έλεγχος ανεξαρτησίας παροχών: Εξακρίβωση αν τα δύο επίπεδα έχουν ανεξάρτητα ρολόγια ΔΕΗ/ΕΥΔΑΠ ή αν απαιτείται ενοποίηση δικτύων.</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Ποιο είναι το ιδιοκτησιακό καθεστώς; Υπάρχει σύσταση οριζοντίου ιδιοκτησίας ή είναι ενιαία ιδιοκτησία;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="viewing-section">
+            <h3 class="viewing-sec-title"><span>💧</span> 2. Υγρασίες, Μονώσεις & Στεγανοποίηση Ταράτσας</h3>
+            <div class="viewing-items-list">
+                
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_1_0" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Αυτοψία στην ταράτσα/δώμα: Έλεγχος ποιότητας υγρομόνωσης (ασφαλτόπανα, πολυουρεθανική μεμβράνη) και σωστής κλίσης των υδρορροών (να μην λιμνάζουν νερά).</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Πότε έγινε η τελευταία στεγανοποίηση/θερμομόνωση της ταράτσας και υπάρχει εγγύηση συνεργείου;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_1_1" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Εξονυχιστικός έλεγχος με φακό σε γωνίες ταβανιών, κάτω από παράθυρα, πίσω από ντουλάπες και στο πατάρι για ίχνη μούχλας, φουσκωμένου χρώματος ή νωπών στιγμάτων.</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Υπήρξε ποτέ εισροή υδάτων από την ταράτσα ή από εξωτερικό τοίχο στη διάρκεια έντονης βροχόπτωσης;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="10">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_1_2" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Έλεγχος εξωτερικών τοίχων (βορινές/δυτικές πλευρές) για αποσάθρωση επιχρισμάτων ή έλλειψη στεγανωτικού χρώματος.</span>
+                    </label>
+                    <span class="item-badge badge-imp">Σημαντικό (+10π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Υπάρχει θερμομόνωση στην εξωτερική τοιχοποιία (κέλυφος) ή είναι μονός τοίχος χωρίς μόνωση;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="viewing-section">
+            <h3 class="viewing-sec-title"><span>⚡</span> 3. Ηλεκτρολογικά, Υδραυλικά & Συστήματα Θέρμανσης/Ψύξης</h3>
+            <div class="viewing-items-list">
+                
+            <div class="viewing-item" data-points="10">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_2_0" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Πλήρης καταγραφή της κατάστασης του ηλεκτρολογικού πίνακα & παροχής (μονοφασικό ή τριφασικό).</span>
+                    </label>
+                    <span class="item-badge badge-imp">Σημαντικό (+10π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Υπάρχει ανάγκη αύξησης ισχύος από τον ΔΕΔΔΗΕ (π.χ. σε Νο 3 τριφασικό για αντλία θερμότητας);»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_2_1" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Έλεγχος αποχετευτικού δικτύου και κεντρικής στήλης (ύπαρξη παλαιών μολύβδινων/αμιαντοσωλήνων).</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Είναι το ακίνητο συνδεδεμένο με το κεντρικό δίκτυο αποχέτευσης της ΕΥΔΑΠ ή λειτουργεί με βόθρο;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="viewing-section">
+            <h3 class="viewing-sec-title"><span>🚗</span> 4. Θέση Parking, Προσβασιμότητα & Κοινόχρηστα</h3>
+            <div class="viewing-items-list">
+                
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_3_0" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Επιθεώρηση του δρόμου εμπρός από το ακίνητο: Δυνατότητα στάθμευσης σε ώρες αιχμής (20:00-22:00) και ύπαρξη στενών πεζοδρομίων.</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Υπάρχει δυνατότητα μίσθωσης θέσης parking σε κοντινό ιδιωτικό γκαράζ ή πυλωτή γειτονικής πολυκατοικίας;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="10">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_3_1" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Κοινόχρηστα & Λειτουργία Πολυκατοικίας / Συγκροτήματος: Έλεγχος βιβλίου κοινοχρήστων και αποθεματικού ταμείου.</span>
+                    </label>
+                    <span class="item-badge badge-imp">Σημαντικό (+10π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Ποιο είναι το μέσο μηνιαίο κόστος κοινοχρήστων και υπάρχουν οφειλές ενοίκων ή προγραμματισμένες έκτακτες εισφορές;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="viewing-section">
+            <h3 class="viewing-sec-title"><span>⚖️</span> 5. Νομικός, Πολεοδομικός & Κτηματολογικός Έλεγχος</h3>
+            <div class="viewing-items-list">
+                
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_4_0" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Έλεγχος Ηλεκτρονικής Ταυτότητας Κτιρίου (ΗΤΚ) και Βεβαίωσης Μηχανικού περί μη αυθαιρεσιών (Ν.4495/2017).</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Έχει εκδοθεί ήδη η ΗΤΚ ή βρίσκεται σε εκκρεμότητα; Υπάρχουν τακτοποιημένοι ημιυπαίθριοι/κλειστοί χώροι;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="15">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_4_1" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Έλεγχος Κτηματολογίου: Επαλήθευση ότι δεν υπάρχουν ενστάσεις ορίων, διεκδικήσεις δασαρχείου ή βάρη/προσημειώσεις.</span>
+                    </label>
+                    <span class="item-badge badge-crit">Κρίσιμος Έλεγχος (+15π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Είναι οι τίτλοι ιδιοκτησίας καθαροί στο Κτηματολόγιο και έτοιμοι για άμεση υπογραφή συμβολαίου;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            <div class="viewing-item" data-points="10">
+                <div class="viewing-item-header">
+                    <label class="viewing-checkbox-label">
+                        <input type="checkbox" class="viewing-chk" id="chk_4_2" onchange="recalcViewingScore()">
+                        <span class="chk-custom"></span>
+                        <span class="item-title-text">Έλεγχος συνιδιοκτησίας / κληρονομικών δικαιωμάτων: Εξακρίβωση αριθμού ιδιοκτητών και ομοφωνίας πώλησης.</span>
+                    </label>
+                    <span class="item-badge badge-imp">Σημαντικό (+10π)</span>
+                </div>
+                <div class="agent-question-box">
+                    <span class="agent-q-icon">🗣️</span>
+                    <div class="agent-q-content">
+                        <strong>Ερώτηση προς Μεσίτη / Ιδιοκτήτη:</strong><br>
+                        <em>«Πόσοι είναι οι συνιδιοκτήτες και είναι όλοι διαθέσιμοι να υπογράψουν άμεσα χωρίς δικαστικές εκκρεμότητες;»</em>
+                    </div>
+                </div>
+                <div class="item-notes-row">
+                    <input type="text" class="item-note-input" placeholder="Σημειώσεις / Απάντηση μεσίτη..." />
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        </div>
+
+        <!-- Feedback & Update Notice -->
+        <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:14px; border-radius:8px; margin-top:20px; font-size:0.86rem; color:#1e40af; line-height:1.6;">
+            <strong>📌 Τι κάνετε μετά την αυτοψία;</strong><br>
+            Αφού ολοκληρώσετε το viewing και συμπληρώσετε το checklist, μπορείτε να πατήσετε <strong>«Αντιγραφή Σημειώσεων»</strong> και να μου στείλετε το τελικό <strong>Viewing Score</strong> και τις απαντήσεις του μεσίτη. Θα ενημερώσω άμεσα τον δείκτη ρίσκου («Σκελετοί στην Ντουλάπα»), το Smart Deal Score και τον προϋπολογισμό του ακινήτου!
+        </div>
+    </div>
+
+    <!-- Viewing Checklist CSS & JS -->
+    <style>
+        .viewing-section { margin-bottom: 22px; }
+        .viewing-sec-title {
+            font-size: 1.08rem; color: #1e3a8a; font-weight: 800; border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .viewing-items-list { display: flex; flex-direction: column; gap: 12px; }
+        .viewing-item {
+            background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
+            padding: 12px 14px; transition: all 0.2s ease;
+        }
+        .viewing-item:hover { border-color: #93c5fd; box-shadow: 0 2px 8px rgba(59,130,246,0.06); }
+        .viewing-item.checked-item { background: #f0fdf4; border-color: #86efac; }
+        .viewing-item-header {
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+        }
+        .viewing-checkbox-label {
+            display: flex; align-items: flex-start; gap: 10px; cursor: pointer; flex: 1;
+            font-size: 0.92rem; font-weight: 600; color: #1e293b; line-height: 1.45;
+        }
+        .viewing-checkbox-label input[type="checkbox"] {
+            width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: #16a34a;
+        }
+        .item-badge {
+            font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0;
+        }
+        .badge-crit { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .badge-imp { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+
+        .agent-question-box {
+            background: #f8fafc; border-left: 3px solid #3b82f6; border-radius: 6px;
+            padding: 8px 12px; margin-top: 8px; font-size: 0.83rem; color: #334155;
+            display: flex; gap: 8px; align-items: flex-start;
+        }
+        .agent-q-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .agent-q-content strong { color: #1e40af; }
+        .agent-q-content em { color: #0f172a; font-weight: 600; font-style: normal; }
+
+        .item-notes-row { margin-top: 8px; }
+        .item-note-input {
+            width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px;
+            font-size: 0.8rem; background: #fafafa; outline: none; transition: border-color 0.2s;
+        }
+        .item-note-input:focus { border-color: #3b82f6; background: #ffffff; }
+
+        .chk-action-btn {
+            padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 4px; transition: all 0.2s;
+        }
+        .chk-action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        @media print {
+            .nav-back, .spitogatos-btn, .chk-action-btn, header { display: none !important; }
+            body { background: white !important; font-size: 12pt; }
+            .card { border: 1px solid #ccc !important; box-shadow: none !important; page-break-inside: avoid; }
+        }
+    </style>
+
+    <script>
+        function recalcViewingScore() {
+            const totalMax = 165;
+            let earned = 0;
+            const items = document.querySelectorAll('.viewing-item');
+            items.forEach(el => {
+                const chk = el.querySelector('.viewing-chk');
+                const pts = parseInt(el.getAttribute('data-points') || 0);
+                if (chk && chk.checked) {
+                    earned += pts;
+                    el.classList.add('checked-item');
+                } else {
+                    el.classList.remove('checked-item');
+                }
+            });
+            
+            const normalizedScore = Math.round((earned / totalMax) * 100);
+            const scoreValEl = document.getElementById('viewing-score-val');
+            const gradeValEl = document.getElementById('viewing-grade-val');
+            const boxEl = document.getElementById('viewing-score-box');
+            
+            if (scoreValEl) scoreValEl.textContent = normalizedScore + ' / 100';
+            
+            let grade = 'Εκκρεμεί';
+            let color = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
+            if (normalizedScore >= 85) {
+                grade = 'Άριστη Αυτοψία (A+)';
+                color = 'linear-gradient(135deg, #065f46, #10b981)';
+            } else if (normalizedScore >= 70) {
+                grade = 'Καλή Εικόνα (A)';
+                color = 'linear-gradient(135deg, #047857, #059669)';
+            } else if (normalizedScore >= 50) {
+                grade = 'Μέτρια &bull; Θέλει Προσοχή (B)';
+                color = 'linear-gradient(135deg, #b45309, #f59e0b)';
+            } else if (normalizedScore > 0) {
+                grade = 'Υψηλό Ρίσκο &bull; Πολλά Ελαττώματα (C/D)';
+                color = 'linear-gradient(135deg, #991b1b, #ef4444)';
+            }
+            
+            if (gradeValEl) gradeValEl.innerHTML = grade;
+            if (boxEl) boxEl.style.background = color;
+        }
+
+        function exportChecklistNotes() {
+            let report = "=== ΑΠΟΤΕΛΕΣΜΑΤΑ ΑΥΤΟΨΙΑΣ (VIEWING AUDIT) ===\n";
+            report += "Ακίνητο ID: " + document.title + "\n";
+            const score = document.getElementById('viewing-score-val').textContent;
+            const grade = document.getElementById('viewing-grade-val').textContent;
+            report += "Viewing Score: " + score + " (" + grade + ")\n\n";
+            
+            document.querySelectorAll('.viewing-section').forEach(sec => {
+                const secTitle = sec.querySelector('.viewing-sec-title').textContent.trim();
+                report += "\n[" + secTitle + "]\n";
+                sec.querySelectorAll('.viewing-item').forEach(it => {
+                    const chk = it.querySelector('.viewing-chk');
+                    const title = it.querySelector('.item-title-text').textContent.trim();
+                    const note = it.querySelector('.item-note-input').value.trim();
+                    const status = chk.checked ? "[OK]" : "[FAIL/PENDING]";
+                    report += status + " " + title + "\n";
+                    if (note) report += "   -> Σημείωση: " + note + "\n";
+                });
+            });
+            
+            navigator.clipboard.writeText(report).then(() => {
+                alert("Οι σημειώσεις και το Viewing Score αντιγράφηκαν στο clipboard! Μπορείτε να τις κάνετε επικόλληση στη συνομιλία μας.");
+            }).catch(err => {
+                alert("Σφάλμα αντιγραφής: " + err);
+            });
+        }
+    </script>
+    
+
         <div class="footer">
             Αυτοματοποιημένη Τεχνική Μελέτη Εκμοντερνισμού &bull; 2026 &bull; Antigravity AI
         </div>
