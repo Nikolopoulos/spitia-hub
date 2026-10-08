@@ -2,7 +2,7 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Real Estate Hub &bull; Split View Portal 2026</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -24,10 +24,14 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
             height: 100%;
-            overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg);
             color: var(--text-main);
+        }
+        
+        /* Desktop Default (No changes to desktop view) */
+        body {
+            overflow: hidden;
         }
         .app-layout {
             display: flex;
@@ -103,6 +107,33 @@
             flex-wrap: wrap;
         }
 
+        /* Mobile View Switcher (Hidden on Desktop) */
+        .mobile-view-tabs {
+            display: none;
+            width: 100%;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
         /* Mode Switcher Pill */
         .mode-toggle-group {
             display: flex;
@@ -174,6 +205,7 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+            -webkit-overflow-scrolling: touch;
         }
         .map-pane {
             width: 52%;
@@ -536,6 +568,82 @@
             font-size: 0.75rem;
             font-weight: 700;
         }
+
+        /* MOBILE RESPONSIVE MEDIA QUERIES (Preserves 100% Desktop View) */
+        @media (max-width: 900px) {
+            header {
+                padding: 10px 14px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .header-stats-strip {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 6px;
+                font-size: 0.72rem;
+            }
+            .stat-badge {
+                padding: 3px 6px;
+            }
+            .controls-strip {
+                padding: 8px 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .control-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .mobile-view-tabs {
+                display: flex;
+            }
+            .search-box {
+                flex: 1;
+                width: auto;
+            }
+            .sort-select {
+                flex: 1;
+            }
+            .split-container {
+                height: calc(100vh - 170px);
+                flex-direction: column;
+            }
+            /* Mobile Tab View State */
+            .split-container.tab-map-active .listings-pane {
+                display: none;
+            }
+            .split-container.tab-map-active .map-pane {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+            .split-container.tab-list-active .map-pane {
+                display: none;
+            }
+            .split-container.tab-list-active .listings-pane {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                padding: 10px;
+            }
+            
+            .property-card {
+                flex-direction: column;
+                gap: 10px;
+                padding: 12px;
+            }
+            .card-thumb-col {
+                width: 100%;
+                height: 160px;
+            }
+            .card-title {
+                white-space: normal;
+                font-size: 0.92rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -551,22 +659,28 @@
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
-                    <span>Σύνολο Ακινήτων:</span>
+                    <span>Σύνολο:</span>
                     <b>30</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
-                    <b>95.0/100 (A+)</b>
+                    <b>95.0/100</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
-                    <span>⭐ Top Smart Deal:</span>
-                    <b>82.1/100 (A+)</b>
+                    <span>⭐ Top Deal:</span>
+                    <b>82.1/100</b>
                 </div>
             </div>
         </header>
 
         <!-- Controls Strip -->
         <div class="controls-strip">
+            <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
+            <div class="mobile-view-tabs">
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα Ακινήτων (30)</button>
+                <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
+            </div>
+
             <div class="control-section">
                 <!-- 3-Tier Mode Selector -->
                 <div class="mode-toggle-group">
@@ -576,7 +690,6 @@
                 </div>
 
                 <!-- Sort select -->
-                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 8px;">Ταξινόμηση:</label>
                 <select id="sort-select" class="sort-select">
                     <option value="fit_desc" selected>🎯 Ταίριασμα Προτιμήσεων (Υψηλό → Χαμηλό)</option>
                     <option value="deal_desc">⭐ Smart Deal Score (Υψηλό → Χαμηλό)</option>
@@ -590,18 +703,18 @@
             <div class="control-section">
                 <!-- Parking filter quick toggle -->
                 <label style="font-size: 0.8rem; font-weight: 700; color: #166534; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                    <input type="checkbox" id="parking-only-filter" style="cursor: pointer;"> 🚗 Μόνο με Parking
+                    <input type="checkbox" id="parking-only-filter" style="cursor: pointer;"> 🚗 Μόνο Parking
                 </label>
-                <input type="text" id="search-input" class="search-box" placeholder="🔍 Αναζήτηση περιοχής/τύπου...">
+                <input type="text" id="search-input" class="search-box" placeholder="🔍 Αναζήτηση περιοχής...">
             </div>
         </div>
 
         <!-- Split View: Listings (Left) | Leaflet Map (Right) -->
-        <div class="split-container">
+        <div id="split-container" class="split-container tab-list-active">
             <div id="listings-pane" class="listings-pane">
                 <div id="listings-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
             </div>
-            <div class="map-pane">
+            <div id="map-pane" class="map-pane">
                 <div id="map"></div>
             </div>
         </div>
@@ -616,6 +729,28 @@
         let searchQuery = '';
         let parkingOnly = false;
         let markerMap = {};
+
+        // Mobile Tab Switcher
+        function switchMobileTab(tab) {
+            const split = document.getElementById('split-container');
+            const btnList = document.getElementById('tab-btn-list');
+            const btnMap = document.getElementById('tab-btn-map');
+
+            if (tab === 'map') {
+                split.classList.remove('tab-list-active');
+                split.classList.add('tab-map-active');
+                btnMap.classList.add('active');
+                btnList.classList.remove('active');
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 200);
+            } else {
+                split.classList.remove('tab-map-active');
+                split.classList.add('tab-list-active');
+                btnList.classList.add('active');
+                btnMap.classList.remove('active');
+            }
+        }
 
         // Initialize Leaflet Map
         const map = L.map('map', {
