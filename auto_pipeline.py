@@ -75,6 +75,16 @@ def fetch_url_via_safari(url):
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
+BLACKLIST_AREAS = [
+    "αγία βαρβάρα", "αγια βαρβαρα", "agia varvara", "agia-varvara", "riminitika", "ριμινίτικα",
+    "μενίδι", "μενιδι", "menidi", "αχαρνές", "αχαρνες", "acharnes",
+    "ζεφύρι", "ζεφυρι", "zefyri",
+    "άνω λιόσια", "ανω λιοσια", "ano liosia", "λιοσια",
+    "ασπρόπυργος", "ασπροπυργος", "aspropyrgos",
+    "φυλή", "φυλη", "fyli",
+    "καματερό", "καματερο", "kamatero"
+]
+
 PREFERENCES = {
     "cash_budget": 180000,
     "max_acceptable_price_loan": 240000,
@@ -84,7 +94,7 @@ PREFERENCES = {
         "οικόπεδο", "οικοπεδο", "αγροτεμάχιο", "αγροτεμαχιο", "plot",
         "επαγγελματικός", "γραφείο", "γραφειο", "κατάστημα", "καταστημα", "commercial",
         "parking", "γκαράζ", "αποθήκη", "αποθηκη", "υπόγειο", "υπογειο",
-        "ενοικίαση", "ενοικιαση", "ενοικιάζεται", "ενοικιαζεται", "/μήνα", "/μηνα", "€ / μήνα"
+        "ενοικίαση", "ενοικιαση", "ενοικιάζεται", "ενοικιαζεται", "/μήνα", "/μηνα", "€ / μήνα", "€/μήνα"
     ]
 }
 
@@ -136,11 +146,16 @@ def get_existing_listing_ids():
         reader = csv.DictReader(f)
         return {r['listing_id'] for r in reader if 'listing_id' in r}
 
-def is_rejected(text, url):
+def is_rejected(text, url, price=None):
     comb = (text + " " + url).lower()
+    for b in BLACKLIST_AREAS:
+        if b in comb:
+            return True, f"Blacklisted area: {b}"
     for r in PREFERENCES["rejected_keywords"]:
         if r in comb:
             return True, f"Rejected keyword: {r}"
+    if price is not None and price < 50000:
+        return True, f"Price {price} < €50k (likely rental/share)"
     sqm_m = re.findall(r'(\d+)\s*(?:τ\.?μ\.?|sqm)', comb)
     if sqm_m:
         try:
@@ -188,7 +203,7 @@ def fetch_email_links(cfg):
         try: p.feed(body)
         except Exception: pass
 
-        # Extract thumbnail image candidates from this email body
+        # Global fallback thumbnail image candidate
         email_imgs = re.findall(r'src=[\"\'](https?://[^\"\']+\.(?:jpg|png|webp)[^\"\']*)[\"\']', body)
         listing_img = None
         for im in email_imgs:
@@ -198,16 +213,55 @@ def fetch_email_links(cfg):
 
         for href, txt in p.links:
             clean_url = href.split('?')[0].strip()
-            # check Spitogatos
+            portal = None
             if 'spitogatos.gr/aggelia/' in clean_url:
-                rej, reason = is_rejected(txt, clean_url)
-                if not rej and clean_url not in [l['url'] for l in valid_links]:
-                    valid_links.append({'portal': 'spitogatos', 'url': clean_url, 'text': txt, 'img_url': listing_img})
-            # check XE
+                portal = 'spitogatos'
             elif 'xe.gr/p/' in clean_url or 'xe.gr/property/d/' in clean_url:
-                rej, reason = is_rejected(txt, clean_url)
-                if not rej and clean_url not in [l['url'] for l in valid_links]:
-                    valid_links.append({'portal': 'xe', 'url': clean_url, 'text': txt, 'img_url': listing_img})
+                portal = 'xe'
+            
+            if not portal:
+                continue
+
+            # Extract surrounding card text from email body
+            card_text = txt
+            card_img = None
+            idx = body.find(href)
+            if idx == -1:
+                idx = body.find(clean_url)
+            if idx != -1:
+                snippet = body[max(0, idx - 400):min(len(body), idx + 2500)]
+                clean_snippet = ' '.join(re.sub(r'<[^>]+>', ' ', snippet).split())
+                card_text = (txt + " " + clean_snippet).strip()
+                c_imgs = re.findall(r'src=[\"\'](https?://[^\"\']+\.(?:jpg|png|webp)[^\"\']*)[\"\']', snippet)
+                for ci in c_imgs:
+                    if 'logo' not in ci and 'dadada' not in ci and 'awstrack' not in ci:
+                        card_img = ci
+                        break
+
+            # Parse price candidate to check if it's a rental (< €50k)
+            price_cand = None
+            pm = re.findall(r'(\d[\d\.]*)\s*€', card_text) or re.findall(r'€\s*(\d[\d\.]*)', card_text)
+            for p_val in pm:
+                try:
+                    v = int(p_val.replace('.', '').replace(',', ''))
+                    if v < 10000000:
+                        price_cand = v
+                        break
+                except ValueError:
+                    pass
+
+            rej, reason = is_rejected(card_text, clean_url, price=price_cand)
+            if rej:
+                logging.info(f"Skipping link {clean_url}: {reason}")
+                continue
+
+            if clean_url not in [l['url'] for l in valid_links]:
+                valid_links.append({
+                    'portal': portal,
+                    'url': clean_url,
+                    'text': card_text,
+                    'img_url': card_img or listing_img
+                })
 
         mail.store(eid, '+FLAGS', '\\Seen')
 
@@ -227,14 +281,18 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
     # Combined context for extraction (page HTML + email card text)
     comb_text = (raw_html + " " + card_text)
 
-    # 2. Basic details from HTML / Card Text
-    # Price
+    # Check blacklist on combined text & url
+    for b in BLACKLIST_AREAS:
+        if b in comb_text.lower() or b in url.lower():
+            raise ValueError(f"Property {lid} rejected: Blacklisted area '{b}' detected.")
+
+    # 2. Price
     price = 160000
     price_matches = re.findall(r'(\d[\d\.]*)\s*€', comb_text) or re.findall(r'€\s*(\d[\d\.]*)', comb_text)
     for pm in price_matches:
         try:
             val = int(pm.replace('.', '').replace(',', ''))
-            if 50000 <= val <= 1000000:
+            if 50000 <= val <= 2000000:
                 price = val
                 break
         except ValueError:
@@ -258,20 +316,50 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
     if year_m:
         year = int(year_m[0])
 
-    # Type & Location
-    ptype = "Μονοκατοικία" if any(w in comb_text.lower() for w in ["μονοκατοικία", "μονοκατοικια", "detached"]) else ("Μεζονέτα" if "μεζονέτα" in comb_text.lower() else "Διαμέρισμα")
+    # Property Type
+    card_l = card_text.lower()
+    if "διαμέρισμα" in card_l or "διαμερισμα" in card_l:
+        ptype = "Διαμέρισμα"
+    elif "μεζονέτα" in card_l or "μεζονετα" in card_l:
+        ptype = "Μεζονέτα"
+    elif "μονοκατοικία" in card_l or "μονοκατοικια" in card_l:
+        ptype = "Μονοκατοικία"
+    elif any(w in comb_text.lower() for w in ["μονοκατοικία", "μονοκατοικια", "detached"]):
+        ptype = "Μονοκατοικία"
+    elif "μεζονέτα" in comb_text.lower():
+        ptype = "Μεζονέτα"
+    else:
+        ptype = "Διαμέρισμα"
     
+    # Location Matching
+    loc_candidates = [
+        ("Αγία Παρασκευή", ["αγία παρασκευή", "αγια παρασκευη", "agia paraskevi", "κοντόπευκο", "αγιάννης"]),
+        ("Μαρούσι", ["μαρούσι", "μαρουσι", "marousi", "maroussi", "νέο τέρμα", "νεο τερμα", "σωρός", "σωρος"]),
+        ("Χαλάνδρι", ["χαλάνδρι", "χαλανδρι", "chalandri", "ριζάρειος", "ριζαρειος"]),
+        ("Ηράκλειο", ["ηράκλειο", "ηρακλειο", "irakleio", "iraklio"]),
+        ("Βριλήσσια", ["βριλήσσια", "βριλησσια", "vrilissia"]),
+        ("Πεύκη", ["πεύκη", "πευκη", "pefki"]),
+        ("Μελίσσια", ["μελίσσια", "μελισσια", "melissia"]),
+        ("Κηφισιά", ["κηφισιά", "κηφισια", "kifisia", "kifissia"]),
+        ("Κορυδαλλός", ["κορυδαλλός", "κορυδαλλος", "korydallos", "πλατεία ελευθερίας"]),
+        ("Νίκαια", ["νίκαια", "νικαια", "nikaia", "μητρόπολη", "νεάπολη", "νεαπολη", "χρυσόστομος"]),
+        ("Κερατσίνι", ["κερατσίνι", "κερατσινι", "keratsini", "αμφιάλη", "αμφιαλη", "ευγένεια", "ευγενεια"]),
+        ("Δραπετσώνα", ["δραπετσώνα", "δραπετσωνα", "drapetsona", "ανάληψη"]),
+        ("Ταμπούρια", ["ταμπούρια", "ταμπουρια", "tabouria", "αγία σοφία"]),
+        ("Πειραιάς (Χατζηκυριάκειο)", ["χατζηκυριάκειο", "χατζηκυριακειο", "πειραϊκή", "πειραικη", "chatzikyriakeio", "piraiki"])
+    ]
     loc = "Κερατσίνι"
-    for candidate in ["Κερατσίνι", "Δραπετσώνα", "Κορυδαλλός", "Νίκαια", "Ταμπούρια", "Μαρούσι", "Αγία Παρασκευή", "Ηράκλειο", "Χαλάνδρι", "Βριλήσσια", "Πεύκη", "Μελίσσια"]:
-        if candidate.lower() in comb_text.lower():
-            loc = candidate
+    comb_lower = comb_text.lower()
+    for official_loc, aliases in loc_candidates:
+        if any(al in comb_lower for al in aliases):
+            loc = official_loc
             break
 
     title = f"Πώληση, {ptype}, {sqm}τ.μ. {loc} | {lid}"
     filename = f"{title}.html"
     html_report = f"property-{lid}.html"
 
-    # Coords approximation based on location
+    # Coordinates
     loc_coords = {
         "Κερατσίνι": (37.9625, 23.6260),
         "Δραπετσώνα": (37.9450, 23.6200),
@@ -282,7 +370,11 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         "Αγία Παρασκευή": (38.0160, 23.8200),
         "Ηράκλειο": (38.0604, 23.7645),
         "Χαλάνδρι": (38.0220, 23.7990),
-        "Βριλήσσια": (38.0350, 23.8300)
+        "Βριλήσσια": (38.0350, 23.8300),
+        "Πειραιάς (Χατζηκυριάκειο)": (37.9350, 23.6350),
+        "Κηφισιά": (38.0740, 23.8120),
+        "Πεύκη": (38.0600, 23.7930),
+        "Μελίσσια": (38.0500, 23.8300)
     }
     lat, lon = loc_coords.get(loc, (37.9700, 23.6500))
 
@@ -294,14 +386,42 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
     turnkey_low = price + renov_low
     turnkey_high = price + renov_high
 
-    # Risk score & reasons
-    risk_score = 3.5
-    risk_level = "Χαμηλό Ρίσκο"
+    # Risk score & reasons based on area & year
+    if loc in ["Μαρούσι", "Αγία Παρασκευή", "Χαλάνδρι", "Ηράκλειο", "Βριλήσσια", "Κηφισιά", "Πεύκη", "Μελίσσια"]:
+        risk_score = 2.5
+        risk_level = "Χαμηλό Ρίσκο"
+        risk_color = "#059669"
+        crime_risk = f"Χαμηλό στην ευρύτερη περιοχή {loc}."
+    elif loc in ["Πειραιάς (Χατζηκυριάκειο)"]:
+        risk_score = 3.2
+        risk_level = "Χαμηλό Ρίσκο"
+        risk_color = "#059669"
+        crime_risk = f"Χαμηλό προς Μέτριο στην περιοχή {loc}."
+    else:
+        risk_score = 3.6
+        risk_level = "Μέτριο Ρίσκο"
+        risk_color = "#d97706"
+        crime_risk = f"Μέτριο στην περιοχή {loc}."
+
     risk_reasons = [
         f"Κατασκευή {year}: Ανάγκη συνήθους αναβάθμισης υδραυλικών/ηλεκτρολογικών.",
-        f"Τοποθεσία ({loc}): Ήσυχη οικιστική ζώνη με χαμηλή εγκληματικότητα.",
-        "Αυτοτελής κατοικία με καλές δυνατότητες διαρρύθμισης."
+        f"Τοποθεσία ({loc}): Ασφαλής οικιστική ζώνη.",
+        f"{ptype} με καλές δυνατότητες διαρρύθμισης."
     ]
+
+    # Parking Extraction (strict positive evidence only, ignoring footer links)
+    has_parking = False
+    parking_info = "Χωρίς Parking"
+    card_lower = card_text.lower()
+    if any(k in card_lower for k in ["θέση στάθμευσης", "θεση σταθμευσης", "θέσεις στάθμευσης", "γκαράζ", "1 parking", "2 parking"]) and "χωρίς parking" not in card_lower and "χωρίς θέση" not in card_lower:
+        has_parking = True
+        parking_info = "Θέση Στάθμευσης"
+    elif raw_html:
+        clean_html = re.sub(r'<footer.*?</footer>', '', raw_html, flags=re.DOTALL)
+        clean_html = re.sub(r'enoikiaseis-parking|poliseis-parking', '', clean_html)
+        if re.search(r'(?:θέση\s*στάθμευσης|κλειστό\s*parking|υπαίθριο\s*parking|θέσεις\s*στάθμευσης)\s*:\s*[1-9]', clean_html, re.I):
+            has_parking = True
+            parking_info = "Θέση Στάθμευσης"
 
     record = {
         "filename": filename,
@@ -332,16 +452,17 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         "deal_grade": "A",
         "deal_desc": "Πολύ Καλή Επιλογή",
         "deal_color": "#059669",
-        "has_parking": "True" if "parking" in raw_html.lower() else "False",
-        "parking_info": "Θέση Στάθμευσης" if "parking" in raw_html.lower() else "Χωρίς Parking",
+        "has_parking": "True" if has_parking else "False",
+        "parking_info": parking_info,
         "baths": "1",
-        "wc": "1",
-        "beds": "3" if sqm >= 110 else "2",
-        "is_penthouse": "True" if "ρετιρέ" in raw_html.lower() else "False",
-        "crime_risk": f"Χαμηλό προς Μέτριο στην περιοχή {loc}.",
+        "wc": "1" if ptype == "Μεζονέτα" else "0",
+        "beds": "3" if sqm >= 115 else "2",
+        "is_penthouse": "True" if "ρετιρέ" in comb_text.lower() else "False",
+        "crime_risk": crime_risk,
         "encampment_risk": "Μηδενικό. Καμία απολύτως σχέση με καταυλισμούς.",
         "environmental_risk": "Ήσυχο οικιστικό περιβάλλον.",
-        "risk_color": "#059669"
+        "risk_color": risk_color,
+        "street_parking_ease": "PRIVATE" if has_parking else "DIFFICULT"
     }
 
     # Evaluate User Fit with budget engine
@@ -525,6 +646,7 @@ def update_csv_and_index(new_records):
         prop_map = {p['listing_id']: p for p in index_props}
 
         for nr in new_records:
+            has_p = nr.get("has_parking") == "True" or nr.get("has_parking") is True
             prop_map[nr['listing_id']] = {
                 "filename": nr.get("filename", ""),
                 "listing_id": nr["listing_id"],
@@ -556,7 +678,15 @@ def update_csv_and_index(new_records):
                 "fit_score": float(nr.get("fit_score", 80.0)),
                 "fit_grade": nr.get("fit_grade", "A"),
                 "fit_desc": nr.get("fit_desc", ""),
-                "fit_color": nr.get("fit_color", "#059669")
+                "fit_color": nr.get("fit_color", "#059669"),
+                "has_parking": has_p,
+                "parking_info": nr.get("parking_info", "Χωρίς Parking" if not has_p else "Θέση Στάθμευσης"),
+                "baths": int(nr.get("baths", 1)),
+                "wc": int(nr.get("wc", 1)),
+                "beds": int(nr.get("beds", 3)),
+                "is_penthouse": nr.get("is_penthouse") == "True",
+                "thumb": nr.get("thumb", ""),
+                "street_parking_ease": nr.get("street_parking_ease", "PRIVATE" if has_p else "DIFFICULT")
             }
 
         new_props_list = list(prop_map.values())

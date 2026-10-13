@@ -1,3 +1,8 @@
 webarchives/*.webarchive
 .DS_Store
 Thumbs.db
+config.json
+
+*.plist
+SpitiaMenuBar
+__pycache__/
