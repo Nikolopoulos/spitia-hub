@@ -104,10 +104,24 @@ def load_config():
             return json.load(f)
     return {}
 
-def update_status_file(last_run, new_count, listings_added=None):
+def check_bot_challenge(title, html, url):
+    comb = (title + " " + html).lower()
+    if "no robots allowed" in comb or "μέρος της ανθρωπότητας" in comb:
+        return True, "Χρυσή Ευκαιρία (xe.gr)", url
+    if "pardon our interruption" in comb or "cf-turnstile" in comb or "challenges.cloudflare.com" in comb:
+        return True, "Σπιτόγατος (spitogatos.gr)", url
+    if "just a moment..." in title.lower() or "attention required! | cloudflare" in comb:
+        plat = "Χρυσή Ευκαιρία (xe.gr)" if "xe.gr" in url else "Σπιτόγατος (spitogatos.gr)"
+        return True, plat, url
+    return False, "", ""
+
+def update_status_file(last_run, new_count, listings_added=None, bot_challenge=None):
     data = {
         "last_run": last_run,
         "new_properties_count": new_count,
+        "bot_challenge_detected": bool(bot_challenge),
+        "bot_challenge_platform": bot_challenge.get("platform", "") if bot_challenge else "",
+        "bot_challenge_url": bot_challenge.get("url", "") if bot_challenge else "",
         "last_listings": listings_added or []
     }
     try:
@@ -716,12 +730,13 @@ def run_pipeline():
 
     now_str = datetime.now().strftime("%H:%M:%S (%d/%m)")
     existing_ids = get_existing_listing_ids()
+    active_bot_challenge = None
 
     # 1. Fetch email links
     links = fetch_email_links(cfg)
     if not links:
         logging.info("No new email links to process.")
-        update_status_file(now_str, 0)
+        update_status_file(now_str, 0, bot_challenge=active_bot_challenge)
         return
 
     logging.info(f"Found {len(links)} raw qualifying link(s). Filtering out already processed...")
@@ -732,7 +747,6 @@ def run_pipeline():
         portal = item['portal']
         
         # Check if already processed
-        # e.g. ID extracted
         is_already_added = any(lid in url for lid in existing_ids)
         if is_already_added:
             logging.info(f"Listing {url} already in dataset. Skipping.")
@@ -742,6 +756,10 @@ def run_pipeline():
         html = ""
         try:
             title, html = fetch_url_via_safari(url)
+            is_bot, b_plat, b_url = check_bot_challenge(title, html, url)
+            if is_bot:
+                logging.warning(f"⚠️ Bot challenge detected on {b_plat}: {b_url}")
+                active_bot_challenge = {"platform": b_plat, "url": b_url}
         except Exception as e:
             logging.warning(f"Safari fetch failed for {url}: {e}. Proceeding with email card data.")
 
@@ -783,10 +801,10 @@ def run_pipeline():
         logging.info(f"Updating database & portal with {len(new_records)} new properties...")
         update_csv_and_index(new_records)
         git_commit_and_push(len(new_records))
-        update_status_file(now_str, len(new_records), [r['spitogatos_url'] for r in new_records])
+        update_status_file(now_str, len(new_records), [r['spitogatos_url'] for r in new_records], bot_challenge=active_bot_challenge)
     else:
         logging.info("No novel properties were added in this run.")
-        update_status_file(now_str, 0)
+        update_status_file(now_str, 0, bot_challenge=active_bot_challenge)
 
 if __name__ == '__main__':
     run_pipeline()
