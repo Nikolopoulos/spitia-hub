@@ -694,6 +694,7 @@
                 <!-- Sort select -->
                 <select id="sort-select" class="sort-select">
                     <option value="fit_desc" selected>🎯 Ταίριασμα Προτιμήσεων (Υψηλό → Χαμηλό)</option>
+                    <option value="date_desc">🆕 Πιο Πρόσφατα στο Σύστημα (Νεότερα πρώτα)</option>
                     <option value="deal_desc">⭐ Smart Deal Score (Υψηλό → Χαμηλό)</option>
                     <option value="price_asc">Τιμή Turnkey (Χαμηλή → Υψηλή)</option>
                     <option value="psqm_asc">€ / τ.μ. Turnkey (Χαμηλό → Υψηλό)</option>
@@ -3399,6 +3400,11 @@
 
             filtered.sort((a, b) => {
                 if (currentSort === 'fit_desc') return b.fit_score - a.fit_score;
+                if (currentSort === 'date_desc') {
+                    let da = a.processed_at ? new Date(a.processed_at).getTime() : 0;
+                    let db = b.processed_at ? new Date(b.processed_at).getTime() : 0;
+                    return db - da;
+                }
                 if (currentSort === 'deal_desc') return b.deal_score - a.deal_score;
                 if (currentSort === 'price_asc') return getActiveTurnkey(a) - getActiveTurnkey(b);
                 if (currentSort === 'psqm_asc') return (getActiveTurnkey(a)/a.sqm) - (getActiveTurnkey(b)/b.sqm);
