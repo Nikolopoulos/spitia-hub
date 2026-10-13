@@ -160,16 +160,48 @@ def get_existing_listing_ids():
         reader = csv.DictReader(f)
         return {r['listing_id'] for r in reader if 'listing_id' in r}
 
-def is_rejected(text, url, price=None):
+AUCTION_KEYWORDS = [
+    "πλειστηριασμ", "πλειστηριαζ", "εκπλειστηριασμ", "eauction", "e-auction",
+    "κατάσχεση", "κατασχεση", "πρώτης προσφοράς", "πρωτης προσφορας"
+]
+
+DIFFICULT_PARKING_AREAS = [
+    "ταμπούρια", "ταμπουρια", "tabouria",
+    "αγία σοφία", "αγια σοφια", "agia sofia",
+    "δραπετσώνα", "δραπετσωνα", "drapetsona",
+    "χατζηκυριάκειο", "χατζηκυριακειο", "chatzikyriakeio",
+    "πειραϊκή", "πειραικη", "piraiki",
+    "πειραιάς", "πειραιας", "piraeus",
+    "κορυδαλλός", "κορυδαλλος", "korydallos",
+    "νίκαια", "νικαια", "nikaia",
+    "χαλάνδρι", "χαλανδρι", "chalandri",
+    "μαρούσι", "μαρουσι", "marousi", "maroussi",
+    "αγία παρασκευή", "αγια παρασκευη", "agia paraskevi"
+]
+
+def is_rejected(text, url, price=None, has_parking=None, property_type=None, location=None):
     comb = (text + " " + url).lower()
+    
+    # 1. Auction filter
+    for auk in AUCTION_KEYWORDS:
+        if auk in comb:
+            return True, f"Auction listing detected: {auk}"
+
+    # 2. Blacklisted areas
     for b in BLACKLIST_AREAS:
         if b in comb:
             return True, f"Blacklisted area: {b}"
+
+    # 3. Rejected keywords
     for r in PREFERENCES["rejected_keywords"]:
         if r in comb:
             return True, f"Rejected keyword: {r}"
+
+    # 4. Price threshold
     if price is not None and price < 50000:
         return True, f"Price {price} < €50k (likely rental/share)"
+
+    # 5. Min SQM
     sqm_m = re.findall(r'(\d+)\s*(?:τ\.?μ\.?|sqm)', comb)
     if sqm_m:
         try:
@@ -177,6 +209,19 @@ def is_rejected(text, url, price=None):
                 return True, f"Size < {PREFERENCES['min_sqm_tolerated']} sqm"
         except ValueError:
             pass
+
+    # 6. No parking + difficult street parking check (if attributes are known at evaluation)
+    if has_parking is False:
+        loc_l = (location or "").lower()
+        ptype_l = (property_type or "").lower()
+        # Any apartment without parking in urban center is rejected
+        if "διαμέρισμα" in ptype_l or "διαμερισμα" in ptype_l or "apartment" in ptype_l:
+            return True, "No private parking in apartment (difficult street parking)"
+        # Or in difficult street parking neighborhoods
+        for dpa in DIFFICULT_PARKING_AREAS:
+            if dpa in loc_l or dpa in comb:
+                return True, f"No private parking in difficult street parking area: {dpa}"
+
     return False, ""
 
 def fetch_email_links(cfg):
@@ -436,6 +481,11 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         if re.search(r'(?:θέση\s*στάθμευσης|κλειστό\s*parking|υπαίθριο\s*parking|θέσεις\s*στάθμευσης)\s*:\s*[1-9]', clean_html, re.I):
             has_parking = True
             parking_info = "Θέση Στάθμευσης"
+
+    # Evaluation filter: Reject auctions and no parking in difficult areas
+    rej, rej_why = is_rejected(comb_text, url, price=price, has_parking=has_parking, property_type=ptype, location=loc)
+    if rej:
+        raise ValueError(f"Property {lid} rejected: {rej_why}")
 
     record = {
         "filename": filename,

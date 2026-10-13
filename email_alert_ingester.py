@@ -43,7 +43,7 @@ PREFERENCES = {
         "ρετιρε", "ρετιρέ", "penthouse",
         "διαμερισμα", "διαμέρισμα", "apartment"  # Kept conditionally for large sqm / top floor
     ],
-    # Rejected keywords (commercial, plots, tiny flats, ground floors in multi-unit buildings, blacklisted areas)
+    # Rejected keywords (commercial, plots, tiny flats, ground floors in multi-unit buildings, blacklisted areas, auctions)
     "rejected_keywords": [
         "οικόπεδο", "οικοπεδο", "αγροτεμάχιο", "αγροτεμαχιο", "plot",
         "επαγγελματικός", "γραφείο", "γραφειο", "κατάστημα", "καταστημα", "commercial",
@@ -52,7 +52,9 @@ PREFERENCES = {
         "μενίδι", "μενιδι", "menidi", "αχαρνές", "αχαρνες", "acharnes",
         "ζεφύρι", "ζεφυρι", "zefyri", "άνω λιόσια", "ανω λιοσια", "ano liosia",
         "ασπρόπυργος", "ασπροπυργος", "aspropyrgos", "φυλή", "φυλη", "καματερό", "καματερο",
-        "ενοικίαση", "ενοικιαση", "ενοικιάζεται", "ενοικιαζεται", "/μήνα", "/μηνα", "€ / μήνα", "€/μήνα"
+        "ενοικίαση", "ενοικιαση", "ενοικιάζεται", "ενοικιαζεται", "/μήνα", "/μηνα", "€ / μήνα", "€/μήνα",
+        "πλειστηριασμ", "πλειστηριαζ", "εκπλειστηριασμ", "eauction", "e-auction",
+        "κατάσχεση", "κατασχεση", "πρώτης προσφοράς", "πρωτης προσφορας"
     ],
     "clusters": {
         "POLOS_1_WEST_PIRAEUS": {
