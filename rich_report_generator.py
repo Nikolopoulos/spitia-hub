@@ -104,7 +104,7 @@ def generate_rich_property_html(record, thumbs_map=None):
             <h2>📸 Φωτογραφίες Ακινήτου</h2>
             <div class="gallery">
                 <div class="photo-card">
-                    <img src="{os.path.basename(thumb_path) if '/' not in thumb_path else thumb_path}" alt="{title}" loading="lazy" />
+                    <img src="thumbs/{os.path.basename(thumb_path)}" alt="{title}" loading="lazy" />
                     <p class="photo-cap">Πρόσοψη / Κύρια όψη ακινήτου</p>
                 </div>
             </div>
