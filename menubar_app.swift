@@ -7,7 +7,7 @@ class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
     var autoCheckTimer: Timer?
     let statusFilePath = "/Volumes/Terataki/projects/spitia/alert_status.json"
     let pythonScriptPath = "/Volumes/Terataki/projects/spitia/auto_pipeline.py"
-    let portalPath = "/Volumes/Terataki/projects/spitia/index.html"
+    let portalUrl = "https://nikolopoulos.github.io/spitia-hub/"
     let projectFolderPath = "/Volumes/Terataki/projects/spitia"
 
     var currentBotChallengeDetected = false
@@ -135,7 +135,9 @@ class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
     }
 
     @objc func openPortal() {
-        NSWorkspace.shared.open(URL(fileURLWithPath: portalPath))
+        if let url = URL(string: portalUrl) {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     @objc func runCheckNow() {
