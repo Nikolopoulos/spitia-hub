@@ -134,6 +134,109 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
+        /* Top Main Navigation Tabs */
+        .nav-tabs-group {
+            display: flex;
+            background: #e2e8f0;
+            padding: 3px;
+            border-radius: 12px;
+            gap: 4px;
+        }
+        .nav-tab-btn {
+            border: none;
+            background: transparent;
+            padding: 7px 16px;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #475569;
+        }
+        .nav-tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .nav-tab-btn#tab-main-rejected.active {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        /* Rejected Pane */
+        .rejected-pane {
+            width: 100%;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding: 20px 28px;
+            background: #f8fafc;
+            display: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .rejected-pane.active {
+            display: block;
+        }
+        .rejected-table-container {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            overflow: hidden;
+            margin-top: 14px;
+        }
+        table.rejected-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+            text-align: left;
+        }
+        table.rejected-table th {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 700;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        table.rejected-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            color: #1e293b;
+        }
+        table.rejected-table tr:hover td {
+            background: #f8fafc;
+        }
+        .reason-badge {
+            display: inline-block;
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: 600;
+            font-size: 0.77rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #fecaca;
+        }
+        .portal-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f1f5f9;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s;
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+        .portal-link-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
         /* Mode Switcher Pill */
         .mode-toggle-group {
             display: flex;
@@ -656,13 +759,17 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 30 Ακίνητα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 24 Ενεργά Ακίνητα &bull; 59 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
-                    <span>Σύνολο:</span>
-                    <b>30</b>
+                    <span>Εγκεκριμένα:</span>
+                    <b>24</b>
+                </div>
+                <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
+                    <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
+                    <b style="color:#ef4444;">59</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -677,6 +784,16 @@
 
         <!-- Controls Strip -->
         <div class="controls-strip">
+            <!-- Main View Tabs (Eligible vs Rejected) -->
+            <div class="nav-tabs-group">
+                <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
+                    ✅ Εγκεκριμένα Ακίνητα (24)
+                </button>
+                <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
+                    🚫 Απορριφθέντα (59)
+                </button>
+            </div>
+
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
                 <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα Ακινήτων (30)</button>
@@ -713,6 +830,34 @@
         </div>
 
         <!-- Split View: Listings (Left) | Leaflet Map (Right) -->
+        <div id="rejected-pane" class="rejected-pane">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (59)</h2>
+                    <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" id="rejected-search" class="search-box" style="width:230px;" placeholder="🔍 Αναζήτηση στα απορριφθέντα..." oninput="filterRejectedTable()">
+                </div>
+            </div>
+            <div class="rejected-table-container">
+                <table class="rejected-table">
+                    <thead>
+                        <tr>
+                            <th style="width:80px;">Portal</th>
+                            <th>Τίτλος / Περιοχή</th>
+                            <th style="width:100px;">Τύπος</th>
+                            <th style="width:90px;">Επιφάνεια</th>
+                            <th style="width:110px;">Τιμή</th>
+                            <th>Αιτία Απόρριψης</th>
+                            <th style="width:150px; text-align:center;">Ενέργεια</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rejected-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="split-container" class="split-container tab-list-active">
             <div id="listings-pane" class="listings-pane">
                 <div id="listings-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -726,6 +871,599 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
+        const rejectedData = [
+  {
+    "listing_id": "1120913539",
+    "title": "Πώληση, Διαμέρισμα, 160τ.μ. Κερατσίνι, Κάτω Αμφιάλη | 20913539",
+    "location": "160τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 260000,
+    "sqm": 160,
+    "url": "https://www.spitogatos.gr/aggelia/1120913539",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1119576489",
+    "title": "Πώληση, Μονοκατοικία, 150τ.μ. Νίκαια, Μητρόπολη | 19576489",
+    "location": "150τ.μ. Νίκαια",
+    "type": "Μονοκατοικία",
+    "price": 220000,
+    "sqm": 150,
+    "url": "https://www.spitogatos.gr/aggelia/1119576489",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Κέντρο Νίκαιας)"
+  },
+  {
+    "listing_id": "1120002093",
+    "title": "Πώληση, Μονοκατοικία, 180τ.μ. Νίκαια, Νεάπολη | 20002093",
+    "location": "180τ.μ. Νίκαια",
+    "type": "Μονοκατοικία",
+    "price": 295000,
+    "sqm": 180,
+    "url": "https://www.spitogatos.gr/aggelia/1120002093",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Κέντρο Νίκαιας)"
+  },
+  {
+    "listing_id": "1118585218",
+    "title": "Πώληση, Μονοκατοικία, 102τ.μ. Κερατσίνι, Αμφιάλη | 18585218",
+    "location": "102τ.μ. Κερατσίνι",
+    "type": "Μονοκατοικία",
+    "price": 150000,
+    "sqm": 102,
+    "url": "https://www.spitogatos.gr/aggelia/1118585218",
+    "reason": "Χωρίς ιδιωτική θέση στάθμευσης σε πυκνοδομημένη περιοχή"
+  },
+  {
+    "listing_id": "1120840543",
+    "title": "Πώληση, Μονοκατοικία, 130τ.μ. Ταμπούρια – Αγία Σοφία, Ταμπούρια | 20840543",
+    "location": "130τ.μ. Ταμπούρια – Αγία Σοφία",
+    "type": "Μονοκατοικία",
+    "price": 145000,
+    "sqm": 130,
+    "url": "https://www.spitogatos.gr/aggelia/1120840543",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια / Αγία Σοφία)"
+  },
+  {
+    "listing_id": "xe-8c2069a5",
+    "title": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι, Αμφιάλη | XE 8c2069a5",
+    "location": "123τ.μ. Κερατσίνι, Αμφιάλη",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 123,
+    "url": "https://www.xe.gr/property/d/poliseis-katoikion/8c2069a5-0009-490f-bc2f-a2de2273c0bd/keratsini-amfialh-170000-123",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1120977051",
+    "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός | 1120977051",
+    "location": "125τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 175000,
+    "sqm": 125,
+    "url": "https://www.spitogatos.gr/aggelia/1120977051",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1119654803",
+    "title": "Πώληση, Μονοκατοικία, 120τ.μ. Κερατσίνι | 1119654803",
+    "location": "120τ.μ. Κερατσίνι",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 120,
+    "url": "https://www.spitogatos.gr/aggelia/1119654803",
+    "reason": "Χωρίς ιδιωτική θέση στάθμευσης σε πυκνοδομημένη περιοχή"
+  },
+  {
+    "listing_id": "xe-994a957c",
+    "title": "Πώληση, Διαμέρισμα, 121τ.μ. Αγία Παρασκευή | xe-994a957c",
+    "location": "121τ.μ. Αγία Παρασκευή",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 121,
+    "url": "https://www.xe.gr/p/994a957c-ae72-4133-a0be-b3f6a38fc813",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1120741278",
+    "title": "Πώληση, Μονοκατοικία, 290τ.μ. Ταμπούρια | 1120741278",
+    "location": "290τ.μ. Ταμπούρια",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 290,
+    "url": "https://www.spitogatos.gr/aggelia/1120741278",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια / Αγία Σοφία)"
+  },
+  {
+    "listing_id": "xe-177374a2",
+    "title": "Πώληση, Διαμέρισμα, 91τ.μ. Κερατσίνι | xe-177374a2",
+    "location": "91τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 115000,
+    "sqm": 91,
+    "url": "https://www.xe.gr/p/177374a2-e58d-4b88-b000-9d5d536dcb14",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1121056695",
+    "title": "Πώληση, Διαμέρισμα, 101τ.μ. Κερατσίνι | 1121056695",
+    "location": "101τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 160000,
+    "sqm": 101,
+    "url": "https://www.spitogatos.gr/aggelia/1121056695",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-203afebf",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Αγία Παρασκευή | xe-203afebf",
+    "location": "105τ.μ. Αγία Παρασκευή",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 105,
+    "url": "https://www.xe.gr/p/203afebf-194a-4952-8ba0-5214b7fb3039",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-1f7b9751",
+    "title": "Πώληση, Διαμέρισμα, 120τ.μ. Κερατσίνι | xe-1f7b9751",
+    "location": "120τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 120000,
+    "sqm": 120,
+    "url": "https://www.xe.gr/p/1f7b9751-544a-4cb7-8588-b4bc98067df3",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-477f2ea0",
+    "title": "Πώληση, Διαμέρισμα, 91τ.μ. Κερατσίνι | xe-477f2ea0",
+    "location": "91τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 115000,
+    "sqm": 91,
+    "url": "https://www.xe.gr/p/477f2ea0-b79b-413b-92f1-4605c06c77fa",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-4ebb6cad",
+    "title": "Πώληση, Διαμέρισμα, 96τ.μ. Νίκαια | xe-4ebb6cad",
+    "location": "96τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 140000,
+    "sqm": 96,
+    "url": "https://www.xe.gr/p/4ebb6cad-575b-40b3-a044-20c04feb6645",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-fd676564",
+    "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός | xe-fd676564",
+    "location": "125τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 125,
+    "url": "https://www.xe.gr/p/fd676564-1c91-4b62-a134-96fafb8f7f5a",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1121059001",
+    "title": "Πώληση, Διαμέρισμα, 115τ.μ. Χαλάνδρι | 1121059001",
+    "location": "115τ.μ. Χαλάνδρι",
+    "type": "Διαμέρισμα",
+    "price": 205600,
+    "sqm": 115,
+    "url": "https://www.spitogatos.gr/aggelia/1121059001",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1121058979",
+    "title": "Πώληση, Διαμέρισμα, 115τ.μ. Χαλάνδρι | 1121058979",
+    "location": "115τ.μ. Χαλάνδρι",
+    "type": "Διαμέρισμα",
+    "price": 51400,
+    "sqm": 115,
+    "url": "https://www.spitogatos.gr/aggelia/1121058979",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1121059495",
+    "title": "Πώληση, Μεζονέτα, 100τ.μ. Πειραιάς (Χατζηκυριάκειο) | 1121059495",
+    "location": "100τ.μ. Πειραιάς (Χατζηκυριάκειο)",
+    "type": "Μεζονέτα",
+    "price": 190000,
+    "sqm": 100,
+    "url": "https://www.spitogatos.gr/aggelia/1121059495",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Χατζηκυριάκειο / Πειραιάς)"
+  },
+  {
+    "listing_id": "1121025271",
+    "title": "Πώληση, Μονοκατοικία, 100τ.μ. Πειραιάς (Χατζηκυριάκειο) | 1121025271",
+    "location": "100τ.μ. Πειραιάς (Χατζηκυριάκειο)",
+    "type": "Μονοκατοικία",
+    "price": 190000,
+    "sqm": 100,
+    "url": "https://www.spitogatos.gr/aggelia/1121025271",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Χατζηκυριάκειο / Πειραιάς)"
+  },
+  {
+    "listing_id": "1120479563",
+    "title": "Πώληση, Μονοκατοικία, 130τ.μ. Ταμπούρια | 1120479563",
+    "location": "130τ.μ. Ταμπούρια",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 130,
+    "url": "https://www.spitogatos.gr/aggelia/1120479563",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια / Αγία Σοφία)"
+  },
+  {
+    "listing_id": "1119872317",
+    "title": "Πώληση, Διαμέρισμα, 107τ.μ. Μαρούσι | 1119872317",
+    "location": "107τ.μ. Μαρούσι",
+    "type": "Διαμέρισμα",
+    "price": 219900,
+    "sqm": 107,
+    "url": "https://www.spitogatos.gr/aggelia/1119872317",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-1e407f2d",
+    "title": "Πώληση, Διαμέρισμα, 108τ.μ. Κορυδαλλός | xe-1e407f2d",
+    "location": "108τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 150000,
+    "sqm": 108,
+    "url": "https://www.xe.gr/p/1e407f2d-c8a3-4360-b17b-0f9a66e48c4f",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-651e2fcd",
+    "title": "Πώληση, Διαμέρισμα, 139τ.μ. Νίκαια | xe-651e2fcd",
+    "location": "139τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 155000,
+    "sqm": 139,
+    "url": "https://www.xe.gr/p/651e2fcd-de48-40ee-b5d3-42eff851e467",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1121060853",
+    "title": "Πώληση, Διαμέρισμα, 101τ.μ. Δραπετσώνα | 1121060853",
+    "location": "101τ.μ. Δραπετσώνα",
+    "type": "Διαμέρισμα",
+    "price": 138300,
+    "sqm": 101,
+    "url": "https://www.spitogatos.gr/aggelia/1121060853",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1119434923",
+    "title": "Πώληση, Διαμέρισμα, 101τ.μ. Πειραιάς (Χατζηκυριάκειο) | 1119434923",
+    "location": "101τ.μ. Πειραιάς (Χατζηκυριάκειο)",
+    "type": "Διαμέρισμα",
+    "price": 190000,
+    "sqm": 101,
+    "url": "https://www.spitogatos.gr/aggelia/1119434923",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "xe-6b736b17",
+    "title": "Πώληση, Μονοκατοικία, 130τ.μ. Κερατσίνι | xe-6b736b17",
+    "location": "130τ.μ. Κερατσίνι",
+    "type": "Μονοκατοικία",
+    "price": 150000,
+    "sqm": 130,
+    "url": "https://www.xe.gr/p/6b736b17-e6da-4774-89f7-ba752f27be16",
+    "reason": "Χωρίς ιδιωτική θέση στάθμευσης σε πυκνοδομημένη περιοχή"
+  },
+  {
+    "listing_id": "1121061943",
+    "title": "Πώληση, Διαμέρισμα, 139τ.μ. Νίκαια | 1121061943",
+    "location": "139τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 155000,
+    "sqm": 139,
+    "url": "https://www.spitogatos.gr/aggelia/1121061943",
+    "reason": "Χωρίς Parking σε διαμέρισμα αστικού ιστού"
+  },
+  {
+    "listing_id": "1121062600",
+    "title": "Πώληση, Μονοκατοικία, 130τ.μ. Ταμπούρια | 1121062600",
+    "location": "130τ.μ. Ταμπούρια",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 130,
+    "url": "https://www.spitogatos.gr/aggelia/1121062600",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια / Αγία Σοφία)"
+  },
+  {
+    "listing_id": "xe-2928fd15",
+    "title": "Πώληση, Διαμέρισμα, 92τ.μ. Ρέντης | €105,000",
+    "location": "92τ.μ. Ρέντης",
+    "type": "Διαμέρισμα",
+    "price": 105000,
+    "sqm": 92,
+    "url": "https://www.xe.gr/p/2928fd15-7432-4515-845e-5b0feecd1559",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "1121071206",
+    "title": "Πώληση, Κτίριο, 114τ.μ. Νίκαια",
+    "location": "114τ.μ. Νίκαια",
+    "type": "Κτίριο",
+    "price": 0,
+    "sqm": 114,
+    "url": "https://www.spitogatos.gr/aggelia/1121071206",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Νίκαια)"
+  },
+  {
+    "listing_id": "xe-9599c8cf",
+    "title": "Πώληση, Διαμέρισμα, 92τ.μ. Ταμπούρια | €150,000",
+    "location": "92τ.μ. Ταμπούρια",
+    "type": "Διαμέρισμα",
+    "price": 150000,
+    "sqm": 92,
+    "url": "https://www.xe.gr/p/9599c8cf-e2f9-4802-a01a-bc2499477f6a",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "1120879228",
+    "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός",
+    "location": "125τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 0,
+    "sqm": 125,
+    "url": "https://www.spitogatos.gr/aggelia/1120879228",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "1120708187",
+    "title": "Πώληση, Διαμέρισμα, 104τ.μ. Πειραιάς",
+    "location": "104τ.μ. Πειραιάς",
+    "type": "Διαμέρισμα",
+    "price": 0,
+    "sqm": 104,
+    "url": "https://www.spitogatos.gr/aggelia/1120708187",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "1121069677",
+    "title": "Πώληση, Διαμέρισμα, 104τ.μ. Πεύκη",
+    "location": "104τ.μ. Πεύκη",
+    "type": "Διαμέρισμα",
+    "price": 0,
+    "sqm": 104,
+    "url": "https://www.spitogatos.gr/aggelia/1121069677",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-6e27c126",
+    "title": "Πώληση, Μονοκατοικία, 90τ.μ. Κορυδαλλός | €150,000",
+    "location": "90τ.μ. Κορυδαλλός",
+    "type": "Μονοκατοικία",
+    "price": 150000,
+    "sqm": 90,
+    "url": "https://www.xe.gr/p/6e27c126-4bb9-4e98-bfcd-c179bff1575c",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Κορυδαλλός)"
+  },
+  {
+    "listing_id": "xe-9edb063b",
+    "title": "Πώληση, Κτίριο, 114τ.μ. Νίκαια | €174,000",
+    "location": "114τ.μ. Νίκαια",
+    "type": "Κτίριο",
+    "price": 174000,
+    "sqm": 114,
+    "url": "https://www.xe.gr/p/9edb063b-2fcb-47d2-8d1b-1ce2ca7c6546",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Νίκαια)"
+  },
+  {
+    "listing_id": "xe-86e4182a",
+    "title": "Πώληση, Διαμέρισμα, 104τ.μ. Πεύκη | €200,000",
+    "location": "104τ.μ. Πεύκη",
+    "type": "Διαμέρισμα",
+    "price": 200000,
+    "sqm": 104,
+    "url": "https://www.xe.gr/p/86e4182a-8a0c-463e-b9aa-2e197822a171",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-ff535139",
+    "title": "Πώληση, Διαμέρισμα, 102τ.μ. Ηράκλειο | €230,000",
+    "location": "102τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 230000,
+    "sqm": 102,
+    "url": "https://www.xe.gr/p/ff535139-847a-4088-bd11-f138f392bfe7",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-35fe2142",
+    "title": "Πώληση, Διαμέρισμα, 100τ.μ. Ταμπούρια | €180,000",
+    "location": "100τ.μ. Ταμπούρια",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 100,
+    "url": "https://www.xe.gr/p/35fe2142-c3ee-49d9-b6e3-79d4d5856563",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-2b4919f9",
+    "title": "Πώληση, Διαμέρισμα, 91τ.μ. Αγία βαρβάρα | €110,000",
+    "location": "91τ.μ. Αγία βαρβάρα",
+    "type": "Διαμέρισμα",
+    "price": 110000,
+    "sqm": 91,
+    "url": "https://www.xe.gr/p/2b4919f9-782c-4535-b8be-70169992c58a",
+    "reason": "Ανεπιθύμητη περιοχή (αγία βαρβάρα)"
+  },
+  {
+    "listing_id": "xe-c85d0c6d",
+    "title": "Πώληση, Διαμέρισμα, 121τ.μ. Μαρούσι | €105,000",
+    "location": "121τ.μ. Μαρούσι",
+    "type": "Διαμέρισμα",
+    "price": 105000,
+    "sqm": 121,
+    "url": "https://www.xe.gr/p/c85d0c6d-7296-44f2-9987-4fda427ed389",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-6ac723da",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Χαλάνδρι | €180,000",
+    "location": "105τ.μ. Χαλάνδρι",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 105,
+    "url": "https://www.xe.gr/p/6ac723da-ea12-4f12-aea1-4f23dcadf271",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-98352883",
+    "title": "Πώληση, Διαμέρισμα, 150τ.μ. Ηράκλειο | €1,300",
+    "location": "150τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 1300,
+    "sqm": 150,
+    "url": "https://www.xe.gr/p/98352883-9a1b-4dc5-8020-06a219d48dc6",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-c1c199e9",
+    "title": "Πώληση, Διαμέρισμα, 93τ.μ. Ταμπούρια | €80,000",
+    "location": "93τ.μ. Ταμπούρια",
+    "type": "Διαμέρισμα",
+    "price": 80000,
+    "sqm": 93,
+    "url": "https://www.xe.gr/p/c1c199e9-c160-4f80-99c6-713c64caf897",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-6eaa6344",
+    "title": "Πώληση, Διαμέρισμα, 115τ.μ. Ηράκλειο | €200,000",
+    "location": "115τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 200000,
+    "sqm": 115,
+    "url": "https://www.xe.gr/p/6eaa6344-ee59-438a-8c2e-20a0728f1f35",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-064804ed",
+    "title": "Πώληση, Διαμέρισμα, 114τ.μ. Κορυδαλλός | €190,000",
+    "location": "114τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 190000,
+    "sqm": 114,
+    "url": "https://www.xe.gr/p/064804ed-75fd-4364-b1eb-e5c6eb97b109",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-daac68d8",
+    "title": "Πώληση, Μεζονέτα, 94τ.μ. Νίκαια | €175,000",
+    "location": "94τ.μ. Νίκαια",
+    "type": "Μεζονέτα",
+    "price": 175000,
+    "sqm": 94,
+    "url": "https://www.xe.gr/p/daac68d8-e49d-42dc-a668-7b6e72bf6cb3",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Νίκαια)"
+  },
+  {
+    "listing_id": "xe-1c61bcb6",
+    "title": "Πώληση, Διαμέρισμα, 91τ.μ. Αγία βαρβάρα | €180,000",
+    "location": "91τ.μ. Αγία βαρβάρα",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 91,
+    "url": "https://www.xe.gr/p/1c61bcb6-c7c7-4205-985d-20e39397f5c5",
+    "reason": "Ανεπιθύμητη περιοχή (αγία βαρβάρα)"
+  },
+  {
+    "listing_id": "xe-a46945b0",
+    "title": "Πώληση, Διαμέρισμα, 103τ.μ. Νίκαια | €130,000",
+    "location": "103τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 130000,
+    "sqm": 103,
+    "url": "https://www.xe.gr/p/a46945b0-ee3c-4d19-ae9f-03173b639d63",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-d894ab15",
+    "title": "Πώληση, Διαμέρισμα, 110τ.μ. Κορυδαλλός | €170,000",
+    "location": "110τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 110,
+    "url": "https://www.xe.gr/p/d894ab15-ecd4-4b68-82f9-33d1237eab94",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-2ec24ede",
+    "title": "Πώληση, Διαμέρισμα, 95τ.μ. Νίκαια | €180,000",
+    "location": "95τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 95,
+    "url": "https://www.xe.gr/p/2ec24ede-04f6-406d-8c0d-d1b526718b7f",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-b5ddc64f",
+    "title": "Πώληση, Διαμέρισμα, 91τ.μ. Δραπετσώνα | €170,000",
+    "location": "91τ.μ. Δραπετσώνα",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 91,
+    "url": "https://www.xe.gr/p/b5ddc64f-b2bf-46cf-a275-2cdc44812222",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "1121061313",
+    "title": "Πώληση, Διαμέρισμα, 130τ.μ. Πεύκη",
+    "location": "130τ.μ. Πεύκη",
+    "type": "Διαμέρισμα",
+    "price": 0,
+    "sqm": 130,
+    "url": "https://www.spitogatos.gr/aggelia/1121061313",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-5c69d641",
+    "title": "Πώληση, Διαμέρισμα, 130τ.μ. Αττική | €1,300",
+    "location": "130τ.μ.",
+    "type": "Διαμέρισμα",
+    "price": 1300,
+    "sqm": 130,
+    "url": "https://www.xe.gr/p/5c69d641-8fea-4351-8baf-7ddf111ba4b0",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-299b88a4",
+    "title": "Πώληση, Διαμέρισμα, 110τ.μ. Χαλάνδρι",
+    "location": "110τ.μ. Χαλάνδρι",
+    "type": "Διαμέρισμα",
+    "price": 0,
+    "sqm": 110,
+    "url": "https://www.xe.gr/p/299b88a4-9986-4a4f-93ab-6eb703ddc353",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-8e5eedcf",
+    "title": "Πώληση, Διαμέρισμα, 96τ.μ. Αγία βαρβάρα | €125,000",
+    "location": "96τ.μ. Αγία βαρβάρα",
+    "type": "Διαμέρισμα",
+    "price": 125000,
+    "sqm": 96,
+    "url": "https://www.xe.gr/p/8e5eedcf-e2e2-434d-9c2a-93898e1afd11",
+    "reason": "Ανεπιθύμητη περιοχή (αγία βαρβάρα)"
+  },
+  {
+    "listing_id": "xe-07c7ee4f",
+    "title": "Πώληση, Διαμέρισμα, 117τ.μ. Αγία βαρβάρα | €130,000",
+    "location": "117τ.μ. Αγία βαρβάρα",
+    "type": "Διαμέρισμα",
+    "price": 130000,
+    "sqm": 117,
+    "url": "https://www.xe.gr/p/07c7ee4f-64f3-4628-9584-268df3f66c8d",
+    "reason": "Ανεπιθύμητη περιοχή (αγία βαρβάρα)"
+  }
+];
+
         const propertiesData = [
   {
     "filename": "Πώληση, Διαμέρισμα, 115τ.μ. Κορυδαλλός, Άνω Κορυδαλλός | 17245573 | Spitogatos.webarchive",
@@ -1712,6 +2450,82 @@
     "street_parking_ease": "PRIVATE"
   }
 ];
+        let currentMainTab = 'eligible'; // 'eligible' or 'rejected'
+
+        function switchMainTab(tab) {
+            currentMainTab = tab;
+            const splitCont = document.getElementById('split-container');
+            const rejPane = document.getElementById('rejected-pane');
+            const tabEligible = document.getElementById('tab-main-eligible');
+            const tabRejected = document.getElementById('tab-main-rejected');
+            const controlsEligible = document.querySelectorAll('.control-section');
+
+            if (tab === 'rejected') {
+                tabRejected.classList.add('active');
+                tabEligible.classList.remove('active');
+                splitCont.style.display = 'none';
+                rejPane.classList.add('active');
+                controlsEligible.forEach(c => c.style.display = 'none');
+                renderRejectedTable(rejectedData);
+            } else {
+                tabEligible.classList.add('active');
+                tabRejected.classList.remove('active');
+                splitCont.style.display = 'flex';
+                rejPane.classList.remove('active');
+                controlsEligible.forEach(c => c.style.display = 'flex');
+                setTimeout(() => { if (map) map.invalidateSize(); }, 150);
+            }
+        }
+
+        function renderRejectedTable(list) {
+            const tbody = document.getElementById('rejected-table-body');
+            if (!tbody) return;
+            if (!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">Δεν βρέθηκαν απορριφθέντα ακίνητα.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = list.map(item => {
+                const isXe = item.url && item.url.includes('xe.gr');
+                const portalBadge = isXe ? '<span style="background:#fef9c3; color:#854d0e; font-weight:700; padding:3px 6px; border-radius:4px; font-size:0.75rem;">ΧΕ</span>' 
+                                         : '<span style="background:#e0f2fe; color:#0369a1; font-weight:700; padding:3px 6px; border-radius:4px; font-size:0.75rem;">Spitogatos</span>';
+                const priceFormatted = item.price ? '€' + Number(item.price).toLocaleString() : '-';
+                const sqmFormatted = item.sqm ? item.sqm + ' τ.μ.' : '-';
+                return `
+                    <tr>
+                        <td>${portalBadge}</td>
+                        <td>
+                            <strong style="font-size:0.86rem; color:#0f172a;">${item.title}</strong>
+                            ${item.location ? `<div style="font-size:0.75rem; color:#64748b; margin-top:2px;">📍 ${item.location}</div>` : ''}
+                        </td>
+                        <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:0.75rem; font-weight:600;">${item.type || 'Διαμέρισμα'}</span></td>
+                        <td><strong>${sqmFormatted}</strong></td>
+                        <td><strong style="color:#059669;">${priceFormatted}</strong></td>
+                        <td><span class="reason-badge">⚠️ ${item.reason}</span></td>
+                        <td style="text-align:center;">
+                            <a href="${item.url}" target="_blank" class="portal-link-btn">
+                                🔗 Άνοιγμα Αγγελίας
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterRejectedTable() {
+            const q = (document.getElementById('rejected-search')?.value || '').toLowerCase().trim();
+            if (!q) {
+                renderRejectedTable(rejectedData);
+                return;
+            }
+            const filtered = rejectedData.filter(it => 
+                (it.title && it.title.toLowerCase().includes(q)) ||
+                (it.location && it.location.toLowerCase().includes(q)) ||
+                (it.reason && it.reason.toLowerCase().includes(q)) ||
+                (it.type && it.type.toLowerCase().includes(q))
+            );
+            renderRejectedTable(filtered);
+        }
+
         let activeMode = 'diy'; // 'diy', 'low', 'high'
         let currentSort = 'fit_desc';
         let searchQuery = '';

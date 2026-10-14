@@ -25,6 +25,7 @@ from rich_report_generator import generate_rich_property_html
 
 base_dir = '/Volumes/Terataki/projects/spitia'
 csv_path = os.path.join(base_dir, 'webarchives', 'processed_listings.csv')
+rejected_json_path = os.path.join(base_dir, 'webarchives', 'rejected_listings.json')
 index_path = os.path.join(base_dir, 'index.html')
 config_path = os.path.join(base_dir, 'config.json')
 status_path = os.path.join(base_dir, 'alert_status.json')
@@ -35,6 +36,51 @@ try:
     from user_fit_budget_engine import evaluate_user_fit_with_budget_and_risk, USER_CASH
 except Exception as e:
     logging.warning(f"Warning importing user_fit_budget_engine: {e}")
+
+def record_rejected_listing(url, reason, title="", price=0, sqm=0, ptype="Διαμέρισμα", loc=""):
+    """Appends or updates a rejected listing in rejected_listings.json"""
+    try:
+        listings = []
+        if os.path.exists(rejected_json_path):
+            with open(rejected_json_path, 'r', encoding='utf-8') as f:
+                listings = json.load(f)
+        
+        # Check if URL already recorded
+        clean_url = url.split('?')[0].strip()
+        for it in listings:
+            if it.get('url', '').split('?')[0].strip() == clean_url:
+                it['reason'] = reason
+                if title: it['title'] = title
+                return
+        
+        # Determine lid
+        if 'spitogatos.gr/aggelia/' in clean_url:
+            m = re.search(r'aggelia/(\d+)', clean_url)
+            lid = m.group(1) if m else str(int(time.time()))
+        else:
+            m = re.search(r'xe\.gr/p/([a-f0-9\-]+)', clean_url) or re.search(r'xe\.gr/property/d/[^/]+/([a-f0-9\-]+)', clean_url)
+            lid = f"xe-{m.group(1)[:8]}" if m else str(int(time.time()))
+
+        display_title = title or f"Πώληση, {ptype}, {sqm}τ.μ. {loc}"
+        if price:
+            display_title += f" | €{price:,}"
+
+        listings.insert(0, {
+            "listing_id": lid,
+            "title": display_title,
+            "location": f"{sqm}τ.μ. {loc}".strip() if loc else f"{sqm}τ.μ.",
+            "type": ptype,
+            "price": price,
+            "sqm": sqm,
+            "url": clean_url,
+            "reason": reason
+        })
+
+        with open(rejected_json_path, 'w', encoding='utf-8') as f:
+            json.dump(listings, f, ensure_ascii=False, indent=2)
+        logging.info(f"Recorded rejected listing: {clean_url} -> {reason}")
+    except Exception as e:
+        logging.error(f"Failed to record rejected listing: {e}")
 
 def fetch_url_via_safari(url):
     applescript = f'''
@@ -316,6 +362,12 @@ def fetch_email_links(cfg):
             rej, reason = is_rejected(card_text, clean_url, price=price_cand)
             if rej:
                 logging.info(f"Skipping link {clean_url}: {reason}")
+                sqm_cand = 0
+                sm = re.findall(r'(\d+(?:[\.,]\d+)?)\s*(?:τ\.?μ\.?|sqm)', card_text)
+                if sm:
+                    try: sqm_cand = int(float(sm[0].replace(',', '.')))
+                    except ValueError: pass
+                record_rejected_listing(clean_url, reason, price=price_cand or 0, sqm=sqm_cand)
                 continue
 
             if clean_url not in [l['url'] for l in valid_links]:
@@ -489,6 +541,7 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
     # Evaluation filter: Reject auctions and no parking in difficult areas
     rej, rej_why = is_rejected(comb_text, url, price=price, has_parking=has_parking, property_type=ptype, location=loc)
     if rej:
+        record_rejected_listing(url, rej_why, title=title, price=price, sqm=sqm, ptype=ptype, loc=loc)
         raise ValueError(f"Property {lid} rejected: {rej_why}")
 
     record = {
@@ -761,14 +814,24 @@ def update_csv_and_index(new_records):
         new_json_str = json.dumps(new_props_list, ensure_ascii=False, indent=2)
         idx_content = idx_content[:pos_data + 23] + new_json_str + idx_content[end_data + 1:]
 
+        # Also update rejectedData if present
+        pos_rej = idx_content.find('const rejectedData = [')
+        if pos_rej != -1 and os.path.exists(rejected_json_path):
+            end_rej = idx_content.find('];', pos_rej)
+            if end_rej != -1:
+                with open(rejected_json_path, 'r', encoding='utf-8') as rf:
+                    rej_list = json.load(rf)
+                rej_json_str = json.dumps(rej_list, ensure_ascii=False, indent=2)
+                idx_content = idx_content[:pos_rej + 21] + rej_json_str + idx_content[end_rej + 1:]
+
         with open(index_path, 'w', encoding='utf-8') as f:
             f.write(idx_content)
-        logging.info("Updated index.html propertiesData successfully.")
+        logging.info("Updated index.html propertiesData & rejectedData successfully.")
 
 def git_commit_and_push(new_count):
     """Stages changes, commits with meaningful message and pushes to origin main"""
     try:
-        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "index.html", "property-*.html"], cwd=base_dir, check=True)
+        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html"], cwd=base_dir, check=True)
         commit_msg = f"feat(auto-ingest): Add {new_count} new evaluated properties from email alerts"
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=base_dir, check=True)
         subprocess.run(["git", "push", "origin", "main"], cwd=base_dir, check=True)
