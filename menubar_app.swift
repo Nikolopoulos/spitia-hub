@@ -3,7 +3,8 @@ import Foundation
 
 class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
-    var timer: Timer?
+    var uiTimer: Timer?
+    var autoCheckTimer: Timer?
     let statusFilePath = "/Volumes/Terataki/projects/spitia/alert_status.json"
     let pythonScriptPath = "/Volumes/Terataki/projects/spitia/auto_pipeline.py"
     let portalPath = "/Volumes/Terataki/projects/spitia/index.html"
@@ -17,14 +18,20 @@ class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updateStatusItemUI()
 
-        // Timer to refresh status item every 10 seconds
-        timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+        // 1. UI refresh timer every 10 seconds (picks up changes to alert_status.json)
+        uiTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
             self?.updateStatusItemUI()
+        }
+
+        // 2. Automatic pipeline execution every 15 minutes (900 seconds)
+        autoCheckTimer = Timer.scheduledTimer(withTimeInterval: 900.0, repeats: true) { [weak self] _ in
+            self?.executePipelineInBackground()
         }
     }
 
     func updateStatusItemUI() {
         var lastRun = "Ποτέ"
+        var nextRun = "Σύντομα (~15λ)"
         var newCount = 0
         var botDetected = false
         var botPlatform = ""
@@ -33,6 +40,7 @@ class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
         if let data = try? Data(contentsOf: URL(fileURLWithPath: statusFilePath)),
            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
             lastRun = json["last_run"] as? String ?? "Ποτέ"
+            nextRun = json["next_run"] as? String ?? "Σύντομα (~15λ)"
             newCount = json["new_properties_count"] as? Int ?? 0
             botDetected = json["bot_challenge_detected"] as? Bool ?? false
             botPlatform = json["bot_challenge_platform"] as? String ?? ""
@@ -87,6 +95,10 @@ class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
         lastRunItem.isEnabled = false
         menu.addItem(lastRunItem)
 
+        let nextRunItem = NSMenuItem(title: "⏳ Επόμενος αυτόματος έλεγχος: \(nextRun)", action: nil, keyEquivalent: "")
+        nextRunItem.isEnabled = false
+        menu.addItem(nextRunItem)
+
         let countItem = NSMenuItem(title: "✨ Νέα ακίνητα (τελευταίο run): \(newCount)", action: nil, keyEquivalent: "")
         countItem.isEnabled = false
         menu.addItem(countItem)
@@ -127,18 +139,23 @@ class SpitiaMenuBarApp: NSObject, NSApplicationDelegate {
     }
 
     @objc func runCheckNow() {
+        executePipelineInBackground(isUserInitiated: true)
+    }
+
+    func executePipelineInBackground(isUserInitiated: Bool = false) {
         if let button = statusItem.button {
             button.title = "🏠 ⏳..."
         }
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
             let task = Process()
-            task.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
-            task.arguments = [self.pythonScriptPath]
+            task.executableURL = URL(fileURLWithPath: "/bin/bash")
+            task.arguments = ["/Volumes/Terataki/projects/spitia/run_pipeline.sh"]
             try? task.run()
             task.waitUntilExit()
 
-            DispatchQueue.main.async { [weak self] in
-                self?.updateStatusItemUI()
+            DispatchQueue.main.async {
+                self.updateStatusItemUI()
             }
         }
     }

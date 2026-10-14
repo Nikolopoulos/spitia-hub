@@ -18,7 +18,7 @@ Full Automated Pipeline:
 """
 
 import os, sys, json, csv, re, time, subprocess, logging, imaplib, email, urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from email.header import decode_header
 from html.parser import HTMLParser
 from rich_report_generator import generate_rich_property_html
@@ -116,8 +116,11 @@ def check_bot_challenge(title, html, url):
     return False, "", ""
 
 def update_status_file(last_run, new_count, listings_added=None, bot_challenge=None):
+    next_run_dt = datetime.now() + timedelta(minutes=15)
+    next_run_str = next_run_dt.strftime("%H:%M:%S (%d/%m)")
     data = {
         "last_run": last_run,
+        "next_run": next_run_str,
         "new_properties_count": new_count,
         "bot_challenge_detected": bool(bot_challenge),
         "bot_challenge_platform": bot_challenge.get("platform", "") if bot_challenge else "",
@@ -201,12 +204,13 @@ def is_rejected(text, url, price=None, has_parking=None, property_type=None, loc
     if price is not None and price < 50000:
         return True, f"Price {price} < €50k (likely rental/share)"
 
-    # 5. Min SQM
-    sqm_m = re.findall(r'(\d+)\s*(?:τ\.?μ\.?|sqm)', comb)
+    # 5. Min SQM (supports decimal formatting like 100.0 τ.μ. from XE)
+    sqm_m = re.findall(r'(\d+(?:[\.,]\d+)?)\s*(?:τ\.?μ\.?|sqm)', comb)
     if sqm_m:
         try:
-            if int(sqm_m[0]) < PREFERENCES["min_sqm_tolerated"]:
-                return True, f"Size < {PREFERENCES['min_sqm_tolerated']} sqm"
+            val_sqm = float(sqm_m[0].replace(',', '.'))
+            if val_sqm < PREFERENCES["min_sqm_tolerated"]:
+                return True, f"Size {val_sqm} < {PREFERENCES['min_sqm_tolerated']} sqm"
         except ValueError:
             pass
 

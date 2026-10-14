@@ -247,11 +247,11 @@ class EmailAlertIngester:
             if rej in combined:
                 return True, f"Rejected keyword found: {rej}"
 
-        # If sqm is clearly stated in email card (e.g. 50 τ.μ., 65τμ) and < 90, skip it!
-        sqm_matches = re.findall(r'(\d+)\s*(?:τ\.?μ\.?|sqm|sq\.m)', combined)
+        # If sqm is clearly stated in email card (e.g. 50 τ.μ., 100.0 τ.μ.) and < 90, skip it!
+        sqm_matches = re.findall(r'(\d+(?:[\.,]\d+)?)\s*(?:τ\.?μ\.?|sqm|sq\.m)', combined)
         if sqm_matches:
             try:
-                sqm = int(sqm_matches[0])
+                sqm = float(sqm_matches[0].replace(',', '.'))
                 if sqm < PREFERENCES["min_sqm_tolerated"]:
                     return True, f"Too small: {sqm} sqm < {PREFERENCES['min_sqm_tolerated']} sqm"
             except ValueError:
