@@ -1,5 +1,25 @@
 [
   {
+    "listing_id": "xe-3b8c6214",
+    "title": "Πώληση, Διαμέρισμα, 96τ.μ. Νίκαια | xe-3b8c6214 | €150,000",
+    "location": "96τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 150000,
+    "sqm": 96,
+    "url": "https://www.xe.gr/p/3b8c6214-d262-4cfd-a2b2-5c88084e3575",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-8c2069a5",
+    "title": "Πώληση, Διαμέρισμα, 123τ.μ. Νίκαια | xe-8c2069a5 | €170,000",
+    "location": "123τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 123,
+    "url": "https://www.xe.gr/p/8c2069a5-0009-490f-bc2f-a2de2273c0bd",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
     "listing_id": "xe-abd9db54",
     "title": "Πώληση, Διαμέρισμα, 93τ.μ. Κορυδαλλός | xe-abd9db54 | €130,000",
     "location": "93τ.μ. Κορυδαλλός",
