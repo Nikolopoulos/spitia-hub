@@ -814,28 +814,61 @@ def update_csv_and_index(new_records):
         new_json_str = json.dumps(new_props_list, ensure_ascii=False, indent=2)
         idx_content = idx_content[:pos_data + 23] + new_json_str + idx_content[end_data + 1:]
 
-        # Also update rejectedData if present
+        with open(index_path, 'w', encoding='utf-8') as f:
+            f.write(idx_content)
+        logging.info("Updated index.html propertiesData successfully.")
+        sync_rejected_to_index()
+
+def sync_rejected_to_index():
+    """Syncs rejected_listings.json into index.html and updates badges"""
+    if not os.path.exists(rejected_json_path) or not os.path.exists(index_path):
+        return False
+    try:
+        with open(rejected_json_path, 'r', encoding='utf-8') as rf:
+            rej_list = json.load(rf)
+        rej_count = len(rej_list)
+        
+        with open(index_path, 'r', encoding='utf-8') as f:
+            idx_content = f.read()
+
+        changed = False
         pos_rej = idx_content.find('const rejectedData = [')
-        if pos_rej != -1 and os.path.exists(rejected_json_path):
+        if pos_rej != -1:
             end_rej = idx_content.find('];', pos_rej)
             if end_rej != -1:
-                with open(rejected_json_path, 'r', encoding='utf-8') as rf:
-                    rej_list = json.load(rf)
                 rej_json_str = json.dumps(rej_list, ensure_ascii=False, indent=2)
-                idx_content = idx_content[:pos_rej + 21] + rej_json_str + idx_content[end_rej + 1:]
+                old_chunk = idx_content[pos_rej + 21 : end_rej + 1]
+                if old_chunk.strip() != rej_json_str.strip():
+                    idx_content = idx_content[:pos_rej + 21] + rej_json_str + idx_content[end_rej + 1:]
+                    changed = True
+
+        # Update badge counts if changed
+        idx_content = re.sub(r'Απορριφθέντα\s*\(\d+\)', f'Απορριφθέντα ({rej_count})', idx_content)
+        idx_content = re.sub(r'>\s*🚫\s*Απορρίφθηκαν:.*?<b[^>]*>\s*\d+\s*</b>', f'>🚫 Απορρίφθηκαν:</span>\n                    <b style="color:#ef4444;">{rej_count}</b>', idx_content, flags=re.DOTALL)
+        idx_content = re.sub(r'Απορριφθέντα\s*Ακίνητα\s*\(\d+\)', f'Απορριφθέντα Ακίνητα ({rej_count})', idx_content)
+        idx_content = re.sub(r'&bull;\s*\d+\s*Απορριφθέντα', f'&bull; {rej_count} Απορριφθέντα', idx_content)
 
         with open(index_path, 'w', encoding='utf-8') as f:
             f.write(idx_content)
-        logging.info("Updated index.html propertiesData & rejectedData successfully.")
+        logging.info(f"Synchronized index.html with {rej_count} rejected properties.")
+        return True
+    except Exception as e:
+        logging.error(f"Error syncing rejectedData to index.html: {e}")
+        return False
 
-def git_commit_and_push(new_count):
+def git_commit_and_push(new_count=0, msg=None):
     """Stages changes, commits with meaningful message and pushes to origin main"""
     try:
         subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html"], cwd=base_dir, check=True)
-        commit_msg = f"feat(auto-ingest): Add {new_count} new evaluated properties from email alerts"
+        # Check if there are staged changes
+        st_proc = subprocess.run(["git", "diff", "--staged", "--quiet"], cwd=base_dir)
+        if st_proc.returncode == 0:
+            logging.info("No git changes to commit.")
+            return
+        commit_msg = msg or (f"feat(auto-ingest): Add {new_count} new evaluated properties from email alerts" if new_count > 0 else "feat(auto-ingest): Update rejected listings and index")
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=base_dir, check=True)
         subprocess.run(["git", "push", "origin", "main"], cwd=base_dir, check=True)
-        logging.info("Successfully pushed new properties to GitHub!")
+        logging.info("Successfully pushed updates to GitHub!")
     except subprocess.CalledProcessError as e:
         logging.error(f"Git commit/push error: {e}")
 
@@ -920,7 +953,9 @@ def run_pipeline():
         git_commit_and_push(len(new_records))
         update_status_file(now_str, len(new_records), [r['spitogatos_url'] for r in new_records], bot_challenge=active_bot_challenge)
     else:
-        logging.info("No novel properties were added in this run.")
+        logging.info("No novel properties were added in this run. Checking rejected listings sync...")
+        sync_rejected_to_index()
+        git_commit_and_push(0, msg="feat(auto-ingest): Sync rejected listings to index.html")
         update_status_file(now_str, 0, bot_challenge=active_bot_challenge)
 
 if __name__ == '__main__':
