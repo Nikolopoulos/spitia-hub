@@ -1,5 +1,235 @@
 [
   {
+    "listing_id": "xe-85138898",
+    "title": "Πώληση, Διαμέρισμα, 112τ.μ. Κερατσίνι | xe-85138898 | €200,000",
+    "location": "112τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 200000,
+    "sqm": 112,
+    "url": "https://www.xe.gr/p/85138898-5382-4685-a95c-504a72730288",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "1121080055",
+    "title": "Πώληση, Διαμέρισμα, 108τ.μ. Κορυδαλλός | 1121080055 | €160,000",
+    "location": "108τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 160000,
+    "sqm": 108,
+    "url": "https://www.spitogatos.gr/aggelia/1121080055",
+    "reason": "No private parking in apartment (difficult street parking)"
+  },
+  {
+    "listing_id": "xe-95cab3cd",
+    "title": "Πώληση, Διαμέρισμα, 108τ.μ. Μαρούσι | xe-95cab3cd | €170,000",
+    "location": "108τ.μ. Μαρούσι",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 108,
+    "url": "https://www.xe.gr/p/95cab3cd-d665-40bb-9084-c89efb121dd8",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-022eda9c",
+    "title": "Πώληση, Διαμέρισμα, 172τ.μ.  | €2,500",
+    "location": "172τ.μ.",
+    "type": "Διαμέρισμα",
+    "price": 2500,
+    "sqm": 172,
+    "url": "https://www.xe.gr/p/022eda9c-25e1-46f1-9f53-be92ecc2b9ce",
+    "reason": "Price 2500 < €50k (likely rental/share)"
+  },
+  {
+    "listing_id": "xe-a2a91ccc",
+    "title": "Πώληση, Διαμέρισμα, 117τ.μ. Κερατσίνι | xe-a2a91ccc | €151,200",
+    "location": "117τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 151200,
+    "sqm": 117,
+    "url": "https://www.xe.gr/p/a2a91ccc-b9a7-46c5-8ee1-6d991fbc9b22",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-22ef8450",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Ηράκλειο | xe-22ef8450 | €170,000",
+    "location": "105τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 105,
+    "url": "https://www.xe.gr/p/22ef8450-262f-47aa-980c-4de0c38adb9b",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-e526c71f",
+    "title": "Πώληση, Διαμέρισμα, 95τ.μ.  | €180,000",
+    "location": "95τ.μ.",
+    "type": "Διαμέρισμα",
+    "price": 180000,
+    "sqm": 95,
+    "url": "https://www.xe.gr/p/e526c71f-d91e-4014-a775-10417ae156a4",
+    "reason": "Blacklisted area: αγία βαρβάρα"
+  },
+  {
+    "listing_id": "1120319855",
+    "title": "Πώληση, Διαμέρισμα, 140τ.μ. Ταμπούρια | 1120319855 | €160,000",
+    "location": "140τ.μ. Ταμπούρια",
+    "type": "Διαμέρισμα",
+    "price": 160000,
+    "sqm": 140,
+    "url": "https://www.spitogatos.gr/aggelia/1120319855",
+    "reason": "No private parking in apartment (difficult street parking)"
+  },
+  {
+    "listing_id": "1121076832",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Κερατσίνι | 1121076832 | €160,000",
+    "location": "105τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 160000,
+    "sqm": 105,
+    "url": "https://www.spitogatos.gr/aggelia/1121076832",
+    "reason": "No private parking in apartment (difficult street parking)"
+  },
+  {
+    "listing_id": "xe-9eae5ff3",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Ηράκλειο | xe-9eae5ff3 | €195,000",
+    "location": "105τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 195000,
+    "sqm": 105,
+    "url": "https://www.xe.gr/p/9eae5ff3-7d6a-4517-8cb2-b80a42938589",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-2cd13d93",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Κορυδαλλός | xe-2cd13d93 | €185,000",
+    "location": "105τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 185000,
+    "sqm": 105,
+    "url": "https://www.xe.gr/p/2cd13d93-2eb7-46e0-a29d-0e3fe0ec651e",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-58f57f05",
+    "title": "Πώληση, Διαμέρισμα, 120τ.μ. Νίκαια | xe-58f57f05 | €170,000",
+    "location": "120τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 120,
+    "url": "https://www.xe.gr/p/58f57f05-d6ba-4298-bf0a-4a29a931b04e",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-4eabd99e",
+    "title": "Πώληση, Μονοκατοικία, 163τ.μ. Κερατσίνι | xe-4eabd99e | €180,000",
+    "location": "163τ.μ. Κερατσίνι",
+    "type": "Μονοκατοικία",
+    "price": 180000,
+    "sqm": 163,
+    "url": "https://www.xe.gr/p/4eabd99e-9978-4c2e-8da0-cb300097abda",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-f60270ad",
+    "title": "Πώληση, Διαμέρισμα, 120τ.μ. Ηράκλειο | xe-f60270ad | €165,000",
+    "location": "120τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 165000,
+    "sqm": 120,
+    "url": "https://www.xe.gr/p/f60270ad-2ac2-461a-9194-f0f72af43773",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-5bd1e6ab",
+    "title": "Πώληση, Διαμέρισμα, 90τ.μ. Κερατσίνι | xe-5bd1e6ab | €150,000",
+    "location": "90τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 150000,
+    "sqm": 90,
+    "url": "https://www.xe.gr/p/5bd1e6ab-3097-45e9-9b88-b78aabfb0fae",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-90285cc1",
+    "title": "Πώληση, Διαμέρισμα, 118τ.μ. Ηράκλειο | xe-90285cc1 | €179,000",
+    "location": "118τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 179000,
+    "sqm": 118,
+    "url": "https://www.xe.gr/p/90285cc1-af0e-495f-a6f7-9fb241999d68",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "1121075638",
+    "title": "Πώληση, Διαμέρισμα, 117τ.μ. Νίκαια | 1121075638 | €160,000",
+    "location": "117τ.μ. Νίκαια",
+    "type": "Διαμέρισμα",
+    "price": 160000,
+    "sqm": 117,
+    "url": "https://www.spitogatos.gr/aggelia/1121075638",
+    "reason": "No private parking in apartment (difficult street parking)"
+  },
+  {
+    "listing_id": "xe-876001f1",
+    "title": "Πώληση, Διαμέρισμα, 117τ.μ. Κορυδαλλός | xe-876001f1 | €185,000",
+    "location": "117τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 185000,
+    "sqm": 117,
+    "url": "https://www.xe.gr/p/876001f1-8fcf-4d51-a997-5012e9adc350",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-c058a263",
+    "title": "Πώληση, Διαμέρισμα, 102τ.μ. Κερατσίνι | xe-c058a263 | €150,000",
+    "location": "102τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 150000,
+    "sqm": 102,
+    "url": "https://www.xe.gr/p/c058a263-efb1-4bca-b598-30e5cc5c4d8f",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-cc0f352c",
+    "title": "Πώληση, Διαμέρισμα, 90τ.μ. Κορυδαλλός | xe-cc0f352c | €155,000",
+    "location": "90τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 155000,
+    "sqm": 90,
+    "url": "https://www.xe.gr/p/cc0f352c-ac22-4d83-8b45-d9018cb93bb6",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-bc3f1327",
+    "title": "Πώληση, Διαμέρισμα, 98τ.μ. Κερατσίνι | xe-bc3f1327 | €148,000",
+    "location": "98τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 148000,
+    "sqm": 98,
+    "url": "https://www.xe.gr/p/bc3f1327-7640-44df-9545-15aad0de4cd0",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-ee5c649e",
+    "title": "Πώληση, Διαμέρισμα, 90τ.μ. Κορυδαλλός | xe-ee5c649e | €165,000",
+    "location": "90τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 165000,
+    "sqm": 90,
+    "url": "https://www.xe.gr/p/ee5c649e-6f33-4369-b24d-daf129da6ae8",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
+    "listing_id": "xe-8442167f",
+    "title": "Πώληση, Διαμέρισμα, 114τ.μ. Ηράκλειο | xe-8442167f | €230,000",
+    "location": "114τ.μ. Ηράκλειο",
+    "type": "Διαμέρισμα",
+    "price": 230000,
+    "sqm": 114,
+    "url": "https://www.xe.gr/p/8442167f-c5c0-42e3-b4a0-f9d27827d08b",
+    "reason": "Auction listing detected: πλειστηριασμ"
+  },
+  {
     "listing_id": "xe-3b8c6214",
     "title": "Πώληση, Διαμέρισμα, 96τ.μ. Νίκαια | xe-3b8c6214 | €150,000",
     "location": "96τ.μ. Νίκαια",
