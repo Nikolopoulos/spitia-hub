@@ -17,7 +17,7 @@ Full Automated Pipeline:
 8. Update alert_status.json for Menu Bar app
 """
 
-import os, sys, json, csv, re, time, subprocess, logging, imaplib, email, urllib.request
+import os, sys, json, csv, re, time, subprocess, logging, imaplib, email, urllib.request, html as html_lib
 from datetime import datetime, timedelta
 from email.header import decode_header
 from html.parser import HTMLParser
@@ -31,11 +31,23 @@ config_path = os.path.join(base_dir, 'config.json')
 status_path = os.path.join(base_dir, 'alert_status.json')
 scratch_dir = '/Users/vnikolopoulos/.gemini/antigravity-cli/brain/f5cd4cb5-f15c-425c-8e9a-e4ffdc3ca53f/scratch'
 
-sys.path.append(scratch_dir)
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+if scratch_dir not in sys.path:
+    sys.path.append(scratch_dir)
 try:
     from user_fit_budget_engine import evaluate_user_fit_with_budget_and_risk, USER_CASH
 except Exception as e:
     logging.warning(f"Warning importing user_fit_budget_engine: {e}")
+
+def extract_visible_text(html):
+    """Strips tags, scripts, styles, svg, and metadata attributes to extract strictly visible human text"""
+    if not html:
+        return ""
+    clean = re.sub(r'<(script|style|svg|header|nav|footer)\b.*?</\1>', ' ', html, flags=re.DOTALL | re.IGNORECASE)
+    clean = re.sub(r'<[^>]+>', ' ', clean)
+    clean = html_lib.unescape(clean)
+    return ' '.join(clean.split())
 
 def record_rejected_listing(url, reason, title="", price=0, sqm=0, ptype="Διαμέρισμα", loc=""):
     """Appends or updates a rejected listing in rejected_listings.json"""
@@ -45,14 +57,11 @@ def record_rejected_listing(url, reason, title="", price=0, sqm=0, ptype="Δια
             with open(rejected_json_path, 'r', encoding='utf-8') as f:
                 listings = json.load(f)
         
-        # Check if URL already recorded
         clean_url = url.split('?')[0].strip()
-        for it in listings:
-            if it.get('url', '').split('?')[0].strip() == clean_url:
-                it['reason'] = reason
-                if title: it['title'] = title
-                return
-        
+        display_title = title or f"Πώληση, {ptype}, {sqm}τ.μ. {loc}".strip()
+        if price and "€" not in display_title:
+            display_title += f" | €{price:,}"
+
         # Determine lid
         if 'spitogatos.gr/aggelia/' in clean_url:
             m = re.search(r'aggelia/(\d+)', clean_url)
@@ -61,9 +70,18 @@ def record_rejected_listing(url, reason, title="", price=0, sqm=0, ptype="Δια
             m = re.search(r'xe\.gr/p/([a-f0-9\-]+)', clean_url) or re.search(r'xe\.gr/property/d/[^/]+/([a-f0-9\-]+)', clean_url)
             lid = f"xe-{m.group(1)[:8]}" if m else str(int(time.time()))
 
-        display_title = title or f"Πώληση, {ptype}, {sqm}τ.μ. {loc}"
-        if price:
-            display_title += f" | €{price:,}"
+        # Check if URL already recorded
+        for it in listings:
+            if it.get('url', '').split('?')[0].strip() == clean_url:
+                it['reason'] = reason
+                if title: it['title'] = display_title
+                if price: it['price'] = price
+                if sqm: it['sqm'] = sqm
+                if loc:
+                    it['location'] = f"{sqm}τ.μ. {loc}".strip() if loc else f"{sqm}τ.μ."
+                with open(rejected_json_path, 'w', encoding='utf-8') as f:
+                    json.dump(listings, f, ensure_ascii=False, indent=2)
+                return
 
         listings.insert(0, {
             "listing_id": lid,
@@ -135,14 +153,14 @@ PREFERENCES = {
     "cash_budget": 180000,
     "max_acceptable_price_loan": 240000,
     "ideal_sqm": 120,
-    "min_sqm_tolerated": 90,
-    "rejected_keywords": [
-        "οικόπεδο", "οικοπεδο", "αγροτεμάχιο", "αγροτεμαχιο", "plot",
-        "επαγγελματικός", "γραφείο", "γραφειο", "κατάστημα", "καταστημα", "commercial",
-        "parking", "γκαράζ", "αποθήκη", "αποθηκη", "υπόγειο", "υπογειο",
-        "ενοικίαση", "ενοικιαση", "ενοικιάζεται", "ενοικιαζεται", "/μήνα", "/μηνα", "€ / μήνα", "€/μήνα"
-    ]
+    "min_sqm_tolerated": 90
 }
+
+REJECTED_PROPERTY_TYPES = [
+    "οικόπεδο", "οικοπεδο", "αγροτεμάχιο", "αγροτεμαχιο", "plot",
+    "επαγγελματικός", "γραφείο", "γραφειο", "κατάστημα", "καταστημα", "commercial",
+    "parking", "γκαράζ", "γκαραζ", "αποθήκη", "αποθηκη"
+]
 
 def load_config():
     if os.path.exists(config_path):
@@ -225,30 +243,50 @@ DIFFICULT_PARKING_AREAS = [
     "νίκαια", "νικαια", "nikaia",
     "χαλάνδρι", "χαλανδρι", "chalandri",
     "μαρούσι", "μαρουσι", "marousi", "maroussi",
-    "αγία παρασκευή", "αγια παρασκευη", "agia paraskevi"
+    "αγία παρασκευή", "αγια παρασκευη", "agia paraskevi",
+    "νέα ιωνία", "νεα ιωνια", "nea ionia", "nea iwnia",
+    "ηράκλειο", "ηρακλειο", "irakleio", "iraklio",
+    "μεταμόρφωση", "μεταμορφωση", "metamorfosi",
+    "λυκόβρυση", "λυκοβρυση", "lykovrysi"
 ]
 
-def is_rejected(text, url, price=None, has_parking=None, property_type=None, location=None):
-    comb = (text + " " + url).lower()
+def is_rejected(text, url, price=None, has_parking=None, property_type=None, location=None, title=""):
+    if text and ('<' in text and '>' in text):
+        search_text = extract_visible_text(text)
+    else:
+        search_text = text or ""
+    comb = (search_text + " " + (url or "")).lower()
+    url_l = (url or "").lower()
+    ptype_l = (property_type or "").lower()
+    title_l = (title or "").lower()
     
-    # 1. Auction filter
+    # 1. Auction filter (only checks user-visible text or URL)
     for auk in AUCTION_KEYWORDS:
         if auk in comb:
-            return True, f"Auction listing detected: {auk}"
+            return True, f"Πλειστηριασμός (Απαγορεύεται από τις προτιμήσεις: {auk})"
 
     # 2. Blacklisted areas
     for b in BLACKLIST_AREAS:
         if b in comb:
-            return True, f"Blacklisted area: {b}"
+            return True, f"Μη επιλέξιμη περιοχή ({b})"
 
-    # 3. Rejected keywords
-    for r in PREFERENCES["rejected_keywords"]:
-        if r in comb:
-            return True, f"Rejected keyword: {r}"
+    # 3. Rejected property types & non-residential categories
+    # Checked strictly against property_type, title or dedicated URL path, NOT general amenity mentions
+    for r in REJECTED_PROPERTY_TYPES:
+        if ptype_l and r == ptype_l:
+            return True, f"Μη επιλέξιμος τύπος ακινήτου ({r})"
+        if f"/poliseis-{r}/" in url_l or f"/enoikiaseis-{r}/" in url_l or f"/{r}/" in url_l or f"-{r}-" in url_l:
+            return True, f"Μη επιλέξιμη κατηγορία ({r})"
+        if title_l and (f"πώληση {r}" in title_l or f"πωληση {r}" in title_l or f"ενοικίαση {r}" in title_l):
+            return True, f"Μη επιλέξιμη κατηγορία ({r})"
+
+    # Check rental keywords in URL or title
+    if "/enoikiaseis" in url_l or "ενοικιάζεται" in title_l or "ενοικιαζεται" in title_l or "/μήνα" in title_l or "€/μήνα" in title_l:
+        return True, "Ενοικίαση (μη επιλέξιμο)"
 
     # 4. Price threshold
     if price is not None and price < 50000:
-        return True, f"Price {price} < €50k (likely rental/share)"
+        return True, f"Τιμή €{price:,} < €50k (πιθανή ενοικίαση / ποσοστό)"
 
     # 5. Min SQM (supports decimal formatting like 100.0 τ.μ. from XE)
     sqm_m = re.findall(r'(\d+(?:[\.,]\d+)?)\s*(?:τ\.?μ\.?|sqm)', comb)
@@ -256,21 +294,20 @@ def is_rejected(text, url, price=None, has_parking=None, property_type=None, loc
         try:
             val_sqm = float(sqm_m[0].replace(',', '.'))
             if val_sqm < PREFERENCES["min_sqm_tolerated"]:
-                return True, f"Size {val_sqm} < {PREFERENCES['min_sqm_tolerated']} sqm"
+                return True, f"Εμβαδόν {val_sqm:g}τ.μ. < {PREFERENCES['min_sqm_tolerated']}τ.μ."
         except ValueError:
             pass
 
     # 6. No parking + difficult street parking check (if attributes are known at evaluation)
     if has_parking is False:
         loc_l = (location or "").lower()
-        ptype_l = (property_type or "").lower()
         # Any apartment without parking in urban center is rejected
         if "διαμέρισμα" in ptype_l or "διαμερισμα" in ptype_l or "apartment" in ptype_l:
-            return True, "No private parking in apartment (difficult street parking)"
+            return True, "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
         # Or in difficult street parking neighborhoods
         for dpa in DIFFICULT_PARKING_AREAS:
             if dpa in loc_l or dpa in comb:
-                return True, f"No private parking in difficult street parking area: {dpa}"
+                return True, f"Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης ({location or dpa})"
 
     return False, ""
 
@@ -367,7 +404,41 @@ def fetch_email_links(cfg):
                 if sm:
                     try: sqm_cand = int(float(sm[0].replace(',', '.')))
                     except ValueError: pass
-                record_rejected_listing(clean_url, reason, price=price_cand or 0, sqm=sqm_cand)
+
+                # Extract property type candidate
+                ptype_cand = "Διαμέρισμα"
+                card_l = card_text.lower()
+                if "μονοκατοικία" in card_l or "μονοκατοικια" in card_l:
+                    ptype_cand = "Μονοκατοικία"
+                elif "μεζονέτα" in card_l or "μεζονετα" in card_l:
+                    ptype_cand = "Μεζονέτα"
+
+                # Extract location candidate
+                loc_cand = ""
+                for official_loc, aliases in [
+                    ("Νέα Ιωνία", ["νέα ιωνία", "νεα ιωνια", "nea ionia", "nea iwnia", "αλσούπολη", "αλσουπολη", "καλογρέζα", "περισσός"]),
+                    ("Ηράκλειο", ["ηράκλειο", "ηρακλειο", "irakleio", "iraklio"]),
+                    ("Μαρούσι", ["μαρούσι", "μαρουσι", "marousi", "maroussi"]),
+                    ("Κορυδαλλός", ["κορυδαλλός", "κορυδαλλος", "korydallos"]),
+                    ("Νίκαια", ["νίκαια", "νικαια", "nikaia"]),
+                    ("Κερατσίνι", ["κερατσίνι", "κερατσινι", "keratsini"]),
+                    ("Δραπετσώνα", ["δραπετσώνα", "δραπετσωνα", "drapetsona"]),
+                    ("Ταμπούρια", ["ταμπούρια", "ταμπουρια", "tabouria"]),
+                    ("Χαλάνδρι", ["χαλάνδρι", "χαλανδρι", "chalandri"]),
+                    ("Αγία Παρασκευή", ["αγία παρασκευή", "αγια παρασκευη", "agia paraskevi"]),
+                    ("Κηφισιά", ["κηφισιά", "κηφισια", "kifisia", "kifissia"]),
+                    ("Μεταμόρφωση", ["μεταμόρφωση", "μεταμορφωση", "metamorfosi"]),
+                    ("Λυκόβρυση", ["λυκόβρυση", "λυκοβρυση", "lykovrysi"]),
+                    ("Πειραιάς", ["πειραιάς", "πειραιας", "piraeus", "χατζηκυριάκειο", "πειραϊκή"])
+                ]:
+                    if any(al in card_l for al in aliases):
+                        loc_cand = official_loc
+                        break
+
+                display_t = f"Πώληση, {ptype_cand}, {sqm_cand}τ.μ. {loc_cand}".strip()
+                if price_cand:
+                    display_t += f" | €{price_cand:,}"
+                record_rejected_listing(clean_url, reason, title=display_t, price=price_cand or 0, sqm=sqm_cand, ptype=ptype_cand, loc=loc_cand)
                 continue
 
             if clean_url not in [l['url'] for l in valid_links]:
@@ -383,7 +454,7 @@ def fetch_email_links(cfg):
     mail.logout()
     return valid_links
 
-def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
+def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""):
     """Extract attributes, compute risk, deal and fit scores, and build record dictionary"""
     # 1. Listing ID
     if portal == 'spitogatos':
@@ -393,37 +464,71 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         m = re.search(r'xe\.gr/p/([a-f0-9\-]+)', url) or re.search(r'xe\.gr/property/d/[^/]+/([a-f0-9\-]+)', url)
         lid = f"xe-{m.group(1)[:8]}" if m else f"xe-{int(time.time())}"
 
-    # Combined context for extraction (page HTML + email card text)
-    comb_text = (raw_html + " " + card_text)
+    # Extract clean text from HTML
+    clean_html_text = extract_visible_text(raw_html)
+    comb_text = (clean_html_text + " " + card_text)
 
     # Check blacklist on combined text & url
     for b in BLACKLIST_AREAS:
         if b in comb_text.lower() or b in url.lower():
             raise ValueError(f"Property {lid} rejected: Blacklisted area '{b}' detected.")
 
+    # Canonical metadata extraction from page title
+    page_title = tab_title or ""
+    if not page_title and raw_html:
+        m_t = re.search(r'<title>(.*?)</title>', raw_html, re.DOTALL | re.IGNORECASE)
+        if m_t:
+            page_title = html_lib.unescape(m_t.group(1)).strip()
+
+    extracted_ptype = None
+    extracted_sqm = None
+    extracted_loc = None
+    extracted_price = None
+
+    if portal == 'xe' and page_title:
+        m_xe = re.search(r'Πώληση κατοικίας\s*-\s*([^,]+),\s*(\d+(?:[\.,]\d+)?)\s*τ\.?μ\.?,\s*([^,]+),\s*([\d\.]+)', page_title)
+        if m_xe:
+            extracted_ptype = m_xe.group(1).strip()
+            try: extracted_sqm = int(float(m_xe.group(2).replace(',', '.')))
+            except ValueError: pass
+            extracted_loc = m_xe.group(3).strip()
+            try: extracted_price = int(m_xe.group(4).replace('.', '').replace(',', ''))
+            except ValueError: pass
+    elif portal == 'spitogatos' and page_title:
+        m_sp = re.search(r'Πώληση,\s*([^,]+),\s*(\d+(?:[\.,]\d+)?)\s*τ\.?μ\.?\s*([^,|]+)', page_title)
+        if m_sp:
+            extracted_ptype = m_sp.group(1).strip()
+            try: extracted_sqm = int(float(m_sp.group(2).replace(',', '.')))
+            except ValueError: pass
+            extracted_loc = m_sp.group(3).split(',')[0].strip()
+
     # 2. Price
-    price = 160000
-    price_matches = re.findall(r'(\d[\d\.]*)\s*€', comb_text) or re.findall(r'€\s*(\d[\d\.]*)', comb_text)
-    for pm in price_matches:
-        try:
-            val = int(pm.replace('.', '').replace(',', ''))
-            if 50000 <= val <= 2000000:
-                price = val
-                break
-        except ValueError:
-            pass
+    price = extracted_price
+    if not price:
+        price = 160000
+        price_matches = re.findall(r'(\d[\d\.]*)\s*€', comb_text) or re.findall(r'€\s*(\d[\d\.]*)', comb_text)
+        for pm in price_matches:
+            try:
+                val = int(pm.replace('.', '').replace(',', ''))
+                if 50000 <= val <= 2000000:
+                    price = val
+                    break
+            except ValueError:
+                pass
 
     # Sqm
-    sqm = 120
-    sqm_m = re.findall(r'(\d+[\.\d]*)\s*τ\.?μ\.?', comb_text)
-    for sm in sqm_m:
-        try:
-            val = int(float(sm))
-            if 80 <= val <= 600:
-                sqm = val
-                break
-        except ValueError:
-            pass
+    sqm = extracted_sqm
+    if not sqm:
+        sqm = 120
+        sqm_m = re.findall(r'(\d+[\.\d]*)\s*τ\.?μ\.?', comb_text)
+        for sm in sqm_m:
+            try:
+                val = int(float(sm))
+                if 80 <= val <= 600:
+                    sqm = val
+                    break
+            except ValueError:
+                pass
 
     # Year
     year = 1975
@@ -432,19 +537,29 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         year = int(year_m[0])
 
     # Property Type
-    card_l = card_text.lower()
-    if "διαμέρισμα" in card_l or "διαμερισμα" in card_l:
-        ptype = "Διαμέρισμα"
-    elif "μεζονέτα" in card_l or "μεζονετα" in card_l:
-        ptype = "Μεζονέτα"
-    elif "μονοκατοικία" in card_l or "μονοκατοικια" in card_l:
-        ptype = "Μονοκατοικία"
-    elif any(w in comb_text.lower() for w in ["μονοκατοικία", "μονοκατοικια", "detached"]):
-        ptype = "Μονοκατοικία"
-    elif "μεζονέτα" in comb_text.lower():
-        ptype = "Μεζονέτα"
+    if extracted_ptype:
+        if "μονοκατοικία" in extracted_ptype.lower() or "μονοκατοικια" in extracted_ptype.lower():
+            ptype = "Μονοκατοικία"
+        elif "μεζονέτα" in extracted_ptype.lower() or "μεζονετα" in extracted_ptype.lower():
+            ptype = "Μεζονέτα"
+        elif "πολυκατοικία" in extracted_ptype.lower() or "πολυκατοικια" in extracted_ptype.lower():
+            ptype = "Πολυκατοικία"
+        else:
+            ptype = "Διαμέρισμα"
     else:
-        ptype = "Διαμέρισμα"
+        card_l = card_text.lower()
+        if "διαμέρισμα" in card_l or "διαμερισμα" in card_l:
+            ptype = "Διαμέρισμα"
+        elif "μεζονέτα" in card_l or "μεζονετα" in card_l:
+            ptype = "Μεζονέτα"
+        elif "μονοκατοικία" in card_l or "μονοκατοικια" in card_l:
+            ptype = "Μονοκατοικία"
+        elif any(w in comb_text.lower() for w in ["μονοκατοικία", "μονοκατοικια", "detached"]):
+            ptype = "Μονοκατοικία"
+        elif "μεζονέτα" in comb_text.lower():
+            ptype = "Μεζονέτα"
+        else:
+            ptype = "Διαμέρισμα"
     
     # Location Matching
     loc_candidates = [
@@ -452,6 +567,9 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         ("Μαρούσι", ["μαρούσι", "μαρουσι", "marousi", "maroussi", "νέο τέρμα", "νεο τερμα", "σωρός", "σωρος"]),
         ("Χαλάνδρι", ["χαλάνδρι", "χαλανδρι", "chalandri", "ριζάρειος", "ριζαρειος"]),
         ("Ηράκλειο", ["ηράκλειο", "ηρακλειο", "irakleio", "iraklio"]),
+        ("Νέα Ιωνία", ["νέα ιωνία", "νεα ιωνια", "nea ionia", "nea iwnia", "αλσούπολη", "αλσουπολη", "καλογρέζα", "καλογρεζα", "περισσός", "περισσος", "ινέπολη", "ινεπολη"]),
+        ("Μεταμόρφωση", ["μεταμόρφωση", "μεταμορφωση", "metamorfosi"]),
+        ("Λυκόβρυση", ["λυκόβρυση", "λυκοβρυση", "lykovrysi"]),
         ("Βριλήσσια", ["βριλήσσια", "βριλησσια", "vrilissia"]),
         ("Πεύκη", ["πεύκη", "πευκη", "pefki"]),
         ("Μελίσσια", ["μελίσσια", "μελισσια", "melissia"]),
@@ -461,14 +579,31 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         ("Κερατσίνι", ["κερατσίνι", "κερατσινι", "keratsini", "αμφιάλη", "αμφιαλη", "ευγένεια", "ευγενεια"]),
         ("Δραπετσώνα", ["δραπετσώνα", "δραπετσωνα", "drapetsona", "ανάληψη"]),
         ("Ταμπούρια", ["ταμπούρια", "ταμπουρια", "tabouria", "αγία σοφία"]),
-        ("Πειραιάς (Χατζηκυριάκειο)", ["χατζηκυριάκειο", "χατζηκυριακειο", "πειραϊκή", "πειραικη", "chatzikyriakeio", "piraiki"])
+        ("Πειραιάς (Χατζηκυριάκειο)", ["χατζηκυριάκειο", "χατζηκυριακειο", "πειραϊκή", "πειραικη", "chatzikyriakeio", "piraiki"]),
+        ("Πειραιάς", ["πειραιάς", "πειραιας", "piraeus"])
     ]
-    loc = "Κερατσίνι"
-    comb_lower = comb_text.lower()
+    loc = None
+    # 1. Match extracted location from page title/url first
+    search_context = (extracted_loc or "") + " " + (url or "")
     for official_loc, aliases in loc_candidates:
-        if any(al in comb_lower for al in aliases):
+        if any(al in search_context.lower() for al in aliases):
             loc = official_loc
             break
+    # 2. Match email card text
+    if not loc and card_text:
+        for official_loc, aliases in loc_candidates:
+            if any(al in card_text.lower() for al in aliases):
+                loc = official_loc
+                break
+    # 3. Match visible page text
+    if not loc:
+        comb_lower = comb_text.lower()
+        for official_loc, aliases in loc_candidates:
+            if any(al in comb_lower for al in aliases):
+                loc = official_loc
+                break
+    if not loc:
+        loc = extracted_loc or "Κερατσίνι"
 
     title = f"Πώληση, {ptype}, {sqm}τ.μ. {loc} | {lid}"
     filename = f"{title}.html"
@@ -487,9 +622,13 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         "Χαλάνδρι": (38.0220, 23.7990),
         "Βριλήσσια": (38.0350, 23.8300),
         "Πειραιάς (Χατζηκυριάκειο)": (37.9350, 23.6350),
+        "Πειραιάς": (37.9430, 23.6470),
         "Κηφισιά": (38.0740, 23.8120),
         "Πεύκη": (38.0600, 23.7930),
-        "Μελίσσια": (38.0500, 23.8300)
+        "Μελίσσια": (38.0500, 23.8300),
+        "Νέα Ιωνία": (38.0350, 23.7550),
+        "Μεταμόρφωση": (38.0650, 23.7600),
+        "Λυκόβρυση": (38.0680, 23.7800)
     }
     lat, lon = loc_coords.get(loc, (37.9700, 23.6500))
 
@@ -502,12 +641,12 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
     turnkey_high = price + renov_high
 
     # Risk score & reasons based on area & year
-    if loc in ["Μαρούσι", "Αγία Παρασκευή", "Χαλάνδρι", "Ηράκλειο", "Βριλήσσια", "Κηφισιά", "Πεύκη", "Μελίσσια"]:
+    if loc in ["Μαρούσι", "Αγία Παρασκευή", "Χαλάνδρι", "Ηράκλειο", "Βριλήσσια", "Κηφισιά", "Πεύκη", "Μελίσσια", "Νέα Ιωνία", "Μεταμόρφωση", "Λυκόβρυση"]:
         risk_score = 2.5
         risk_level = "Χαμηλό Ρίσκο"
         risk_color = "#059669"
         crime_risk = f"Χαμηλό στην ευρύτερη περιοχή {loc}."
-    elif loc in ["Πειραιάς (Χατζηκυριάκειο)"]:
+    elif loc in ["Πειραιάς (Χατζηκυριάκειο)", "Πειραιάς"]:
         risk_score = 3.2
         risk_level = "Χαμηλό Ρίσκο"
         risk_color = "#059669"
@@ -532,16 +671,20 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text=""):
         has_parking = True
         parking_info = "Θέση Στάθμευσης"
     elif raw_html:
-        clean_html = re.sub(r'<footer.*?</footer>', '', raw_html, flags=re.DOTALL)
-        clean_html = re.sub(r'enoikiaseis-parking|poliseis-parking', '', clean_html)
-        if re.search(r'(?:θέση\s*στάθμευσης|κλειστό\s*parking|υπαίθριο\s*parking|θέσεις\s*στάθμευσης)\s*:\s*[1-9]', clean_html, re.I):
+        clean_html = re.sub(r'<(footer|nav|header).*?</\1>', ' ', raw_html, flags=re.DOTALL | re.IGNORECASE)
+        clean_html = re.sub(r'enoikiaseis-parking|poliseis-parking', ' ', clean_html)
+        if re.search(r'(?:θέση\s*στάθμευσης|κλειστό\s*parking|υπαίθριο\s*parking|θέσεις\s*στάθμευσης|parking)\s*:\s*(?:[1-9]|Ναι|Δική|Υπαίθριο|Κλειστό|Πυλωτής)', clean_html, re.I):
+            has_parking = True
+            parking_info = "Θέση Στάθμευσης"
+        elif any(k in clean_html.lower() for k in ["αποκλειστική θέση στάθμευσης", "αποκλειστικη θεση σταθμευσης", "δική του αποκλειστική θέση", "δικη του αποκλειστικη θεση"]):
             has_parking = True
             parking_info = "Θέση Στάθμευσης"
 
     # Evaluation filter: Reject auctions and no parking in difficult areas
-    rej, rej_why = is_rejected(comb_text, url, price=price, has_parking=has_parking, property_type=ptype, location=loc)
+    rej, rej_why = is_rejected(comb_text, url, price=price, has_parking=has_parking, property_type=ptype, location=loc, title=title)
     if rej:
-        record_rejected_listing(url, rej_why, title=title, price=price, sqm=sqm, ptype=ptype, loc=loc)
+        display_title = f"Πώληση, {ptype}, {sqm}τ.μ. {loc} | €{price:,}"
+        record_rejected_listing(url, rej_why, title=display_title, price=price, sqm=sqm, ptype=ptype, loc=loc)
         raise ValueError(f"Property {lid} rejected: {rej_why}")
 
     record = {
@@ -859,7 +1002,7 @@ def sync_rejected_to_index():
 def git_commit_and_push(new_count=0, msg=None):
     """Stages changes, commits with meaningful message and pushes to origin main"""
     try:
-        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html"], cwd=base_dir, check=True)
+        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html", "auto_pipeline.py", "user_fit_budget_engine.py", "street_parking_security_intel.py"], cwd=base_dir, check=True)
         # Check if there are staged changes
         st_proc = subprocess.run(["git", "diff", "--staged", "--quiet"], cwd=base_dir)
         if st_proc.returncode == 0:
@@ -914,7 +1057,7 @@ def run_pipeline():
             logging.warning(f"Safari fetch failed for {url}: {e}. Proceeding with email card data.")
 
         try:
-            record = parse_and_evaluate_listing(portal, url, html, card_text=item.get('text', ''))
+            record = parse_and_evaluate_listing(portal, url, html, card_text=item.get('text', ''), tab_title=title if 'title' in locals() else '')
             
             # Download thumbnail if found
             lid = record['listing_id']
