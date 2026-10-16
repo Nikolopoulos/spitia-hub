@@ -759,7 +759,7 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 24 Ενεργά Ακίνητα &bull; 97 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 24 Ενεργά Ακίνητα &bull; 98 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
@@ -769,7 +769,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">97</b>
+                    <b style="color:#ef4444;">98</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -790,7 +790,7 @@
                     ✅ Εγκεκριμένα Ακίνητα (24)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (97)
+                    🚫 Απορριφθέντα (98)
                 </button>
             </div>
 
@@ -833,7 +833,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (97)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (98)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -872,6 +872,16 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "xe-27e7f306",
+    "title": "Πώληση, Διαμέρισμα, 115τ.μ. | €145,000",
+    "location": "115τ.μ.",
+    "type": "Διαμέρισμα",
+    "price": 145000,
+    "sqm": 115,
+    "url": "https://www.xe.gr/p/27e7f306-5308-47f8-a107-36980f1da5fb",
+    "reason": "Μη επιλέξιμη περιοχή (αγία βαρβάρα)"
+  },
   {
     "listing_id": "1121088019",
     "title": "Πώληση, Διαμέρισμα, 119τ.μ. Κερατσίνι | €160,000",
@@ -3073,6 +3083,47 @@
     "beds": 2,
     "is_penthouse": false,
     "thumb": "thumbs/xe-311f6fc9.jpg",
+    "street_parking_ease": "DIFFICULT"
+  },
+  {
+    "filename": "Πώληση, Μονοκατοικία, 140τ.μ. Κερατσίνι | 1121088568.html",
+    "listing_id": "1121088568",
+    "title": "Πώληση, Μονοκατοικία, 140τ.μ. Κερατσίνι | 1121088568",
+    "location": "140τ.μ. Κερατσίνι",
+    "type": "Μονοκατοικία",
+    "price": 160000.0,
+    "sqm": 140.0,
+    "year": 1980,
+    "plot_sqm": 140.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 49000.0,
+    "renov_high": 77000.0,
+    "turnkey_low": 209000.0,
+    "turnkey_high": 237000.0,
+    "html_report": "property-1121088568.html",
+    "spitogatos_url": "https://www.spitogatos.gr/aggelia/1121088568",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-16 17:20:11",
+    "renov_diy": 58800.0,
+    "turnkey_diy": 218800.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 56.0,
+    "fit_grade": "B",
+    "fit_desc": "Μέτριο Ταίριασμα &bull; Απαιτεί συμβιβασμούς σε δάνειο, χώρους ή ρίσκο",
+    "fit_color": "#d97706",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 3,
+    "is_penthouse": true,
+    "thumb": "thumbs/1121088568.jpg",
     "street_parking_ease": "DIFFICULT"
   }
 ];
