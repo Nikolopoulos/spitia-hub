@@ -759,7 +759,7 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 24 Ενεργά Ακίνητα &bull; 106 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 24 Ενεργά Ακίνητα &bull; 110 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
@@ -769,7 +769,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">106</b>
+                    <b style="color:#ef4444;">110</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -790,7 +790,7 @@
                     ✅ Εγκεκριμένα Ακίνητα (24)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (106)
+                    🚫 Απορριφθέντα (110)
                 </button>
             </div>
 
@@ -833,7 +833,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (106)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (110)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -872,6 +872,46 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "xe-3f8028e1",
+    "title": "Πώληση, Διαμέρισμα, 160τ.μ. Κερατσίνι | €170,000",
+    "location": "160τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 170000,
+    "sqm": 160,
+    "url": "https://www.xe.gr/p/3f8028e1-a475-4e39-957b-868a7b2a3b25",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-d457608a",
+    "title": "Πώληση, Μονοκατοικία, 124τ.μ. Κερατσίνι | €160,000",
+    "location": "124τ.μ. Κερατσίνι",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 124,
+    "url": "https://www.xe.gr/p/d457608a-be90-49e2-9844-6d56109dacb9",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Κερατσίνι)"
+  },
+  {
+    "listing_id": "xe-3d5d8bc0",
+    "title": "Πώληση, Διαμέρισμα, 107τ.μ. Κερατσίνι | €175,000",
+    "location": "107τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 175000,
+    "sqm": 107,
+    "url": "https://www.xe.gr/p/3d5d8bc0-7319-4033-ba95-57498f189ccc",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "xe-cf580d2b",
+    "title": "Πώληση, Διαμέρισμα, 92τ.μ. Κερατσίνι | €130,000",
+    "location": "92τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 130000,
+    "sqm": 92,
+    "url": "https://www.xe.gr/p/cf580d2b-b11c-43b8-980a-ac5d1221a0c9",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
   {
     "listing_id": "xe-141d97e6",
     "title": "Πώληση, Μονοκατοικία, 140τ.μ. Πειραιάς | €185,000",
@@ -3204,6 +3244,47 @@
     "beds": 3,
     "is_penthouse": true,
     "thumb": "thumbs/1121088568.jpg",
+    "street_parking_ease": "DIFFICULT"
+  },
+  {
+    "filename": "Πώληση, Μεζονέτα, 94τ.μ. Κερατσίνι | xe-c634a13e.html",
+    "listing_id": "xe-c634a13e",
+    "title": "Πώληση, Μεζονέτα, 94τ.μ. Κερατσίνι | xe-c634a13e",
+    "location": "94τ.μ. Κερατσίνι",
+    "type": "Μεζονέτα",
+    "price": 160000.0,
+    "sqm": 94.0,
+    "year": 2000,
+    "plot_sqm": 94.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 32900.0,
+    "renov_high": 51700.0,
+    "turnkey_low": 192900.0,
+    "turnkey_high": 211700.0,
+    "html_report": "property-xe-c634a13e.html",
+    "spitogatos_url": "https://www.xe.gr/p/c634a13e-f5c5-4348-8d82-8d8a26bae9a0",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-17 13:50:10",
+    "renov_diy": 39480.0,
+    "turnkey_diy": 199480.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 63.0,
+    "fit_grade": "B",
+    "fit_desc": "Μέτριο Ταίριασμα &bull; Απαιτεί συμβιβασμούς σε δάνειο, χώρους ή ρίσκο",
+    "fit_color": "#d97706",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 1,
+    "beds": 2,
+    "is_penthouse": true,
+    "thumb": "thumbs/xe-c634a13e.jpg",
     "street_parking_ease": "DIFFICULT"
   }
 ];
