@@ -96,15 +96,23 @@ def generate_rich_property_html(record, thumbs_map=None):
     risk_reasons_html = "".join([f"<li style='margin-bottom:8px;'>{r}</li>" for r in risk_reasons])
 
     # Gallery image
-    thumb_path = (thumbs_map or {}).get(lid, '')
+    thumb_path = (thumbs_map or {}).get(lid, '') or record.get('thumb', '') or f"thumbs/{lid}.jpg"
+    thumb_file = os.path.basename(thumb_path) if thumb_path else f"{lid}.jpg"
+    remote_img = record.get('image_url', '')
+    
+    # Check if local file exists or remote img exists
+    local_exists = os.path.exists(thumb_path) or os.path.exists(f"thumbs/{thumb_file}") or os.path.exists(os.path.join(os.path.dirname(__file__), 'thumbs', thumb_file))
+    
     gallery_html = ""
-    if thumb_path and os.path.exists(thumb_path):
+    if local_exists or remote_img:
+        img_src = f"thumbs/{thumb_file}" if local_exists else remote_img
+        onerror_attr = f' onerror="this.onerror=null;this.src=\'{remote_img}\';"' if (remote_img and local_exists) else ''
         gallery_html = f'''
         <div class="card">
             <h2>📸 Φωτογραφίες Ακινήτου</h2>
             <div class="gallery">
                 <div class="photo-card">
-                    <img src="thumbs/{os.path.basename(thumb_path)}" alt="{title}" loading="lazy" />
+                    <img src="{img_src}"{onerror_attr} alt="{title}" loading="lazy" />
                     <p class="photo-cap">Πρόσοψη / Κύρια όψη ακινήτου</p>
                 </div>
             </div>

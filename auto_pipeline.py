@@ -949,13 +949,21 @@ def update_csv_and_index(new_records):
                 "wc": int(nr.get("wc", 1)),
                 "beds": int(nr.get("beds", 3)),
                 "is_penthouse": nr.get("is_penthouse") == "True",
-                "thumb": nr.get("thumb", ""),
+                "thumb": nr.get("thumb", f"thumbs/{nr['listing_id']}.jpg" if os.path.exists(os.path.join(base_dir, 'thumbs', f"{nr['listing_id']}.jpg")) else ""),
+                "image_url": nr.get("image_url", ""),
                 "street_parking_ease": nr.get("street_parking_ease", "PRIVATE" if has_p else "DIFFICULT")
             }
 
         new_props_list = list(prop_map.values())
         new_json_str = json.dumps(new_props_list, ensure_ascii=False, indent=2)
         idx_content = idx_content[:pos_data + 23] + new_json_str + idx_content[end_data + 1:]
+
+        # Update approved property badge counts
+        active_count = len(new_props_list)
+        idx_content = re.sub(r'<span>Εγκεκριμένα:</span>\s*<b[^>]*>\s*\d+\s*</b>', f'<span>Εγκεκριμένα:</span>\n                    <b>{active_count}</b>', idx_content)
+        idx_content = re.sub(r'Εγκεκριμένα\s*Ακίνητα\s*\(\d+\)', f'Εγκεκριμένα Ακίνητα ({active_count})', idx_content)
+        idx_content = re.sub(r'Λίστα\s*Ακινήτων\s*\(\d+\)', f'Λίστα Ακινήτων ({active_count})', idx_content)
+        idx_content = re.sub(r'\d+\s*Ενεργά\s*Ακίνητα', f'{active_count} Ενεργά Ακίνητα', idx_content)
 
         with open(index_path, 'w', encoding='utf-8') as f:
             f.write(idx_content)
@@ -991,6 +999,18 @@ def sync_rejected_to_index():
         idx_content = re.sub(r'Απορριφθέντα\s*Ακίνητα\s*\(\d+\)', f'Απορριφθέντα Ακίνητα ({rej_count})', idx_content)
         idx_content = re.sub(r'&bull;\s*\d+\s*Απορριφθέντα', f'&bull; {rej_count} Απορριφθέντα', idx_content)
 
+        # Also update approved property count from propertiesData
+        active_m = re.search(r'const propertiesData = (\[.*?\]);', idx_content, re.DOTALL)
+        if active_m:
+            try:
+                active_count = len(json.loads(active_m.group(1)))
+                idx_content = re.sub(r'<span>Εγκεκριμένα:</span>\s*<b[^>]*>\s*\d+\s*</b>', f'<span>Εγκεκριμένα:</span>\n                    <b>{active_count}</b>', idx_content)
+                idx_content = re.sub(r'Εγκεκριμένα\s*Ακίνητα\s*\(\d+\)', f'Εγκεκριμένα Ακίνητα ({active_count})', idx_content)
+                idx_content = re.sub(r'Λίστα\s*Ακινήτων\s*\(\d+\)', f'Λίστα Ακινήτων ({active_count})', idx_content)
+                idx_content = re.sub(r'\d+\s*Ενεργά\s*Ακίνητα', f'{active_count} Ενεργά Ακίνητα', idx_content)
+            except Exception:
+                pass
+
         with open(index_path, 'w', encoding='utf-8') as f:
             f.write(idx_content)
         logging.info(f"Synchronized index.html with {rej_count} rejected properties.")
@@ -1002,7 +1022,7 @@ def sync_rejected_to_index():
 def git_commit_and_push(new_count=0, msg=None):
     """Stages changes, commits with meaningful message and pushes to origin main"""
     try:
-        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html", "auto_pipeline.py", "user_fit_budget_engine.py", "street_parking_security_intel.py"], cwd=base_dir, check=True)
+        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html", "thumbs/*.jpg", "auto_pipeline.py", "rich_report_generator.py", "user_fit_budget_engine.py", "street_parking_security_intel.py"], cwd=base_dir, check=True)
         # Check if there are staged changes
         st_proc = subprocess.run(["git", "diff", "--staged", "--quiet"], cwd=base_dir)
         if st_proc.returncode == 0:
@@ -1059,23 +1079,38 @@ def run_pipeline():
         try:
             record = parse_and_evaluate_listing(portal, url, html, card_text=item.get('text', ''), tab_title=title if 'title' in locals() else '')
             
-            # Download thumbnail if found
+            # Download thumbnail if found (from email or fallback to page og:image / HTML)
             lid = record['listing_id']
             img_url = item.get('img_url')
+            if not img_url and html:
+                m_og = re.search(r'<meta[^>]+property=[\"\']og:image[\"\'][^>]+content=[\"\']([^\"\']+)[\"\']', html, re.I) or re.search(r'<meta[^>]+content=[\"\']([^\"\']+)[\"\'][^>]+property=[\"\']og:image[\"\']', html, re.I)
+                if m_og:
+                    img_url = html_lib.unescape(m_og.group(1)).strip()
+                if not img_url:
+                    all_imgs = re.findall(r'https?://[^\s\"\'<>]+\.(?:jpg|jpeg|png|webp)', html)
+                    for im in all_imgs:
+                        if ('blob.cdn.xe.gr' in im or 'images.spitogatos.gr' in im) and 'logo' not in im and 'icon' not in im:
+                            img_url = im
+                            break
+
             thumbs_map = {}
             if img_url:
+                record['image_url'] = img_url
                 thumbs_dir = os.path.join(base_dir, 'thumbs')
                 os.makedirs(thumbs_dir, exist_ok=True)
                 thumb_file = f"{lid}.jpg"
                 thumb_target = os.path.join(thumbs_dir, thumb_file)
                 try:
-                    req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
-                    with urllib.request.urlopen(req, timeout=5) as resp, open(thumb_target, 'wb') as out:
+                    req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'})
+                    with urllib.request.urlopen(req, timeout=8) as resp, open(thumb_target, 'wb') as out:
                         out.write(resp.read())
                     record['thumb'] = f"thumbs/{thumb_file}"
                     thumbs_map[lid] = f"thumbs/{thumb_file}"
                 except Exception as ex:
                     logging.warning(f"Could not download thumbnail for {lid}: {ex}")
+            elif os.path.exists(os.path.join(base_dir, 'thumbs', f"{lid}.jpg")):
+                record['thumb'] = f"thumbs/{lid}.jpg"
+                thumbs_map[lid] = f"thumbs/{lid}.jpg"
 
             # Generate full rich report matching master standards
             rich_html = generate_rich_property_html(record, thumbs_map)

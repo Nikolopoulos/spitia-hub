@@ -759,13 +759,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 24 Ενεργά Ακίνητα &bull; 161 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 39 Ενεργά Ακίνητα &bull; 161 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b>24</b>
+                    <b>39</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
@@ -787,7 +787,7 @@
             <!-- Main View Tabs (Eligible vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα Ακίνητα (24)
+                    ✅ Εγκεκριμένα Ακίνητα (39)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
                     🚫 Απορριφθέντα (161)
@@ -796,7 +796,7 @@
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα Ακινήτων (30)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα Ακινήτων (39)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -3589,7 +3589,8 @@
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-9eae5ff3.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2026/09/17/da740e81-0888-40e0-a0b4-5c831b79367e/da740e81-0888-40e0-a0b4-5c831b79367e-source.jpg?width=640&height=480&format=jpg",
     "street_parking_ease": "PRIVATE"
   },
   {
@@ -4374,9 +4375,12 @@
                     parkText = '🚗 Δύσκολο / Χωρίς Parking';
                 }
 
+                const imgSrc = p.thumb || p.image_url || '';
+                const fallbackAttr = p.image_url ? ` onerror="this.onerror=null;if(this.src!=='${p.image_url}')this.src='${p.image_url}';"` : '';
+
                 card.innerHTML = `
                     <div class="card-thumb-col">
-                        ${p.thumb ? `<img src="${p.thumb}" alt="${p.title}" loading="lazy" />` : '<div style="width:100%;height:100%;background:#cbd5e1;"></div>'}
+                        ${imgSrc ? `<img src="${imgSrc}"${fallbackAttr} alt="${p.title}" loading="lazy" />` : '<div style="width:100%;height:100%;background:#cbd5e1;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:1.8rem;">🏠</div>'}
                         <span class="card-badge-type">${p.type}</span>
                         <span class="card-badge-year">${p.year}</span>
                     </div>
@@ -4508,7 +4512,39 @@
             updateView();
         });
 
+        function updateHeaderCounts() {
+            const elCount = typeof propertiesData !== 'undefined' ? propertiesData.length : 0;
+            const rejCount = typeof rejectedData !== 'undefined' ? rejectedData.length : 0;
+
+            const statBadges = document.querySelectorAll('.header-stats-strip .stat-badge');
+            if (statBadges.length > 0) {
+                const b = statBadges[0].querySelector('b');
+                if (b) b.textContent = elCount;
+            }
+            if (statBadges.length > 1) {
+                const bRej = statBadges[1].querySelector('b');
+                if (bRej) bRej.textContent = rejCount;
+            }
+            const tabEl = document.getElementById('tab-main-eligible');
+            if (tabEl) tabEl.textContent = `✅ Εγκεκριμένα Ακίνητα (${elCount})`;
+
+            const tabRej = document.getElementById('tab-main-rejected');
+            if (tabRej) tabRej.textContent = `🚫 Απορριφθέντα (${rejCount})`;
+
+            const tabMobile = document.getElementById('tab-btn-list');
+            if (tabMobile) tabMobile.textContent = `📋 Λίστα Ακινήτων (${elCount})`;
+
+            const rejTitle = document.querySelector('#rejected-pane h2');
+            if (rejTitle) rejTitle.textContent = `🚫 Απορριφθέντα Ακίνητα (${rejCount})`;
+
+            const brandSubtitle = document.querySelector('.header-brand div div');
+            if (brandSubtitle) {
+                brandSubtitle.innerHTML = `Custom Engineering & User Preferences Engine &bull; ${elCount} Ενεργά Ακίνητα &bull; ${rejCount} Απορριφθέντα`;
+            }
+        }
+
         // Initial Boot
+        updateHeaderCounts();
         updateView();
     </script>
 </body>
