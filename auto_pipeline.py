@@ -26,6 +26,7 @@ from rich_report_generator import generate_rich_property_html
 base_dir = '/Volumes/Terataki/projects/spitia'
 csv_path = os.path.join(base_dir, 'webarchives', 'processed_listings.csv')
 rejected_json_path = os.path.join(base_dir, 'webarchives', 'rejected_listings.json')
+archived_json_path = os.path.join(base_dir, 'webarchives', 'archived_listings.json')
 index_path = os.path.join(base_dir, 'index.html')
 config_path = os.path.join(base_dir, 'config.json')
 status_path = os.path.join(base_dir, 'alert_status.json')
@@ -221,11 +222,26 @@ class EmailHTMLParser(HTMLParser):
             self.current_text = []
 
 def get_existing_listing_ids():
-    if not os.path.exists(csv_path):
-        return set()
-    with open(csv_path, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        return {r['listing_id'] for r in reader if 'listing_id' in r}
+    ids = set()
+    if os.path.exists(csv_path):
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            ids.update({r['listing_id'] for r in reader if 'listing_id' in r})
+    if os.path.exists(archived_json_path):
+        try:
+            with open(archived_json_path, 'r', encoding='utf-8') as af:
+                arch_list = json.load(af)
+                ids.update({str(r.get('listing_id')) for r in arch_list if 'listing_id' in r})
+        except Exception:
+            pass
+    if os.path.exists(rejected_json_path):
+        try:
+            with open(rejected_json_path, 'r', encoding='utf-8') as rf:
+                rej_list = json.load(rf)
+                ids.update({str(r.get('listing_id')) for r in rej_list if 'listing_id' in r})
+        except Exception:
+            pass
+    return ids
 
 AUCTION_KEYWORDS = [
     "πλειστηριασμ", "πλειστηριαζ", "εκπλειστηριασμ", "eauction", "e-auction",
@@ -287,6 +303,8 @@ def is_rejected(text, url, price=None, has_parking=None, property_type=None, loc
     # 4. Price threshold
     if price is not None and price < 50000:
         return True, f"Τιμή €{price:,} < €50k (πιθανή ενοικίαση / ποσοστό)"
+    if price is not None and price > PREFERENCES.get("max_acceptable_price_loan", 240000):
+        return True, f"Υπέρβαση Budget (Τιμή €{price:,} > €{PREFERENCES.get('max_acceptable_price_loan', 240000):,})"
 
     # 5. Min SQM (supports decimal formatting like 100.0 τ.μ. from XE)
     sqm_m = re.findall(r'(\d+(?:[\.,]\d+)?)\s*(?:τ\.?μ\.?|sqm)', comb)
@@ -999,21 +1017,32 @@ def sync_rejected_to_index():
         idx_content = re.sub(r'Απορριφθέντα\s*Ακίνητα\s*\(\d+\)', f'Απορριφθέντα Ακίνητα ({rej_count})', idx_content)
         idx_content = re.sub(r'&bull;\s*\d+\s*Απορριφθέντα', f'&bull; {rej_count} Απορριφθέντα', idx_content)
 
-        # Also update approved property count from propertiesData
+        # Also update approved property count from propertiesData and archived count
         active_m = re.search(r'const propertiesData = (\[.*?\]);', idx_content, re.DOTALL)
         if active_m:
             try:
                 active_count = len(json.loads(active_m.group(1)))
-                idx_content = re.sub(r'<span>Εγκεκριμένα:</span>\s*<b[^>]*>\s*\d+\s*</b>', f'<span>Εγκεκριμένα:</span>\n                    <b>{active_count}</b>', idx_content)
-                idx_content = re.sub(r'Εγκεκριμένα\s*Ακίνητα\s*\(\d+\)', f'Εγκεκριμένα Ακίνητα ({active_count})', idx_content)
-                idx_content = re.sub(r'Λίστα\s*Ακινήτων\s*\(\d+\)', f'Λίστα Ακινήτων ({active_count})', idx_content)
+                idx_content = re.sub(r'<span>Εγκεκριμένα:</span>\s*<b[^>]*>\s*\d+\s*</b>', f'<span>Εγκεκριμένα:</span>\n                    <b id="stat-approved-count">{active_count}</b>', idx_content)
+                idx_content = re.sub(r'Εγκεκριμένα\s*(?:Ακίνητα)?\s*\(\d+\)', f'Εγκεκριμένα ({active_count})', idx_content)
+                idx_content = re.sub(r'Λίστα\s*(?:Ακινήτων)?\s*\(\d+\)', f'Λίστα ({active_count})', idx_content)
                 idx_content = re.sub(r'\d+\s*Ενεργά\s*Ακίνητα', f'{active_count} Ενεργά Ακίνητα', idx_content)
+            except Exception:
+                pass
+
+        arch_count = 0
+        if os.path.exists(archived_json_path):
+            try:
+                with open(archived_json_path, 'r', encoding='utf-8') as af:
+                    arch_count = len(json.load(af))
+                idx_content = re.sub(r'Παλιά\s*Αποθηκευμένα\s*\(\d+\)', f'Παλιά Αποθηκευμένα ({arch_count})', idx_content)
+                idx_content = re.sub(r'>\s*📁\s*Παλιά:.*?<b[^>]*>\s*\d+\s*</b>', f'>📁 Παλιά:</span>\n                    <b id="stat-archived-count" style="color:#f59e0b;">{arch_count}</b>', idx_content, flags=re.DOTALL)
+                idx_content = re.sub(r'&bull;\s*\d+\s*Παλιά', f'&bull; {arch_count} Παλιά', idx_content)
             except Exception:
                 pass
 
         with open(index_path, 'w', encoding='utf-8') as f:
             f.write(idx_content)
-        logging.info(f"Synchronized index.html with {rej_count} rejected properties.")
+        logging.info(f"Synchronized index.html with {rej_count} rejected and {arch_count} archived properties.")
         return True
     except Exception as e:
         logging.error(f"Error syncing rejectedData to index.html: {e}")
@@ -1022,7 +1051,7 @@ def sync_rejected_to_index():
 def git_commit_and_push(new_count=0, msg=None):
     """Stages changes, commits with meaningful message and pushes to origin main"""
     try:
-        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/rejected_listings.json", "index.html", "property-*.html", "thumbs/*.jpg", "auto_pipeline.py", "rich_report_generator.py", "user_fit_budget_engine.py", "street_parking_security_intel.py"], cwd=base_dir, check=True)
+        subprocess.run(["git", "add", "webarchives/processed_listings.csv", "webarchives/archived_listings.json", "webarchives/rejected_listings.json", "index.html", "property-*.html", "thumbs/*.jpg", "auto_pipeline.py", "rich_report_generator.py", "user_fit_budget_engine.py", "street_parking_security_intel.py"], cwd=base_dir, check=True)
         # Check if there are staged changes
         st_proc = subprocess.run(["git", "diff", "--staged", "--quiet"], cwd=base_dir)
         if st_proc.returncode == 0:
