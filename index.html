@@ -763,7 +763,7 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 12 Ενεργά Ακίνητα &bull; 27 Παλιά &bull; 161 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 12 Ενεργά Ακίνητα &bull; 27 Παλιά &bull; 163 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">161</b>
+                    <b style="color:#ef4444;">163</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -801,7 +801,7 @@
                     📁 Παλιά Αποθηκευμένα (27)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (161)
+                    🚫 Απορριφθέντα (163)
                 </button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (161)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (163)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,26 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "1121127856",
+    "title": "Πώληση, Διαμέρισμα, 110τ.μ. Κορυδαλλός | €160,000",
+    "location": "110τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 160000,
+    "sqm": 110,
+    "url": "https://www.spitogatos.gr/aggelia/1121127856",
+    "reason": "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
+  },
+  {
+    "listing_id": "1121127864",
+    "title": "Πώληση, Μονοκατοικία, 200τ.μ. Κηφισιά | €160,000",
+    "location": "200τ.μ. Κηφισιά",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 200,
+    "url": "https://www.spitogatos.gr/aggelia/1121127864",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Κηφισιά)"
+  },
   {
     "listing_id": "xe-5342a40a",
     "title": "Πώληση, Διαμέρισμα, 120τ.μ. Νίκαια | €110,000",
@@ -1735,13 +1755,13 @@
   },
   {
     "listing_id": "1121076832",
-    "title": "Πώληση, Διαμέρισμα, 105τ.μ. Κερατσίνι | €160,000",
+    "title": "Πώληση, Διαμέρισμα, 105τ.μ. | €3,000",
     "location": "105τ.μ. Κερατσίνι",
     "type": "Διαμέρισμα",
-    "price": 160000,
+    "price": 3000,
     "sqm": 105,
     "url": "https://www.spitogatos.gr/aggelia/1121076832",
-    "reason": "No private parking in apartment (difficult street parking)"
+    "reason": "Τιμή €3,000 < €50k (πιθανή ενοικίαση / ποσοστό)"
   },
   {
     "listing_id": "xe-2cd13d93",
