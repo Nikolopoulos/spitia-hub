@@ -191,3 +191,76 @@ def evaluate_user_fit_with_budget_and_risk(p):
         color = "#dc2626"
 
     return final_score, grade, desc, color, breakdown, dealbreakers
+
+def calculate_enfia(sqm, location, year, ptype="Διαμέρισμα", is_penthouse=False):
+    """
+    Calculates Greek ENFIA property tax based on Law 4916/2022
+    """
+    loc_l = (location or "").lower()
+    if any(k in loc_l for k in ['κηφισι', 'kifisia', 'εκάλη', 'ekali', 'ψυχικ']):
+        base_rate = 4.60
+    elif any(k in loc_l for k in ['μαρούσι', 'marousi', 'ηράκλειο', 'irakleio', 'γέρακας', 'gerakas', 'χαλάνδρι', 'δροσι', 'drosia']):
+        base_rate = 3.70
+    elif any(k in loc_l for k in ['κορυδαλλ', 'korydallos', 'νίκαια', 'nikaia', 'πειραι', 'piraeus', 'καμίνια', 'kaminia']):
+        base_rate = 2.80
+    else:
+        base_rate = 2.80
+        
+    current_year = 2026
+    try:
+        yr = int(year) if year and str(year).isdigit() and int(year) > 1900 else 1980
+    except Exception:
+        yr = 1980
+    age = max(0, current_year - yr)
+    
+    if age >= 26:
+        sp = 1.00
+    elif age >= 20:
+        sp = 1.05
+    elif age >= 15:
+        sp = 1.10
+    elif age >= 10:
+        sp = 1.15
+    elif age >= 5:
+        sp = 1.20
+    else:
+        sp = 1.25
+        
+    ptype_l = (ptype or "").lower()
+    is_p = is_penthouse is True or str(is_penthouse).lower() == 'true' or 'ρετιρέ' in loc_l or 'ρετιρε' in ptype_l
+    if 'μονοκατοικία' in ptype_l or 'μονοκατοικια' in ptype_l or 'detached' in ptype_l:
+        so = 1.02
+    elif is_p:
+        so = 1.02
+    elif 'μεζονέτα' in ptype_l or 'μεζονετα' in ptype_l:
+        so = 1.01
+    else:
+        so = 1.01
+        
+    spr = 1.02 if ('μονοκατοικ' in ptype_l or 'μεζονετ' in ptype_l or is_p) else 1.01
+    main_tax = float(sqm or 100) * base_rate * sp * so * spr
+    return round(main_tax)
+
+def calculate_mortgage_plan(total_cost, user_cash=USER_CASH, annual_rate=0.0372):
+    """
+    Calculates required loan and monthly installments for 5, 10, 15, 20, and 30 years at 3.72% interest
+    """
+    loan_needed = max(0.0, float(total_cost) - float(user_cash))
+    if loan_needed <= 0:
+        return {
+            'loan_needed': 0,
+            'installments': {5: 0, 10: 0, 15: 0, 20: 0, 30: 0}
+        }
+    
+    monthly_rate = annual_rate / 12.0
+    installments = {}
+    for years in [5, 10, 15, 20, 30]:
+        n = years * 12
+        m = loan_needed * (monthly_rate * ((1.0 + monthly_rate) ** n)) / (((1.0 + monthly_rate) ** n) - 1.0)
+        installments[years] = round(m)
+        
+    return {
+        'loan_needed': round(loan_needed),
+        'installments': installments
+    }
+

@@ -6,6 +6,7 @@ viewing guide checklists, user fit, risk breakdown, and image galleries.
 """
 
 import os, json, csv, re, base64
+from user_fit_budget_engine import calculate_enfia, calculate_mortgage_plan, USER_CASH
 
 def generate_rich_property_html(record, thumbs_map=None):
     """
@@ -68,6 +69,42 @@ def generate_rich_property_html(record, thumbs_map=None):
     turnkey_cash = price + transfer_fees + tot_cash
     turnkey_low = price + transfer_fees + tot_low
     turnkey_high = price + transfer_fees + tot_high
+
+    # ENFIA & Mortgage calculations
+    is_p = record.get('is_penthouse', False)
+    enfia_annual = calculate_enfia(sqm, loc, year, ptype, is_p)
+    enfia_monthly = round(enfia_annual / 12)
+
+    plan_cash = calculate_mortgage_plan(turnkey_cash, USER_CASH, 0.0372)
+    plan_low = calculate_mortgage_plan(turnkey_low, USER_CASH, 0.0372)
+    plan_high = calculate_mortgage_plan(turnkey_high, USER_CASH, 0.0372)
+
+    def format_plan_row(plan, name, turnkey_val):
+        loan = plan['loan_needed']
+        loan_str = 'Χωρίς Δάνειο (€0)' if loan == 0 else f'€{loan:,}'
+        loan_color = '#059669' if loan == 0 else '#0284c7'
+        equity = min(turnkey_val, USER_CASH)
+        m5 = f"€{plan['installments'][5]:,}/μ" if loan > 0 else "€0"
+        m10 = f"€{plan['installments'][10]:,}/μ" if loan > 0 else "€0"
+        m15 = f"€{plan['installments'][15]:,}/μ" if loan > 0 else "€0"
+        m20 = f"€{plan['installments'][20]:,}/μ" if loan > 0 else "€0"
+        m30 = f"€{plan['installments'][30]:,}/μ" if loan > 0 else "€0"
+        return f"""
+                    <tr>
+                        <td><strong>{name}</strong></td>
+                        <td style="color:#047857; font-weight:700;">€{turnkey_val:,}</td>
+                        <td>€{equity:,}</td>
+                        <td><b style="color:{loan_color};">{loan_str}</b></td>
+                        <td>{m5}</td>
+                        <td>{m10}</td>
+                        <td>{m15}</td>
+                        <td>{m20}</td>
+                        <td><strong style="color:#047857;">{m30}</strong></td>
+                    </tr>"""
+
+    mortgage_rows_html = format_plan_row(plan_cash, "💵 Μαύρα / Friends", turnkey_cash) + \
+                         format_plan_row(plan_low, "📋 Standard Low", turnkey_low) + \
+                         format_plan_row(plan_high, "💎 High-End 2026", turnkey_high)
 
     # Fit & Risk
     fit_score = record.get('fit_score', '80.0')
@@ -250,6 +287,10 @@ def generate_rich_property_html(record, thumbs_map=None):
                 <div class="stat-val">€{turnkey_high:,}</div>
                 <div class="stat-lbl">Turnkey (High-End 2026)</div>
             </div>
+            <div class="stat-card" style="border-top:3px solid #0284c7;">
+                <div class="stat-val" style="color:#0284c7;">€{enfia_annual:,}</div>
+                <div class="stat-lbl">🏛️ Ετήσιος ΕΝΦΙΑ (~€{enfia_monthly}/μ)</div>
+            </div>
         </div>
 
         <!-- User Fit Match Card -->
@@ -409,6 +450,35 @@ def generate_rich_property_html(record, thumbs_map=None):
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #0284c7;">
+            <h2>🏦 Χρηματοδότηση, Στεγαστικό Δάνειο & Μηνιαίες Δόσεις (Επιτόκιο 3,72% &bull; Budget €{USER_CASH:,})</h2>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-top:4px;">
+                Υπολογισμός μηνιαίων δόσεων για αποπληρωμή σε <strong>5, 10, 15, 20 και 30 έτη</strong> βάσει των διαθέσιμων μετρητών σας (<strong>€{USER_CASH:,}</strong>) και σταθερού επιτοκίου <strong>3,72%</strong>.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Σενάριο Turnkey</th>
+                        <th>Τελικό Κόστος</th>
+                        <th>Ίδια Κεφάλαια</th>
+                        <th>Απαιτούμενο Δάνειο</th>
+                        <th>5 Έτη (60μ)</th>
+                        <th>10 Έτη (120μ)</th>
+                        <th>15 Έτη (180μ)</th>
+                        <th>20 Έτη (240μ)</th>
+                        <th>30 Έτη (360μ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+{mortgage_rows_html}
+                </tbody>
+            </table>
+            <div style="margin-top:14px; padding:10px 14px; background:#f1f5f9; border-radius:8px; font-size:0.86rem; color:#334155; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div>🏛️ <strong>Εκτίμηση Ετήσιου ΕΝΦΙΑ:</strong> <span style="color:#0284c7; font-weight:700;">€{enfia_annual:,} / έτος</span> (περίπου <strong>€{enfia_monthly:,}/μήνα</strong>)</div>
+                <div style="font-size:0.8rem; color:#64748b;">Υπολογισμός με βάση το Ν. 4916/2022</div>
+            </div>
         </div>
 
         <div class="footer">

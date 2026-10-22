@@ -37,7 +37,7 @@ if base_dir not in sys.path:
 if scratch_dir not in sys.path:
     sys.path.append(scratch_dir)
 try:
-    from user_fit_budget_engine import evaluate_user_fit_with_budget_and_risk, USER_CASH
+    from user_fit_budget_engine import evaluate_user_fit_with_budget_and_risk, USER_CASH, calculate_enfia
 except Exception as e:
     logging.warning(f"Warning importing user_fit_budget_engine: {e}")
 
@@ -969,7 +969,8 @@ def update_csv_and_index(new_records):
                 "is_penthouse": nr.get("is_penthouse") == "True",
                 "thumb": nr.get("thumb", f"thumbs/{nr['listing_id']}.jpg" if os.path.exists(os.path.join(base_dir, 'thumbs', f"{nr['listing_id']}.jpg")) else ""),
                 "image_url": nr.get("image_url", ""),
-                "street_parking_ease": nr.get("street_parking_ease", "PRIVATE" if has_p else "DIFFICULT")
+                "street_parking_ease": nr.get("street_parking_ease", "PRIVATE" if has_p else "DIFFICULT"),
+                "enfia": calculate_enfia(nr.get("sqm", 0), nr.get("location", ""), nr.get("year", 0), nr.get("type", ""), nr.get("is_penthouse") == "True")
             }
 
         new_props_list = list(prop_map.values())
