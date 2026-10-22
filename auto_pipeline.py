@@ -744,7 +744,8 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
         "encampment_risk": "Μηδενικό. Καμία απολύτως σχέση με καταυλισμούς.",
         "environmental_risk": "Ήσυχο οικιστικό περιβάλλον.",
         "risk_color": risk_color,
-        "street_parking_ease": "PRIVATE" if has_parking else "DIFFICULT"
+        "street_parking_ease": "PRIVATE" if has_parking else "DIFFICULT",
+        "enfia": str(calculate_enfia(sqm, location, year, ptype, "ρετιρέ" in comb_text.lower()))
     }
 
     # Evaluate User Fit with budget engine
