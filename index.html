@@ -763,7 +763,7 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 13 Ενεργά Ακίνητα &bull; 27 Παλιά &bull; 191 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 13 Ενεργά Ακίνητα &bull; 27 Παλιά &bull; 193 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">191</b>
+                    <b style="color:#ef4444;">193</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -801,7 +801,7 @@
                     📁 Παλιά Αποθηκευμένα (27)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (191)
+                    🚫 Απορριφθέντα (193)
                 </button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (191)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα Ακίνητα (193)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,26 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "1121139549",
+    "title": "Πώληση, Μονοκατοικία, 118τ.μ. Πειραιάς | €160,000",
+    "location": "118τ.μ. Πειραιάς",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 118,
+    "url": "https://www.spitogatos.gr/aggelia/1121139549",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Πειραιάς)"
+  },
+  {
+    "listing_id": "1121139799",
+    "title": "Πώληση, Διαμέρισμα, 107τ.μ. Κορυδαλλός | €146,000",
+    "location": "107τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 146000,
+    "sqm": 107,
+    "url": "https://www.spitogatos.gr/aggelia/1121139799",
+    "reason": "Πλειστηριασμός (Απαγορεύεται από τις προτιμήσεις: πλειστηριασμ)"
+  },
   {
     "listing_id": "1121139310",
     "title": "Πώληση, Διαμέρισμα, 102τ.μ. Κερατσίνι | €135,000",
