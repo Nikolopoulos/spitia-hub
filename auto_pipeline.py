@@ -152,7 +152,7 @@ BLACKLIST_AREAS = [
 
 PREFERENCES = {
     "cash_budget": 180000,
-    "max_acceptable_price_loan": 240000,
+    "max_acceptable_price_loan": 500000,
     "ideal_sqm": 120,
     "min_sqm_tolerated": 90
 }
@@ -250,20 +250,7 @@ AUCTION_KEYWORDS = [
 
 DIFFICULT_PARKING_AREAS = [
     "ταμπούρια", "ταμπουρια", "tabouria",
-    "αγία σοφία", "αγια σοφια", "agia sofia",
-    "δραπετσώνα", "δραπετσωνα", "drapetsona",
-    "χατζηκυριάκειο", "χατζηκυριακειο", "chatzikyriakeio",
-    "πειραϊκή", "πειραικη", "piraiki",
-    "πειραιάς", "πειραιας", "piraeus",
-    "κορυδαλλός", "κορυδαλλος", "korydallos",
-    "νίκαια", "νικαια", "nikaia",
-    "χαλάνδρι", "χαλανδρι", "chalandri",
-    "μαρούσι", "μαρουσι", "marousi", "maroussi",
-    "αγία παρασκευή", "αγια παρασκευη", "agia paraskevi",
-    "νέα ιωνία", "νεα ιωνια", "nea ionia", "nea iwnia",
-    "ηράκλειο", "ηρακλειο", "irakleio", "iraklio",
-    "μεταμόρφωση", "μεταμορφωση", "metamorfosi",
-    "λυκόβρυση", "λυκοβρυση", "lykovrysi"
+    "αγία σοφία", "αγια σοφια", "agia sofia"
 ]
 
 def is_rejected(text, url, price=None, has_parking=None, property_type=None, location=None, title=""):
@@ -286,7 +273,17 @@ def is_rejected(text, url, price=None, has_parking=None, property_type=None, loc
         if b in comb:
             return True, f"Μη επιλέξιμη περιοχή ({b})"
 
-    # 3. Rejected property types & non-residential categories
+    # 3. Crime, Petty Theft, Encampments & Scrap routes hard filter
+    crime_keywords = [
+        "μικροκλοπ", "μικροεγκληματικ", "μικροπαραβατικ",
+        "καταυλισμ", "τσιγκάν", "τσιγγάν", "γύφτ",
+        "scrap", "πλανόδι", "σχιστ", "εμπόριο μετάλλων"
+    ]
+    for ck in crime_keywords:
+        if ck in comb:
+            return True, f"Απορρίφθηκε: Αυξημένη εγκληματικότητα / μικροκλοπές / γειτνίαση με καταυλισμούς ή διαδρομές scrap ({ck})"
+
+    # 4. Rejected property types & non-residential categories
     # Checked strictly against property_type, title or dedicated URL path, NOT general amenity mentions
     for r in REJECTED_PROPERTY_TYPES:
         if ptype_l and r == ptype_l:
@@ -300,13 +297,13 @@ def is_rejected(text, url, price=None, has_parking=None, property_type=None, loc
     if "/enoikiaseis" in url_l or "ενοικιάζεται" in title_l or "ενοικιαζεται" in title_l or "/μήνα" in title_l or "€/μήνα" in title_l:
         return True, "Ενοικίαση (μη επιλέξιμο)"
 
-    # 4. Price threshold
+    # 5. Price threshold (Max €500k for deals)
     if price is not None and price < 50000:
         return True, f"Τιμή €{price:,} < €50k (πιθανή ενοικίαση / ποσοστό)"
-    if price is not None and price > PREFERENCES.get("max_acceptable_price_loan", 240000):
-        return True, f"Υπέρβαση Budget (Τιμή €{price:,} > €{PREFERENCES.get('max_acceptable_price_loan', 240000):,})"
+    if price is not None and price > PREFERENCES.get("max_acceptable_price_loan", 500000):
+        return True, f"Υπέρβαση Budget (Τιμή €{price:,} > €{PREFERENCES.get('max_acceptable_price_loan', 500000):,})"
 
-    # 5. Min SQM (supports decimal formatting like 100.0 τ.μ. from XE)
+    # 6. Min SQM (supports decimal formatting like 100.0 τ.μ. from XE)
     sqm_m = re.findall(r'(\d+(?:[\.,]\d+)?)\s*(?:τ\.?μ\.?|sqm)', comb)
     if sqm_m:
         try:
@@ -316,13 +313,9 @@ def is_rejected(text, url, price=None, has_parking=None, property_type=None, loc
         except ValueError:
             pass
 
-    # 6. No parking + difficult street parking check (if attributes are known at evaluation)
+    # 7. Parking check: only reject if acute parking bottleneck area
     if has_parking is False:
         loc_l = (location or "").lower()
-        # Any apartment without parking in urban center is rejected
-        if "διαμέρισμα" in ptype_l or "διαμερισμα" in ptype_l or "apartment" in ptype_l:
-            return True, "Χωρίς Parking (Διαμέρισμα σε αστικό ιστό)"
-        # Or in difficult street parking neighborhoods
         for dpa in DIFFICULT_PARKING_AREAS:
             if dpa in loc_l or dpa in comb:
                 return True, f"Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης ({location or dpa})"
@@ -744,8 +737,8 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
         "encampment_risk": "Μηδενικό. Καμία απολύτως σχέση με καταυλισμούς.",
         "environmental_risk": "Ήσυχο οικιστικό περιβάλλον.",
         "risk_color": risk_color,
-        "street_parking_ease": "PRIVATE" if has_parking else "DIFFICULT",
-        "enfia": str(calculate_enfia(sqm, location, year, ptype, "ρετιρέ" in comb_text.lower()))
+        "street_parking_ease": "PRIVATE" if has_parking else ("EASY" if loc in ["Μαρούσι", "Αγία Παρασκευή", "Χαλάνδρι", "Ηράκλειο", "Βριλήσσια", "Κηφισιά", "Πεύκη", "Μελίσσια", "Νέα Ιωνία", "Μεταμόρφωση", "Λυκόβρυση", "Γέρακας", "Δροσιά"] else "MODERATE"),
+        "enfia": str(calculate_enfia(sqm, loc, year, ptype, "ρετιρέ" in comb_text.lower()))
     }
 
     # Evaluate User Fit with budget engine

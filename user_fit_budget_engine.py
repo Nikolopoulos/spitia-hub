@@ -40,7 +40,15 @@ def evaluate_user_fit_with_budget_and_risk(p):
     is_sensational = (risk_score <= 3.5 and deal_score >= 75.0)
 
     # -------------------------------------------------------------
-    # 1. BUDGET & LOAN COMPONENT (25 pts max)
+    # 0. CRIME / ENCAMPMENT / PETTY THEFT HARD REJECT CHECK
+    # -------------------------------------------------------------
+    crime_txt = (str(p.get('crime_risk', '')) + " " + str(p.get('encampment_risk', '')) + " " + str(p.get('risk_reasons', ''))).lower()
+    has_crime_risk = any(k in crime_txt for k in ['μικροκλοπ', 'μικροεγκληματικ', 'μικροπαραβατικ', 'καταυλισμ', 'τσιγκάν', 'τσιγγάν', 'γύφτ', 'scrap', 'πλανόδι', 'σχιστ', 'εμπόριο μετάλλων']) and (risk_score >= 4.0 or 'αυξημένο' in crime_txt or 'μέτριο προς αυξημένο' in crime_txt or 'θύλακες' in crime_txt)
+    if has_crime_risk:
+        dealbreakers.append("🚨 Απορρίπτεται: Αυξημένη εγκληματικότητα / μικροκλοπές / γειτνίαση με καταυλισμούς ή διαδρομές scrap")
+
+    # -------------------------------------------------------------
+    # 1. BUDGET & LOAN COMPONENT (25 pts max) - Ceiling up to €500k
     # -------------------------------------------------------------
     if loan_needed <= 0:
         b_pts = 25.0
@@ -55,14 +63,20 @@ def evaluate_user_fit_with_budget_and_risk(p):
         score += b_pts
         breakdown.append(f"🏦 Μεσαίο Δάνειο (+{int(b_pts)}/25): Απαιτείται δανεισμός €{int(loan_needed):,} πάνω από τα €180.000 μετρητά.")
     else: # Loan > 100,000
-        if is_sensational:
-            b_pts = 14.0
-            score += b_pts
-            breakdown.append(f"⭐ Συνταρακτική Ευκαιρία &bull; Ανοιχτό σε Μεγαλύτερο Δάνειο (+{int(b_pts)}/25): Παρότι απαιτείται δάνειο €{int(loan_needed):,}, το ακίνητο συνδυάζει χαμηλό ρίσκο ({risk_score}/10) και κορυφαίο deal ({deal_score}/100)!")
+        # User allows up to €500k all-inclusive if it's a good deal
+        if turnkey_cost <= 500000 and (deal_score >= 50.0 or risk_score <= 4.5):
+            if is_sensational or (deal_score >= 70.0 and risk_score <= 4.0):
+                b_pts = 14.0
+                score += b_pts
+                breakdown.append(f"⭐ Συνταρακτική Ευκαιρία &bull; Ανοιχτό σε Μεγαλύτερο Δάνειο (+{int(b_pts)}/25): Turnkey €{int(turnkey_cost):,} (Δάνειο €{int(loan_needed):,}), χαμηλό ρίσκο ({risk_score}/10) και κορυφαίο deal ({deal_score}/100) εντός του ορίου €500k!")
+            else:
+                b_pts = 10.0
+                score += b_pts
+                breakdown.append(f"🏦 Μεγαλύτερο Δάνειο Εντός Ορίου €500k (+{int(b_pts)}/25): Turnkey €{int(turnkey_cost):,} (Δάνειο €{int(loan_needed):,}) &bull; Αποδεκτό ως αξιόλογη ευκαιρία.")
         else:
             b_pts = 3.0
             score += b_pts
-            dealbreakers.append(f"⚠️ Μεγάλο Δάνειο (> €{int(loan_needed):,}) χωρίς συνταρακτικό deal")
+            dealbreakers.append(f"⚠️ Μεγάλο Δάνειο (> €{int(loan_needed):,}) ή υπέρβαση ορίου €500k")
             breakdown.append(f"📉 Υψηλό Δάνειο (+{int(b_pts)}/25): Απαιτείται βαρύς δανεισμός €{int(loan_needed):,} πάνω από το διαθέσιμο κεφάλαιο των €180.000.")
 
     # -------------------------------------------------------------
@@ -91,9 +105,13 @@ def evaluate_user_fit_with_budget_and_risk(p):
         breakdown.append(f"🚨 Υψηλό Ρίσκο Περιοχής/Κτιρίου (0/15 - Ποινή): Σοβαροί κίνδυνοι ασφάλειας, παλαιότητας ή περιβάλλοντος ({risk_score}/10).")
 
     # -------------------------------------------------------------
-    # 3. PARKING & VEHICLE THEFT (25 pts max)
+    # 3. PARKING & VEHICLE THEFT (25 pts max) - Critical Judgment
     # -------------------------------------------------------------
-    has_private = p.get('has_parking', 'False') == 'True'
+    has_private = p.get('has_parking', 'False') == 'True' or p.get('has_parking') is True
+    loc_l = (str(p.get('location', '')) + ' ' + str(p.get('title', ''))).lower()
+    easy_suburbs = ['μαρούσι', 'μαρουσι', 'ηράκλειο', 'ηρακλειο', 'κηφισιά', 'κηφισια', 'γέρακας', 'γερακας', 'δροσιά', 'δροσια', 'βριλήσσια', 'βριλησσια', 'μεταμόρφωση', 'μεταμορφωση', 'λυκόβρυση', 'λυκοβρυση', 'άνω κορυδαλλός', 'ανω κορυδαλλος', 'πεύκη', 'πευκη', 'μελίσσια', 'μελισσια', 'χαλάνδρι', 'χαλανδρι']
+    is_easy_area = any(sub in loc_l for sub in easy_suburbs)
+
     if has_private:
         p_pts = 25.0
         score += p_pts
@@ -107,16 +125,22 @@ def evaluate_user_fit_with_budget_and_risk(p):
                 score += p_pts
                 breakdown.append(f"🟢 Στάθμευση στον Δρόμο (+{int(p_pts)}/25 - Αποδεκτό): {s_data['summary']}. Άνετοι δρόμοι, εύκολη εύρεση θέσης χωρίς καθημερινό άγχος.")
             elif s_data['street_parking_ease'] == 'MODERATE':
-                p_pts = 12.0
+                p_pts = 14.0
                 score += p_pts
-                breakdown.append(f"🟡 Στάθμευση στον Δρόμο (+{int(p_pts)}/25 - Μέτριο): {s_data['summary']}. Απαιτείται αναζήτηση σε γειτονικά στενά.")
+                breakdown.append(f"🟡 Στάθμευση στον Δρόμο (+{int(p_pts)}/25 - Μέτριο): {s_data['summary']}. Βρίσκεις θέση με λίγο ψάξιμο.")
             else:
                 p_pts = 0.0
                 dealbreakers.append("❌ Χωρίς Parking & Οξύ Πρόβλημα Στάθμευσης/Κλοπών στον Δρόμο")
                 breakdown.append(f"🔴 Χωρίς Parking (0/25 - Dealbreaker): {s_data['summary']}. Πολύ δύσκολη εύρεση θέσης & υψηλός κίνδυνος κλοπής οχημάτων/μηχανών.")
+        elif is_easy_area:
+            p_pts = 18.0
+            score += p_pts
+            breakdown.append(f"🟢 Στάθμευση στον Δρόμο (+{int(p_pts)}/25 - Ήσυχο Προάστιο): Εύκολη εύρεση θέσης στάθμευσης σε φαρδείς, ήσυχους δρόμους χωρίς πίεση.")
         else:
-            dealbreakers.append("❌ Χωρίς Parking")
-            breakdown.append("❌ Χωρίς Parking (0/25)")
+            # Urban area without private parking: penalize points, but do not auto-disqualify unless severe
+            p_pts = 8.0
+            score += p_pts
+            breakdown.append(f"🟡 Χωρίς Ιδιωτικό Parking (+{int(p_pts)}/25 - Απαιτείται Έλεγχος): Έλλειψη ιδιωτικής θέσης, πιθανή δυσκολία στάθμευσης τις ώρες αιχμής.")
 
     # -------------------------------------------------------------
     # 4. BATHROOMS & WC (15 pts max)
