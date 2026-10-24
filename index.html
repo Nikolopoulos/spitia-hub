@@ -763,13 +763,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 187 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 45 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 188 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 47 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b id="stat-approved-count">187</b>
+                    <b id="stat-approved-count">188</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3);">
                     <span style="color:#fcd34d;">📁 Παλιά:</span>
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">45</b>
+                    <b style="color:#ef4444;">47</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -795,19 +795,19 @@
             <!-- Main View Tabs (Eligible vs Archived vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα (187)
+                    ✅ Εγκεκριμένα (188)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-archived" onclick="switchMainTab('archived')">
                     📁 Παλιά Αποθηκευμένα (13)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (45)
+                    🚫 Απορριφθέντα (47)
                 </button>
             </div>
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (187)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (188)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (45)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (47)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,26 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "1121139310",
+    "title": "Πώληση, Διαμέρισμα, 102τ.μ. Κερατσίνι | €10,000",
+    "location": "102τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 10000,
+    "sqm": 102,
+    "url": "https://www.spitogatos.gr/aggelia/1121139310",
+    "reason": "Τιμή €10,000 < €50k (πιθανή ενοικίαση / ποσοστό)"
+  },
+  {
+    "listing_id": "1121140532",
+    "title": "Πώληση, Διαμέρισμα, 104τ.μ. Κερατσίνι | €10,000",
+    "location": "104τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 10000,
+    "sqm": 104,
+    "url": "https://www.spitogatos.gr/aggelia/1121140532",
+    "reason": "Τιμή €10,000 < €50k (πιθανή ενοικίαση / ποσοστό)"
+  },
   {
     "listing_id": "1121146388",
     "title": "Πώληση, Μονοκατοικία, 100τ.μ. Ταμπούρια | €160,000",
@@ -9751,6 +9771,49 @@ const propertiesData = [
     "thumb": "thumbs/xe-b5ddc64f.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 260
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 90τ.μ. Κερατσίνι | xe-1652843b.html",
+    "listing_id": "xe-1652843b",
+    "title": "Πώληση, Διαμέρισμα, 90τ.μ. Κερατσίνι | xe-1652843b",
+    "location": "90τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 175000.0,
+    "sqm": 90.0,
+    "year": 2011,
+    "plot_sqm": 90.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 31500.0,
+    "renov_high": 49500.0,
+    "turnkey_low": 206500.0,
+    "turnkey_high": 224500.0,
+    "html_report": "property-xe-1652843b.html",
+    "spitogatos_url": "https://www.xe.gr/p/1652843b-794f-49b1-90f4-0ecc7978e066",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-24 23:05:07",
+    "renov_diy": 37800.0,
+    "turnkey_diy": 212800.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 48.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 2,
+    "is_penthouse": false,
+    "thumb": "thumbs/xe-1652843b.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2026/07/31/4ccc539e-48ea-4174-97d4-482fd8f78f91/4ccc539e-48ea-4174-97d4-482fd8f78f91-source.jpg",
+    "street_parking_ease": "MODERATE",
+    "enfia": 283
   }
 ];
         let currentMainTab = 'eligible'; // 'eligible', 'archived', or 'rejected'
