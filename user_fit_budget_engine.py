@@ -48,6 +48,15 @@ def evaluate_user_fit_with_budget_and_risk(p):
         dealbreakers.append("🚨 Απορρίπτεται: Αυξημένη εγκληματικότητα / μικροκλοπές / γειτνίαση με καταυλισμούς ή διαδρομές scrap")
 
     # -------------------------------------------------------------
+    # 0b. AUCTION / SEIZURE / DISTRESSED ASSET HARD REJECT CHECK
+    # -------------------------------------------------------------
+    raw_desc = (str(p.get('title', '')) + " " + str(p.get('description', '')) + " " + str(p.get('risk_reasons', '')) + " " + str(p.get('spitogatos_url', ''))).lower()
+    trans = str.maketrans("άέήίόύώϊϋΐΰΆΈΉΊΌΎΏΪΫ", "αεηιουωιυιυαεηιουωιυ")
+    norm_desc = raw_desc.translate(trans)
+    if any(k in norm_desc for k in ['πλειστηριασμ', 'πλειστηριαζ', 'εκπλειστηριασμ', 'eauction', 'e-auction', 'κατασχεσ', 'αναγκαστικη εκτελεσ', 'αναγκαστικη εκποιησ', 'πρωτης προσφορας', '1ης προσφορας', 'δημοπρασι']):
+        dealbreakers.append("🚨 Απορρίπτεται: Πλειστηριασμός / Αναγκαστική εκτέλεση / Κατάσχεση")
+
+    # -------------------------------------------------------------
     # 1. BUDGET & LOAN COMPONENT (25 pts max) - Ceiling up to €500k
     # -------------------------------------------------------------
     if loan_needed <= 0:

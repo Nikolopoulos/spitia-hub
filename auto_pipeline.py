@@ -17,7 +17,7 @@ Full Automated Pipeline:
 8. Update alert_status.json for Menu Bar app
 """
 
-import os, sys, json, csv, re, time, subprocess, logging, imaplib, email, urllib.request, html as html_lib
+import os, sys, json, csv, re, time, subprocess, logging, imaplib, email, urllib.request, html as html_lib, unicodedata
 from datetime import datetime, timedelta
 from email.header import decode_header
 from html.parser import HTMLParser
@@ -49,6 +49,65 @@ def extract_visible_text(html):
     clean = re.sub(r'<[^>]+>', ' ', clean)
     clean = html_lib.unescape(clean)
     return ' '.join(clean.split())
+
+def extract_listing_full_text(html, rendered_text="", card_text=""):
+    """
+    Extracts and compiles complete text content including Safari rendered body text,
+    email card summary, metadata descriptions, Next.js __NEXT_DATA__ JSON payloads,
+    JSON-LD structures, and HTML description containers.
+    """
+    chunks = []
+    if rendered_text:
+        chunks.append(rendered_text)
+    if card_text:
+        chunks.append(card_text)
+    if html:
+        # 1. Meta descriptions
+        meta_matches = re.findall(r'<meta[^>]+(?:name|property)=[\"\'](?:description|og:description|twitter:description)[\"\'][^>]+content=[\"\']([^\"\']+)[\"\']', html, re.I)
+        meta_matches += re.findall(r'<meta[^>]+content=[\"\']([^\"\']+)[\"\'][^>]+(?:name|property)=[\"\'](?:description|og:description|twitter:description)[\"\']', html, re.I)
+        chunks.extend(meta_matches)
+        
+        # 2. Next.js __NEXT_DATA__ JSON payload
+        next_m = re.search(r'<script[^>]+id=[\"\']__NEXT_DATA__[\"\'][^>]*>(.*?)</script>', html, re.DOTALL | re.I)
+        if next_m:
+            try:
+                data = json.loads(next_m.group(1))
+                def walk(obj):
+                    if isinstance(obj, dict):
+                        for k, v in obj.items():
+                            if isinstance(v, str) and len(v) > 8 and any(kw in k.lower() for kw in ['desc', 'text', 'comment', 'body', 'note', 'title', 'detail']):
+                                chunks.append(v)
+                            else:
+                                walk(v)
+                    elif isinstance(obj, list):
+                        for item in obj:
+                            walk(item)
+                walk(data)
+            except Exception:
+                pass
+                
+        # 3. JSON-LD scripts
+        ld_scripts = re.findall(r'<script[^>]+type=[\"\']application/ld\+json[\"\'][^>]*>(.*?)</script>', html, re.DOTALL | re.I)
+        for ld in ld_scripts:
+            try:
+                data = json.loads(ld)
+                if isinstance(data, dict):
+                    if 'description' in data and isinstance(data['description'], str):
+                        chunks.append(data['description'])
+                    if 'name' in data and isinstance(data['name'], str):
+                        chunks.append(data['name'])
+            except Exception:
+                pass
+
+        # 4. Description containers in HTML
+        desc_blocks = re.findall(r'<(?:div|section|p|article)[^>]+(?:class|id)=[\"\'][^\"\']*(?:description|details|perigrafi|ad-text)[^\"\']*[\"\'][^>]*>(.*?)</(?:div|section|p|article)>', html, re.DOTALL | re.I)
+        for db in desc_blocks:
+            chunks.append(re.sub(r'<[^>]+>', ' ', db))
+            
+        # 5. Visible text fallback
+        chunks.append(extract_visible_text(html))
+        
+    return ' '.join(chunks)
 
 def record_rejected_listing(url, reason, title="", price=0, sqm=0, ptype="Διαμέρισμα", loc=""):
     """Appends or updates a rejected listing in rejected_listings.json"""
@@ -124,8 +183,12 @@ def fetch_url_via_safari(url):
         
         set tabTitle to name of targetTab
         set pageSource to (source of targetTab) as text
+        set pageText to ""
+        try
+            set pageText to (text of targetTab) as text
+        end try
         close targetTab
-        return tabTitle & "|||SPLIT|||" & pageSource
+        return tabTitle & "|||SPLIT|||" & pageSource & "|||SPLIT|||" & pageText
     end tell
     '''
     proc = subprocess.run(['osascript', '-e', applescript], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -135,7 +198,8 @@ def fetch_url_via_safari(url):
     parts = proc.stdout.split('|||SPLIT|||')
     title = parts[0].strip()
     html = parts[1].strip() if len(parts) > 1 else ""
-    return title, html
+    rendered_text = parts[2].strip() if len(parts) > 2 else ""
+    return title, html, rendered_text
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -243,10 +307,87 @@ def get_existing_listing_ids():
             pass
     return ids
 
-AUCTION_KEYWORDS = [
-    "πλειστηριασμ", "πλειστηριαζ", "εκπλειστηριασμ", "eauction", "e-auction",
-    "κατάσχεση", "κατασχεση", "πρώτης προσφοράς", "πρωτης προσφορας"
+def normalize_greek_text(text):
+    if not text:
+        return ""
+    text = unicodedata.normalize('NFC', text)
+    trans = str.maketrans("άέήίόύώϊϋΐΰΆΈΉΊΌΎΏΪΫ", "αεηιουωιυιυαεηιουωιυ")
+    return text.lower().translate(trans)
+
+AUCTION_PATTERNS = [
+    # Core auction roots and stems
+    "πλειστηριασμ",          # πλειστηριασμός, πλειστηριασμού, πλειστηριασμοί, πλειστηριασμό, πλειστηριασμών, πλειστηριασμούς
+    "πλειστηριαζ",           # πλειστηριάζεται, πλειστηριάζονται
+    "εκπλειστηριασμ",        # εκπλειστηριασμός, εκπλειστηριασμού
+    "εκπλειστηριαζ",         # εκπλειστηριάζεται, εκπλειστηριάζονται
+    "eauction",
+    "e-auction",
+    "κατασχεσ",              # κατάσχεση, κατασχέσεως, κατασχεμένο, κατασχεμένα
+    "αναγκαστικη εκτελεσ",   # αναγκαστική εκτέλεση, αναγκαστικής εκτέλεσης
+    "αναγκαστικη εκποιησ",   # αναγκαστική εκποίηση, αναγκαστικής εκποίησης
+    "αναγκαστικη κατασχεσ",  # αναγκαστική κατάσχεση
+    "εκποιειται μεσω",       # εκποιείται μέσω
+    "δημοπρασι",             # δημοπρασία, δημοπρασίας, δημοπρασίες, ηλεκτρονική δημοπρασία
+    "δημοπρατειτ",           # δημοπρατείται, δημοπρατούνται
+    "e-δημοπρασι",
+    "δικαστικος επιμελητ",   # δικαστικός επιμελητής
+    "κατακυρωτικ",           # κατακυρωτική έκθεση
+    "εκθεση κατασχεσ",       # έκθεση κατάσχεσης
+    "εκθεση αναγκαστικ",     # έκθεση αναγκαστικής εκτέλεσης
+    # Bidding / First offer terms
+    "πρωτης προσφορας",      # πρώτης προσφοράς
+    "πρωτη προσφορα",        # πρώτη προσφορά
+    "1ης προσφορας",         # 1ης προσφοράς
+    "1η προσφορα",           # 1η προσφορά
+    "τιμη 1ης προσφορας",
+    "τιμη πρωτης προσφορας",
+    "τιμη εκκινησης πλειστηριασμ",
+    "τιμη εναρξης πλειστηριασμ",
+    "τιμη εναρξης διαγωνισμ",
+    # Specific auction phrasing in descriptions
+    "μεσω πλειστηριασμ",     # μέσω πλειστηριασμού
+    "σε πλειστηριασμ",       # σε πλειστηριασμό
+    "προς πλειστηριασμ",     # προς πλειστηριασμό
+    "ημερομηνια πλειστηριασμ", # ημερομηνία πλειστηριασμού
+    "ημερα πλειστηριασμ",    # ημέρα πλειστηριασμού
+    "ωρα πλειστηριασμ",      # ώρα πλειστηριασμού
+    "διενεργεια πλειστηριασμ", # διενέργεια πλειστηριασμού
+    "διεξαγωγη πλειστηριασμ", # διεξαγωγή πλειστηριασμού
+    "κωδικος πλειστηριασμ",  # κωδικός πλειστηριασμού
+    "αριθμος πλειστηριασμ",  # αριθμός πλειστηριασμού
+    "ακινητο πλειστηριασμ",  # ακίνητο πλειστηριασμού
+    "πωλειται μεσω πλειστηριασμ",
+    "διατιθεται μεσω πλειστηριασμ",
+    "διαθεση μεσω πλειστηριασμ",
+    "διαδικασια πλειστηριασμ",
+    "προς εκποιηση",
+    "ηλεκτρονικο διαγωνισμ"
 ]
+
+def is_auction_listing(text, url=""):
+    """
+    Scans the entire listing description, rendered text, meta tags, and URL
+    for explicit auction, seizure, or distressed servicer auction sale indicators.
+    """
+    comb = (text or "") + " " + (url or "")
+    norm = normalize_greek_text(comb)
+    
+    # 1. Check auction patterns
+    for pat in AUCTION_PATTERNS:
+        if pat in norm:
+            return True, pat
+            
+    # 2. Check servicer debt auctions
+    if any(s in norm for s in ['dovalue', 'intrum', 'cepal', 'qquant']):
+        if any(w in norm for w in ['προσφορ', 'πλειστηρ', 'χαρτοφυλακι', 'portfolio', 'εκποιησ', 'διαδικασι', 'πλατφορμ', 'eauction', 'bid', 'κατασχεσ']):
+            return True, "τραπεζικός/servicer πλειστηριασμός (doValue/Intrum/Cepal/qquant)"
+            
+    # 3. URL checks
+    url_l = (url or "").lower()
+    if any(u_part in url_l for u_part in ['eauction', 'e-auction', 'pleistiriasm', 'pleistiriasmoi', 'katasxesi']):
+        return True, f"auction URL keyword ({url_l})"
+        
+    return False, ""
 
 DIFFICULT_PARKING_AREAS = [
     "ταμπούρια", "ταμπουρια", "tabouria",
@@ -254,19 +395,15 @@ DIFFICULT_PARKING_AREAS = [
 ]
 
 def is_rejected(text, url, price=None, has_parking=None, property_type=None, location=None, title=""):
-    if text and ('<' in text and '>' in text):
-        search_text = extract_visible_text(text)
-    else:
-        search_text = text or ""
-    comb = (search_text + " " + (url or "")).lower()
+    comb = (text or "") + " " + (url or "")
     url_l = (url or "").lower()
     ptype_l = (property_type or "").lower()
     title_l = (title or "").lower()
     
-    # 1. Auction filter (only checks user-visible text or URL)
-    for auk in AUCTION_KEYWORDS:
-        if auk in comb:
-            return True, f"Πλειστηριασμός (Απαγορεύεται από τις προτιμήσεις: {auk})"
+    # 1. Auction filter (analyzes full listing text, rendered description, metadata and URL)
+    is_auc, auc_reason = is_auction_listing(comb, url)
+    if is_auc:
+        return True, f"Πλειστηριασμός (Ανιχνεύθηκε στο κείμενο/στοιχεία της αγγελίας: '{auc_reason}')"
 
     # 2. Blacklisted areas
     for b in BLACKLIST_AREAS:
@@ -465,7 +602,7 @@ def fetch_email_links(cfg):
     mail.logout()
     return valid_links
 
-def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""):
+def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title="", rendered_text=""):
     """Extract attributes, compute risk, deal and fit scores, and build record dictionary"""
     # 1. Listing ID
     if portal == 'spitogatos':
@@ -475,9 +612,8 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
         m = re.search(r'xe\.gr/p/([a-f0-9\-]+)', url) or re.search(r'xe\.gr/property/d/[^/]+/([a-f0-9\-]+)', url)
         lid = f"xe-{m.group(1)[:8]}" if m else f"xe-{int(time.time())}"
 
-    # Extract clean text from HTML
-    clean_html_text = extract_visible_text(raw_html)
-    comb_text = (clean_html_text + " " + card_text)
+    # Extract comprehensive full listing text (rendered description, card, JSON payloads, meta tags)
+    comb_text = extract_listing_full_text(raw_html, rendered_text=rendered_text, card_text=card_text)
 
     # Check blacklist on combined text & url
     for b in BLACKLIST_AREAS:
@@ -1091,8 +1227,9 @@ def run_pipeline():
 
         logging.info(f"Downloading listing via Safari: {url}")
         html = ""
+        rendered_text = ""
         try:
-            title, html = fetch_url_via_safari(url)
+            title, html, rendered_text = fetch_url_via_safari(url)
             is_bot, b_plat, b_url = check_bot_challenge(title, html, url)
             if is_bot:
                 logging.warning(f"⚠️ Bot challenge detected on {b_plat}: {b_url}")
@@ -1101,7 +1238,7 @@ def run_pipeline():
             logging.warning(f"Safari fetch failed for {url}: {e}. Proceeding with email card data.")
 
         try:
-            record = parse_and_evaluate_listing(portal, url, html, card_text=item.get('text', ''), tab_title=title if 'title' in locals() else '')
+            record = parse_and_evaluate_listing(portal, url, html, card_text=item.get('text', ''), tab_title=title if 'title' in locals() else '', rendered_text=rendered_text)
             
             # Download thumbnail if found (from email or fallback to page og:image / HTML)
             lid = record['listing_id']

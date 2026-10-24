@@ -763,13 +763,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 188 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 44 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 187 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 45 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b id="stat-approved-count">188</b>
+                    <b id="stat-approved-count">187</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3);">
                     <span style="color:#fcd34d;">📁 Παλιά:</span>
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b id="stat-rejected-count" style="color:#ef4444;">44</b>
+                    <b style="color:#ef4444;">45</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -795,19 +795,19 @@
             <!-- Main View Tabs (Eligible vs Archived vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα (188)
+                    ✅ Εγκεκριμένα (187)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-archived" onclick="switchMainTab('archived')">
                     📁 Παλιά Αποθηκευμένα (13)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (44)
+                    🚫 Απορριφθέντα (45)
                 </button>
             </div>
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (188)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (187)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (44)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (45)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,16 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "1121146388",
+    "title": "Πώληση, Μονοκατοικία, 100τ.μ. Ταμπούρια | €160,000",
+    "location": "100τ.μ. Ταμπούρια",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 100,
+    "url": "https://www.spitogatos.gr/aggelia/1121146388",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια)"
+  },
   {
     "listing_id": "1121144520",
     "title": "Πώληση, Διαμέρισμα, 110τ.μ. Πειραιάς | €80,000",
@@ -3018,7 +3028,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119792032.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 343
   },
@@ -3102,7 +3112,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121141442.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 386
   },
@@ -3186,7 +3196,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121140532.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 297
   },
@@ -3312,7 +3322,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121139549.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 344
   },
@@ -3354,7 +3364,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121139310.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 291
   },
@@ -3438,7 +3448,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-64dc3fbc.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 274
   },
@@ -3480,7 +3490,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-2c9ae7c9.jpg",
     "street_parking_ease": "EASY",
     "enfia": 442
   },
@@ -3522,7 +3532,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-3f4ef631.jpg",
     "street_parking_ease": "EASY",
     "enfia": 438
   },
@@ -3564,7 +3574,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-2545795a.jpg",
     "street_parking_ease": "EASY",
     "enfia": 438
   },
@@ -3606,7 +3616,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-8733a52d.jpg",
     "street_parking_ease": "EASY",
     "enfia": 442
   },
@@ -3648,7 +3658,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121138671.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 351
   },
@@ -3690,7 +3700,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-c7c90ea8.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 351
   },
@@ -3732,7 +3742,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-2f0c1e9b.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -3774,7 +3784,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-0ea993ca.jpg",
     "street_parking_ease": "EASY",
     "enfia": 396
   },
@@ -3816,7 +3826,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121132870.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -3858,7 +3868,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-e55985dc.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -3900,7 +3910,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121131786.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -3942,7 +3952,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121131304.jpg",
     "street_parking_ease": "EASY",
     "enfia": 438
   },
@@ -3984,7 +3994,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-573807d1.jpg",
     "street_parking_ease": "EASY",
     "enfia": 438
   },
@@ -4026,7 +4036,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-f03baa30.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 274
   },
@@ -4068,7 +4078,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-f08975b7.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 285
   },
@@ -4110,7 +4120,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-b6028f84.jpg",
     "street_parking_ease": "EASY",
     "enfia": 377
   },
@@ -4152,7 +4162,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-ac83e730.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -4194,7 +4204,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121128190.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 331
   },
@@ -4236,7 +4246,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121128223.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 294
   },
@@ -4278,7 +4288,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121127910.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 437
   },
@@ -4320,7 +4330,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121127916.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 583
   },
@@ -4362,7 +4372,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121127856.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 314
   },
@@ -4446,7 +4456,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121123167.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 320
   },
@@ -4488,7 +4498,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121119376.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -4530,7 +4540,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121121679.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 377
   },
@@ -4572,7 +4582,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121121684.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 475
   },
@@ -4614,7 +4624,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-ba994ed3.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 475
   },
@@ -4656,7 +4666,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-233ae239.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 377
   },
@@ -4698,7 +4708,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-28810128.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 314
   },
@@ -4740,7 +4750,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-d3fc5c06.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 386
   },
@@ -4782,7 +4792,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-f695a8b0.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 357
   },
@@ -4824,7 +4834,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-b86c503c.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 318
   },
@@ -4866,7 +4876,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-9ebca129.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 386
   },
@@ -4908,7 +4918,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121114728.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 308
   },
@@ -4992,7 +5002,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121112825.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 405
   },
@@ -5034,7 +5044,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-7bfef8b5.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 274
   },
@@ -5076,7 +5086,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-314f65de.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 338
   },
@@ -5118,7 +5128,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121111664.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 320
   },
@@ -5160,7 +5170,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121111799.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 314
   },
@@ -5202,7 +5212,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-07a566f7.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 320
   },
@@ -5244,7 +5254,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-a52670d3.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -5286,7 +5296,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-b83bb3e9.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 474
   },
@@ -5328,7 +5338,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121110314.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 400
   },
@@ -5370,7 +5380,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-0833d7ef.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 400
   },
@@ -5412,7 +5422,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121109883.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 343
   },
@@ -5454,7 +5464,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121109878.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 514
   },
@@ -5496,7 +5506,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1118445225.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -5538,7 +5548,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-c329f0e3.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 271
   },
@@ -5580,7 +5590,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119960943.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 288
   },
@@ -5622,7 +5632,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-ab88e709.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 343
   },
@@ -5664,7 +5674,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-e9dc13c1.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 271
   },
@@ -5706,7 +5716,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121104049.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -5748,7 +5758,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121104452.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 494
   },
@@ -5790,7 +5800,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121104717.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 303
   },
@@ -5832,7 +5842,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-d03767fe.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 357
   },
@@ -5916,7 +5926,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-0ca3f8d0.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 294
   },
@@ -5958,7 +5968,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-43c56bf3.jpg",
     "street_parking_ease": "EASY",
     "enfia": 389
   },
@@ -6000,7 +6010,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121101556.jpg",
     "street_parking_ease": "EASY",
     "enfia": 393
   },
@@ -6042,7 +6052,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-94dff3c2.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -6084,7 +6094,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-0d9774be.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 300
   },
@@ -6126,7 +6136,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-4e8508f1.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -6168,7 +6178,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121101163.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 300
   },
@@ -6210,7 +6220,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-db1a66cd.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 340
   },
@@ -6252,7 +6262,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119696813.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 314
   },
@@ -6336,7 +6346,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119793586.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 334
   },
@@ -6378,7 +6388,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-3f8028e1.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 457
   },
@@ -6420,7 +6430,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-d457608a.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 361
   },
@@ -6462,7 +6472,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-3d5d8bc0.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 306
   },
@@ -6504,7 +6514,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-cf580d2b.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 263
   },
@@ -6546,7 +6556,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-141d97e6.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 408
   },
@@ -6588,7 +6598,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119730703.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 360
   },
@@ -6630,7 +6640,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-593af96f.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 306
   },
@@ -6714,7 +6724,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1120155319.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 428
   },
@@ -6756,7 +6766,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1117054352.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 288
   },
@@ -6798,7 +6808,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121088771.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 591
   },
@@ -6840,7 +6850,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121088019.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 340
   },
@@ -6882,7 +6892,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121088028.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 343
   },
@@ -6924,7 +6934,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121088099.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 294
   },
@@ -6966,7 +6976,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-27a42feb.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 340
   },
@@ -7008,7 +7018,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-aed844ca.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 343
   },
@@ -7050,7 +7060,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-b792db88.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -7092,7 +7102,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-27b1d24b.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 266
   },
@@ -7134,7 +7144,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-8a7b9328.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -7176,7 +7186,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-85dc4cce.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 260
   },
@@ -7218,7 +7228,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-aabe54e3.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 274
   },
@@ -7260,7 +7270,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1120350275.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 393
   },
@@ -7302,7 +7312,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-85138898.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 320
   },
@@ -7344,7 +7354,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121080055.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 308
   },
@@ -7386,7 +7396,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-95cab3cd.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 308
   },
@@ -7428,7 +7438,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-22ef8450.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 300
   },
@@ -7470,7 +7480,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-2cd13d93.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 300
   },
@@ -7512,7 +7522,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-58f57f05.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 343
   },
@@ -7554,7 +7564,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-4eabd99e.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 466
   },
@@ -7596,7 +7606,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-f60270ad.jpg",
     "street_parking_ease": "EASY",
     "enfia": 343
   },
@@ -7638,7 +7648,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-5bd1e6ab.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -7680,7 +7690,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-90285cc1.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 337
   },
@@ -7722,7 +7732,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-876001f1.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 334
   },
@@ -7764,7 +7774,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-c058a263.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 291
   },
@@ -7806,7 +7816,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-cc0f352c.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -7848,7 +7858,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-bc3f1327.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 280
   },
@@ -7890,7 +7900,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-ee5c649e.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 257
   },
@@ -7932,7 +7942,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-8442167f.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 326
   },
@@ -7974,15 +7984,15 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-3b8c6214.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 274
   },
   {
-    "filename": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι | €170,000.html",
+    "filename": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι, Αμφιάλη | XE 8c2069a5.html",
     "listing_id": "xe-8c2069a5",
-    "title": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι | €170,000",
-    "location": "123τ.μ. Κερατσίνι",
+    "title": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι, Αμφιάλη | XE 8c2069a5",
+    "location": "123τ.μ. Κερατσίνι, Αμφιάλη",
     "type": "Διαμέρισμα",
     "price": 170000.0,
     "sqm": 123.0,
@@ -7994,7 +8004,7 @@ const propertiesData = [
     "turnkey_low": 213050.0,
     "turnkey_high": 237650.0,
     "html_report": "property-xe-8c2069a5.html",
-    "spitogatos_url": "https://www.xe.gr/p/8c2069a5-0009-490f-bc2f-a2de2273c0bd",
+    "spitogatos_url": "https://www.xe.gr/property/d/poliseis-katoikion/8c2069a5-0009-490f-bc2f-a2de2273c0bd/keratsini-amfialh-170000-123",
     "lat": 37.9625,
     "lon": 23.626,
     "processed_at": "2026-10-24 14:40:04",
@@ -8016,7 +8026,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-8c2069a5.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 351
   },
@@ -8058,7 +8068,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-abd9db54.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 266
   },
@@ -8100,7 +8110,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1120913539.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 457
   },
@@ -8142,7 +8152,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119576489.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 437
   },
@@ -8184,7 +8194,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1120002093.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 524
   },
@@ -8226,51 +8236,9 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1118585218.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 297
-  },
-  {
-    "filename": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι, Αμφιάλη | XE 8c2069a5.html",
-    "listing_id": "xe-8c2069a5",
-    "title": "Πώληση, Διαμέρισμα, 123τ.μ. Κερατσίνι, Αμφιάλη | XE 8c2069a5",
-    "location": "123τ.μ. Κερατσίνι, Αμφιάλη",
-    "type": "Διαμέρισμα",
-    "price": 170000.0,
-    "sqm": 123.0,
-    "year": 1980,
-    "plot_sqm": 123.0,
-    "courtyard": "Βεράντα",
-    "renov_low": 43050.0,
-    "renov_high": 67650.0,
-    "turnkey_low": 213050.0,
-    "turnkey_high": 237650.0,
-    "html_report": "property-xe-8c2069a5.html",
-    "spitogatos_url": "https://www.xe.gr/property/d/poliseis-katoikion/8c2069a5-0009-490f-bc2f-a2de2273c0bd/keratsini-amfialh-170000-123",
-    "lat": 37.9625,
-    "lon": 23.626,
-    "processed_at": "2026-10-24 14:40:04",
-    "renov_diy": 51660.0,
-    "turnkey_diy": 221660.0,
-    "risk_score": 3.6,
-    "risk_level": "Μέτριο Ρίσκο",
-    "deal_score": 72.4,
-    "deal_grade": "A",
-    "deal_desc": "Πολύ Καλή Επιλογή",
-    "deal_color": "#059669",
-    "fit_score": 74.0,
-    "fit_grade": "A",
-    "fit_desc": "Πολύ Καλό Ταίριασμα &bull; Καλύπτει ανάγκες, λογικό δάνειο & ελεγχόμενο ρίσκο",
-    "fit_color": "#059669",
-    "has_parking": false,
-    "parking_info": "Στάθμευση στον δρόμο (Απαιτείται αναζήτηση τις ώρες αιχμής)",
-    "baths": 1,
-    "wc": 1,
-    "beds": 3,
-    "is_penthouse": false,
-    "thumb": "",
-    "street_parking_ease": "MODERATE",
-    "enfia": 351
   },
   {
     "filename": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός.html",
@@ -8310,7 +8278,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1120977051.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 357
   },
@@ -8352,7 +8320,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119654803.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 350
   },
@@ -8394,7 +8362,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-994a957c.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 346
   },
@@ -8436,7 +8404,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-177374a2.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 260
   },
@@ -8478,7 +8446,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121056695.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 288
   },
@@ -8520,7 +8488,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-203afebf.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 300
   },
@@ -8604,7 +8572,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-477f2ea0.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 260
   },
@@ -8646,7 +8614,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-4ebb6cad.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 274
   },
@@ -8688,7 +8656,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-fd676564.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 357
   },
@@ -8730,7 +8698,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121059001.jpg",
     "street_parking_ease": "EASY",
     "enfia": 434
   },
@@ -8772,7 +8740,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121058979.jpg",
     "street_parking_ease": "EASY",
     "enfia": 434
   },
@@ -8814,7 +8782,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121059495.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 286
   },
@@ -8856,7 +8824,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121025271.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 291
   },
@@ -8898,7 +8866,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119872317.jpg",
     "street_parking_ease": "EASY",
     "enfia": 404
   },
@@ -8982,7 +8950,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-651e2fcd.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 397
   },
@@ -9024,7 +8992,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121060853.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 288
   },
@@ -9066,7 +9034,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1119434923.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 288
   },
@@ -9108,7 +9076,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-6b736b17.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 379
   },
@@ -9150,7 +9118,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121061943.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 397
   },
@@ -9192,7 +9160,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-2928fd15.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 263
   },
@@ -9234,7 +9202,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/1121069677.jpg",
     "street_parking_ease": "EASY",
     "enfia": 297
   },
@@ -9276,7 +9244,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-6e27c126.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 262
   },
@@ -9318,7 +9286,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-9edb063b.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 326
   },
@@ -9402,7 +9370,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-ff535139.jpg",
     "street_parking_ease": "EASY",
     "enfia": 385
   },
@@ -9444,7 +9412,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-c85d0c6d.jpg",
     "street_parking_ease": "EASY",
     "enfia": 457
   },
@@ -9486,7 +9454,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-6ac723da.jpg",
     "street_parking_ease": "EASY",
     "enfia": 396
   },
@@ -9528,7 +9496,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-6eaa6344.jpg",
     "street_parking_ease": "EASY",
     "enfia": 434
   },
@@ -9570,7 +9538,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-064804ed.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 326
   },
@@ -9612,7 +9580,7 @@ const propertiesData = [
     "wc": 1,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-daac68d8.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 268
   },
@@ -9654,7 +9622,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-a46945b0.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 294
   },
@@ -9696,7 +9664,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 3,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-d894ab15.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 314
   },
@@ -9738,7 +9706,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-2ec24ede.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 271
   },
@@ -9780,7 +9748,7 @@ const propertiesData = [
     "wc": 0,
     "beds": 2,
     "is_penthouse": false,
-    "thumb": "",
+    "thumb": "thumbs/xe-b5ddc64f.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 260
   }
