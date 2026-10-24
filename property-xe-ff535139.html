@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Τεχνική & Οικονομική Μελέτη: Πώληση, Διαμέρισμα, 102τ.μ. Ηράκλειο | €230,000 (xe-ff535139)</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #2563eb;
+            --accent: #f59e0b;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --cash-green: #047857;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .nav-back {
+            display: inline-flex; align-items: center; gap: 6px; color: var(--primary-light);
+            text-decoration: none; font-weight: 700; font-size: 0.9rem; margin-bottom: 16px;
+        }
+        .nav-back:hover { text-decoration: underline; }
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: white; padding: 32px; border-radius: 16px; margin-bottom: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .badge {
+            display: inline-block; background: #dbeafe; color: #1e40af; font-weight: 600;
+            font-size: 0.85rem; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px;
+        }
+        h1 { font-size: 1.85rem; margin-bottom: 8px; line-height: 1.3; }
+        .header-meta {
+            display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.95rem; color: #cbd5e1; margin-top: 12px;
+        }
+        .spitogatos-btn {
+            display: inline-flex; align-items: center; gap: 8px; background: #f59e0b; color: #111827;
+            font-weight: 700; text-decoration: none; padding: 10px 20px; border-radius: 8px; margin-top: 16px;
+        }
+        .grid-stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card-bg); padding: 18px; border-radius: 12px; border: 1px solid var(--border); text-align: center;
+        }
+        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .stat-val-cash { color: var(--cash-green) !important; }
+        .stat-lbl { font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-top: 4px; }
+        .card {
+            background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 28px; margin-bottom: 24px;
+        }
+        .card h2 {
+            font-size: 1.35rem; color: var(--primary); margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;
+        }
+        .gallery {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 16px 0;
+        }
+        .photo-card {
+            background: #f1f5f9; border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
+        }
+        .photo-card img { width: 100%; height: 260px; object-fit: cover; display: block; }
+        .photo-cap { padding: 10px; font-size: 0.85rem; color: var(--text-muted); }
+
+        /* Table & Permit Badges */
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: #f8fafc; font-weight: 700; color: var(--primary); }
+        .badge-permit {
+            display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+        }
+        .permit-required { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .permit-free { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .permit-mixed { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        
+        .total-row { font-weight: 800; background: #f0fdf4 !important; color: #166534; font-size: 1.05rem; }
+        
+        .permit-note-box {
+            background: #f0fdf4; border-left: 4px solid #059669; border-radius: 8px; padding: 16px; margin-bottom: 20px;
+            font-size: 0.9rem; line-height: 1.6; color: #064e3b;
+        }
+        .permit-note-title { font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        
+        .footer { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 36px; padding-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="nav-back">← Επιστροφή στο Master Hub Ακινήτων</a>
+        <header>
+            <span class="badge">Μελέτη Εκμοντερνισμού 2026 &bull; 3-Tier Budget Analysis</span>
+            <h1>Πώληση, Διαμέρισμα, 102τ.μ. Ηράκλειο | €230,000</h1>
+            <div class="header-meta">
+                <span>📍 102τ.μ. Ηράκλειο</span>
+                <span>📅 Έτος: 1980</span>
+                <span>📐 Επιφάνεια: 102 τ.μ.</span>
+                <span>🏷️ Τύπος: Διαμέρισμα</span>
+            </div>
+            <a href="https://www.xe.gr/p/ff535139-847a-4088-bd11-f138f392bfe7" target="_blank" class="spitogatos-btn">
+                🔗 Άνοιγμα Αγγελίας στο Portal (ID: xe-ff535139)
+            </a>
+        </header>
+
+        <div class="grid-stats">
+            <div class="stat-card">
+                <div class="stat-val">€230,000</div>
+                <div class="stat-lbl">Τιμή Πώλησης</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val stat-val-cash">€279,797</div>
+                <div class="stat-lbl">Turnkey (Μαύρα / Friends)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">€287,600</div>
+                <div class="stat-lbl">Turnkey (Standard Low)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">€311,000</div>
+                <div class="stat-lbl">Turnkey (High-End 2026)</div>
+            </div>
+            <div class="stat-card" style="border-top:3px solid #0284c7;">
+                <div class="stat-val" style="color:#0284c7;">€385</div>
+                <div class="stat-lbl">🏛️ Ετήσιος ΕΝΦΙΑ (~€32/μ)</div>
+            </div>
+        </div>
+
+        <!-- User Fit Match Card -->
+        <div class="card" style="border: 2px solid #d97706; background: #fcfdfd;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h2 style="margin: 0; border: none; padding: 0; color: #d97706;">🎯 Προσωπικό Ταίριασμα: 55.0 / 100</h2>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Μέτριο Ταίριασμα &bull; Απαιτεί συμβιβασμούς σε δάνειο, χώρους ή ρίσκο</p>
+                </div>
+                <div style="background: #d97706; color: white; padding: 8px 18px; border-radius: 12px; font-weight: 900; font-size: 1.3rem;">
+                    Match: B
+                </div>
+            </div>
+            <div style="margin-top: 14px; font-size: 0.88rem; color: #1e293b;">
+                <ul style="list-style-type: none; padding-left: 0; line-height: 1.6;">
+                    <li style='margin-bottom:6px;'>🏦 Μεσαίο Δάνειο (+13/25): Απαιτείται δανεισμός €92,840 πάνω από τα €180.000 μετρητά.</li><li style='margin-bottom:6px;'>🛡️ Ασφαλής Γειτονιά & Ελάχιστο Ρίσκο (+15/15): Ήσυχη περιοχή με χαμηλό δείκτη κινδύνου (2.5/10).</li><li style='margin-bottom:6px;'>🟢 Στάθμευση στον Δρόμο (+18/25 - Ήσυχο Προάστιο): Εύκολη εύρεση θέσης στάθμευσης σε φαρδείς, ήσυχους δρόμους χωρίς πίεση.</li><li style='margin-bottom:6px;'>❌ Μόνο 1 Μπάνιο (0/15)</li><li style='margin-bottom:6px;'>🏢 Απλό Διαμέρισμα (+4/15)</li><li style='margin-bottom:6px;'>🛏️ 2 Υπνοδωμάτια (+5/10): Επιθυμητά 3 Υ/Δ</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Risk Assessment Card -->
+        <div class="card" style="border-left: 6px solid #059669;">
+            <h2>🛡️ Ανάλυση Ρίσκου Ακινήτου & Περιοχής (2.5 / 10 - Χαμηλό Ρίσκο)</h2>
+            <ul style="line-height: 1.6; padding-left: 20px; color: #334155;">
+                <li style='margin-bottom:8px;'>Κατασκευή 1980: Ανάγκη συνήθους αναβάθμισης υδραυλικών/ηλεκτρολογικών.</li><li style='margin-bottom:8px;'>Τοποθεσία (Ηράκλειο): Οικιστική ζώνη.</li><li style='margin-bottom:8px;'>Διαμέρισμα με καλές δυνατότητες αξιοποίησης.</li>
+            </ul>
+        </div>
+
+        
+
+        <div class="card">
+            <h2>🏗️ Αναλυτικός Προϋπολογισμός Ανακαίνισης 2026 ανά Εργασία</h2>
+            
+            <div class="permit-note-box">
+                <div class="permit-note-title">⚖️ Κανόνας Αδειοδότησης & Μαύρων (Strict Compliance)</div>
+                Διαχωρισμός εργασιών σε υποχρεωτικά τιμολογημένες (άδειες, σκαλωσιές, εγγυήσεις αντλίας θερμότητας) και εργασίες με μεροκάματα χωρίς άδεια (γκρεμίσματα, πλακάκια, ξυλουργικά).
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Κατηγορία Εργασίας</th>
+                        <th>Καθεστώς Άδειας</th>
+                        <th>💵 Μαύρα / Friends</th>
+                        <th>📋 Standard Low</th>
+                        <th>💎 High-End 2026</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Άδειες, Μηχανικός & Έλεγχοι</strong><br><small style="color:var(--text-muted)">Άδεια Μικρής Κλίμακας / ΕΕΔΜΚ, επιβλέψεις</small></td>
+                        <td><span class="badge-permit permit-required">⚖️ Υποχρεωτική Άδεια (0% Έκπτωση)</span></td>
+                        <td><b>€3,500</b></td>
+                        <td>€3,500</td>
+                        <td>€6,500</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Καθαιρέσεις, Αποξηλώσεις & Μπάζα</strong><br><small style="color:var(--text-muted)">Γκρεμίσματα, απομάκρυνση παλαιών πλακιδίων</small></td>
+                        <td><span class="badge-permit permit-free">💵 Χωρίς Άδεια (Μεροκάματο)</span></td>
+                        <td><b>€2,784</b></td>
+                        <td>€4,284</td>
+                        <td>€6,732</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Γυψοσανίδες & Διαρρυθμίσεις</strong><br><small style="color:var(--text-muted)">Νέα χωρίσματα, ψευδοροφές, κρυφοί φωτισμοί</small></td>
+                        <td><span class="badge-permit permit-free">💵 Χωρίς Άδεια (Μεροκάματο)</span></td>
+                        <td><b>€2,499</b></td>
+                        <td>€3,570</td>
+                        <td>€5,610</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ηλεκτρολογική Εγκατάσταση</strong><br><small style="color:var(--text-muted)">Νέος πίνακας, καλωδιώσεις, πιστοποιητικό ΔΕΔΔΗΕ</small></td>
+                        <td><span class="badge-permit permit-mixed">⚠️ Μικτό (Υποχρεωτικό Πιστοποιητικό)</span></td>
+                        <td><b>€3,998</b></td>
+                        <td>€4,998</td>
+                        <td>€7,854</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Υδραυλικά & 2 Μπάνια/WC</strong><br><small style="color:var(--text-muted)">Νέες σωληνώσεις πολυστρωματικές, είδη υγιεινής</small></td>
+                        <td><span class="badge-permit permit-free">💵 Χωρίς Άδεια (Φίλοι / Μεροκάματο)</span></td>
+                        <td><b>€3,998</b></td>
+                        <td>€5,712</td>
+                        <td>€8,976</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Κουφώματα & Θερμοπρόσοψη</strong><br><small style="color:var(--text-muted)">Σκαλωσιές εξωτερικά & εργοστασιακή εγγύηση αλουμινίων</small></td>
+                        <td><span class="badge-permit permit-required">⚖️ Υποχρεωτική Άδεια (Σκαλωσιά / Εγγύηση)</span></td>
+                        <td><b>€5,783</b></td>
+                        <td>€6,426</td>
+                        <td>€10,098</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HVAC (Αντλία Θερμότητας / AC)</strong><br><small style="color:var(--text-muted)">Επίσημη εγγύηση 5-10 ετών μηχανημάτων & τιμολόγια</small></td>
+                        <td><span class="badge-permit permit-required">🛡️ Επίσημα (Εγγύηση Εισαγωγέα)</span></td>
+                        <td><b>€5,087</b></td>
+                        <td>€5,355</td>
+                        <td>€8,415</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Δάπεδα, Κουζίνα & Ξυλουργικά</strong><br><small style="color:var(--text-muted)">Πλακάκια, ντουλάπες, κουζίνα από γνωστό επιπλοποιό</small></td>
+                        <td><span class="badge-permit permit-free">💵 Χωρίς Άδεια (Φίλοι / Μεροκάματο)</span></td>
+                        <td><b>€3,748</b></td>
+                        <td>€5,355</td>
+                        <td>€8,415</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2">ΣΥΝΟΛΟ ΑΝΑΚΑΙΝΙΣΗΣ 2026</td>
+                        <td style="color:#047857; font-weight:900;">€31,397</td>
+                        <td>€39,200</td>
+                        <td>€62,600</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>📊 Τελική Επένδυση (Turnkey Analysis 3 Σεναρίων)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Στοιχείο Κόστους</th>
+                        <th>💵 Μαύρα / Friends</th>
+                        <th>📋 Standard Low</th>
+                        <th>💎 High-End 2026</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Τιμή Αγοράς Ακινήτου</strong></td>
+                        <td>€230,000</td>
+                        <td>€230,000</td>
+                        <td>€230,000</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Φόροι & Έξοδα Μεταβίβασης (~8%)</strong></td>
+                        <td>€18,400</td>
+                        <td>€18,400</td>
+                        <td>€18,400</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Κόστος Ανακαίνισης 2026</strong></td>
+                        <td style="color:#047857; font-weight:700;">€31,397</td>
+                        <td>€39,200</td>
+                        <td>€62,600</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>ΤΕΛΙΚΟ ΚΟΣΤΟΣ TURNKEY</td>
+                        <td style="color:#047857; font-weight:900;">€279,797</td>
+                        <td>€287,600</td>
+                        <td>€311,000</td>
+                    </tr>
+                    <tr style="font-weight:700; color:var(--primary);">
+                        <td>Τελικό Κόστος ανά τ.μ.</td>
+                        <td style="color:#047857;">€2,743 / τ.μ.</td>
+                        <td>€2,819 / τ.μ.</td>
+                        <td>€3,049 / τ.μ.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #0284c7;">
+            <h2>🏦 Χρηματοδότηση, Στεγαστικό Δάνειο & Μηνιαίες Δόσεις (Επιτόκιο 3,72% &bull; Budget €180,000)</h2>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-top:4px;">
+                Υπολογισμός μηνιαίων δόσεων για αποπληρωμή σε <strong>5, 10, 15, 20 και 30 έτη</strong> βάσει των διαθέσιμων μετρητών σας (<strong>€180,000</strong>) και σταθερού επιτοκίου <strong>3,72%</strong>.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Σενάριο Turnkey</th>
+                        <th>Τελικό Κόστος</th>
+                        <th>Ίδια Κεφάλαια</th>
+                        <th>Απαιτούμενο Δάνειο</th>
+                        <th>5 Έτη (60μ)</th>
+                        <th>10 Έτη (120μ)</th>
+                        <th>15 Έτη (180μ)</th>
+                        <th>20 Έτη (240μ)</th>
+                        <th>30 Έτη (360μ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>💵 Μαύρα / Friends</strong></td>
+                        <td style="color:#047857; font-weight:700;">€279,797</td>
+                        <td>€180,000</td>
+                        <td><b style="color:#0284c7;">€99,797</b></td>
+                        <td>€1,825/μ</td>
+                        <td>€997/μ</td>
+                        <td>€724/μ</td>
+                        <td>€590/μ</td>
+                        <td><strong style="color:#047857;">€460/μ</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>📋 Standard Low</strong></td>
+                        <td style="color:#047857; font-weight:700;">€287,600</td>
+                        <td>€180,000</td>
+                        <td><b style="color:#0284c7;">€107,600</b></td>
+                        <td>€1,968/μ</td>
+                        <td>€1,075/μ</td>
+                        <td>€781/μ</td>
+                        <td>€636/μ</td>
+                        <td><strong style="color:#047857;">€496/μ</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>💎 High-End 2026</strong></td>
+                        <td style="color:#047857; font-weight:700;">€311,000</td>
+                        <td>€180,000</td>
+                        <td><b style="color:#0284c7;">€131,000</b></td>
+                        <td>€2,396/μ</td>
+                        <td>€1,309/μ</td>
+                        <td>€951/μ</td>
+                        <td>€775/μ</td>
+                        <td><strong style="color:#047857;">€604/μ</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top:14px; padding:10px 14px; background:#f1f5f9; border-radius:8px; font-size:0.86rem; color:#334155; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div>🏛️ <strong>Εκτίμηση Ετήσιου ΕΝΦΙΑ:</strong> <span style="color:#0284c7; font-weight:700;">€385 / έτος</span> (περίπου <strong>€32/μήνα</strong>)</div>
+                <div style="font-size:0.8rem; color:#64748b;">Υπολογισμός με βάση το Ν. 4916/2022</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Real Estate Hub &bull; Τεχνική & Οικονομική Μελέτη Ακινήτου &bull; 2026
+        </div>
+    </div>
+</body>
+</html>
