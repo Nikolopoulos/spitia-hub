@@ -649,19 +649,56 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
             except ValueError: pass
             extracted_loc = m_sp.group(3).split(',')[0].strip()
 
-    # 2. Price
+    # 2. Price Extraction (authoritative meta/JSON-LD first, then comprehensive regex)
     price = extracted_price
-    if not price:
-        price = 160000
-        price_matches = re.findall(r'(\d[\d\.]*)\s*€', comb_text) or re.findall(r'€\s*(\d[\d\.]*)', comb_text)
-        for pm in price_matches:
+    if not price and raw_html:
+        # Check structured schema.org JSON-LD
+        m_ld_price = re.search(r'[\"\']price[\"\']\s*:\s*[\"\']?(\d+)[\"\']?', raw_html)
+        if m_ld_price:
+            try:
+                p_val = int(m_ld_price.group(1))
+                if 50000 <= p_val <= 2500000:
+                    price = p_val
+            except ValueError:
+                pass
+        # Check meta price tags
+        if not price:
+            m_meta_p = re.search(r'<meta[^>]+(?:property|name)=[\"\'](?:product:price:amount|og:price:amount)[\"\'][^>]+content=[\"\'](\d+)[\"\']', raw_html, re.I)
+            if m_meta_p:
+                try:
+                    p_val = int(m_meta_p.group(1))
+                    if 50000 <= p_val <= 2500000:
+                        price = p_val
+                except ValueError:
+                    pass
+
+    # Check card_text from email alert
+    if not price and card_text:
+        card_matches = re.findall(r'€\s*([\d\.,]+)', card_text) + re.findall(r'([\d\.,]+)\s*€', card_text)
+        for pm in card_matches:
             try:
                 val = int(pm.replace('.', '').replace(',', ''))
-                if 50000 <= val <= 2000000:
+                if 50000 <= val <= 2500000:
                     price = val
                     break
             except ValueError:
                 pass
+
+    # Check combined text (combine both prefix and suffix euro signs)
+    if not price:
+        price_matches = re.findall(r'€\s*([\d\.,]+)', comb_text) + re.findall(r'([\d\.,]+)\s*€', comb_text)
+        for pm in price_matches:
+            try:
+                val = int(pm.replace('.', '').replace(',', ''))
+                if 50000 <= val <= 2500000:
+                    price = val
+                    break
+            except ValueError:
+                pass
+
+    if not price:
+        logging.warning(f"Could not extract price for {url}, setting fallback 160000")
+        price = 160000
 
     # Sqm
     sqm = extracted_sqm
