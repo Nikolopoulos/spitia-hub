@@ -727,6 +727,7 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
         ("Δραπετσώνα", ["δραπετσώνα", "δραπετσωνα", "drapetsona", "ανάληψη"]),
         ("Ταμπούρια", ["ταμπούρια", "ταμπουρια", "tabouria", "αγία σοφία"]),
         ("Πειραιάς (Χατζηκυριάκειο)", ["χατζηκυριάκειο", "χατζηκυριακειο", "πειραϊκή", "πειραικη", "chatzikyriakeio", "piraiki"]),
+        ("Πειραιάς (Καμίνια)", ["καμίνια", "καμινια", "παλαιά κοκκινιά", "παλαια κοκκινια", "kaminia", "kaminiwn", "kokkinia"]),
         ("Πειραιάς", ["πειραιάς", "πειραιας", "piraeus"])
     ]
     loc = None
@@ -742,11 +743,15 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
             if any(al in card_text.lower() for al in aliases):
                 loc = official_loc
                 break
-    # 3. Match visible page text
+    # 3. If extracted location exists directly from portal title, preserve it
+    if not loc and extracted_loc:
+        loc = extracted_loc
+    # 4. Fallback: match visible text, explicitly stripping broker agency addresses
     if not loc:
-        comb_lower = comb_text.lower()
+        clean_search = re.sub(r'(?:πληροφορίες\s*αγγελιοδότη|στοιχεία\s*μεσίτη|μεσιτικό\s*γραφείο|realty|real\s*estate).*', ' ', comb_text, flags=re.DOTALL | re.IGNORECASE)
+        clean_lower = clean_search.lower()
         for official_loc, aliases in loc_candidates:
-            if any(al in comb_lower for al in aliases):
+            if any(al in clean_lower for al in aliases):
                 loc = official_loc
                 break
     if not loc:
@@ -769,6 +774,7 @@ def parse_and_evaluate_listing(portal, url, raw_html, card_text="", tab_title=""
         "Χαλάνδρι": (38.0220, 23.7990),
         "Βριλήσσια": (38.0350, 23.8300),
         "Πειραιάς (Χατζηκυριάκειο)": (37.9350, 23.6350),
+        "Πειραιάς (Καμίνια)": (37.9550, 23.6600),
         "Πειραιάς": (37.9430, 23.6470),
         "Κηφισιά": (38.0740, 23.8120),
         "Πεύκη": (38.0600, 23.7930),
