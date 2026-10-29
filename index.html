@@ -763,13 +763,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 252 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 57 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 253 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 58 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b id="stat-approved-count">252</b>
+                    <b id="stat-approved-count">253</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3);">
                     <span style="color:#fcd34d;">📁 Παλιά:</span>
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">57</b>
+                    <b style="color:#ef4444;">58</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -795,19 +795,19 @@
             <!-- Main View Tabs (Eligible vs Archived vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα (252)
+                    ✅ Εγκεκριμένα (253)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-archived" onclick="switchMainTab('archived')">
                     📁 Παλιά Αποθηκευμένα (13)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (57)
+                    🚫 Απορριφθέντα (58)
                 </button>
             </div>
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (252)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (253)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (57)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (58)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,16 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "1120977051",
+    "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός | €10,000",
+    "location": "125τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 10000,
+    "sqm": 125,
+    "url": "https://www.spitogatos.gr/aggelia/1120977051",
+    "reason": "Τιμή €10,000 < €50k (πιθανή ενοικίαση / ποσοστό)"
+  },
   {
     "listing_id": "1119443959",
     "title": "Πώληση, Μονοκατοικία, 180τ.μ. Ταμπούρια | €160,000",
@@ -12686,6 +12696,49 @@ const propertiesData = [
     "image_url": "https://blob.cdn.xe.gr/live/2026/05/04/b966ffa2-9937-41b2-b781-10d611a5c985/b966ffa2-9937-41b2-b781-10d611a5c985-source.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 366
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός | 1121176375.html",
+    "listing_id": "1121176375",
+    "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός | 1121176375",
+    "location": "125τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 160000.0,
+    "sqm": 125.0,
+    "year": 1975,
+    "plot_sqm": 125.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 43750.0,
+    "renov_high": 68750.0,
+    "turnkey_low": 203750.0,
+    "turnkey_high": 228750.0,
+    "html_report": "property-1121176375.html",
+    "spitogatos_url": "https://www.spitogatos.gr/aggelia/1121176375",
+    "lat": 37.985,
+    "lon": 23.65,
+    "processed_at": "2026-10-29 19:50:02",
+    "renov_diy": 52500.0,
+    "turnkey_diy": 212500.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 53.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 3,
+    "is_penthouse": false,
+    "thumb": "thumbs/1121176375.jpg",
+    "image_url": "https://m2.spitogatos.gr/374242843_150x110.jpg?v=20140916",
+    "street_parking_ease": "MODERATE",
+    "enfia": 357
   }
 ];
         let currentMainTab = 'eligible'; // 'eligible', 'archived', or 'rejected'
