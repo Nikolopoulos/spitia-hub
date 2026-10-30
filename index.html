@@ -763,13 +763,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 270 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 60 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 272 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 61 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b id="stat-approved-count">270</b>
+                    <b id="stat-approved-count">272</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3);">
                     <span style="color:#fcd34d;">📁 Παλιά:</span>
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">60</b>
+                    <b style="color:#ef4444;">61</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -795,19 +795,19 @@
             <!-- Main View Tabs (Eligible vs Archived vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα (270)
+                    ✅ Εγκεκριμένα (272)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-archived" onclick="switchMainTab('archived')">
                     📁 Παλιά Αποθηκευμένα (13)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (60)
+                    🚫 Απορριφθέντα (61)
                 </button>
             </div>
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (270)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (272)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (60)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (61)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,16 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "1118860198",
+    "title": "Πώληση, Μονοκατοικία, 132τ.μ. Ταμπούρια | €160,000",
+    "location": "132τ.μ. Ταμπούρια",
+    "type": "Μονοκατοικία",
+    "price": 160000,
+    "sqm": 132,
+    "url": "https://www.spitogatos.gr/aggelia/1118860198",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια)"
+  },
   {
     "listing_id": "xe-4282a930",
     "title": "Πώληση, Μονοκατοικία, 95τ.μ. Ταμπούρια | €120,000",
@@ -13490,6 +13500,92 @@ const propertiesData = [
     "image_url": "https://blob.cdn.xe.gr/live/2026/10/30/cfbc75fb-177d-4c10-87ce-89866ff51abd/cfbc75fb-177d-4c10-87ce-89866ff51abd-source.jpg",
     "street_parking_ease": "MODERATE",
     "enfia": 326
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 114τ.μ. Κορυδαλλός | 1121181954.html",
+    "listing_id": "1121181954",
+    "title": "Πώληση, Διαμέρισμα, 114τ.μ. Κορυδαλλός | 1121181954",
+    "location": "114τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 160000.0,
+    "sqm": 114.0,
+    "year": 1975,
+    "plot_sqm": 114.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 39900.0,
+    "renov_high": 62700.0,
+    "turnkey_low": 199900.0,
+    "turnkey_high": 222700.0,
+    "html_report": "property-1121181954.html",
+    "spitogatos_url": "https://www.spitogatos.gr/aggelia/1121181954",
+    "lat": 37.985,
+    "lon": 23.65,
+    "processed_at": "2026-10-30 13:50:02",
+    "renov_diy": 47880.0,
+    "turnkey_diy": 207880.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 48.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 2,
+    "is_penthouse": false,
+    "thumb": "thumbs/1121181954.jpg",
+    "image_url": "https://m2.spitogatos.gr/372516268_150x110.jpg?v=20140916",
+    "street_parking_ease": "MODERATE",
+    "enfia": 326
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 120τ.μ. Κερατσίνι | 1121059272.html",
+    "listing_id": "1121059272",
+    "title": "Πώληση, Διαμέρισμα, 120τ.μ. Κερατσίνι | 1121059272",
+    "location": "120τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 160000.0,
+    "sqm": 120.0,
+    "year": 1975,
+    "plot_sqm": 120.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 42000.0,
+    "renov_high": 66000.0,
+    "turnkey_low": 202000.0,
+    "turnkey_high": 226000.0,
+    "html_report": "property-1121059272.html",
+    "spitogatos_url": "https://www.spitogatos.gr/aggelia/1121059272",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-30 13:50:04",
+    "renov_diy": 50400.0,
+    "turnkey_diy": 210400.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 53.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 3,
+    "is_penthouse": false,
+    "thumb": "thumbs/1121059272.jpg",
+    "image_url": "https://m2.spitogatos.gr/372516268_150x110.jpg?v=20140916",
+    "street_parking_ease": "MODERATE",
+    "enfia": 343
   }
 ];
         let currentMainTab = 'eligible'; // 'eligible', 'archived', or 'rejected'
