@@ -763,13 +763,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 256 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 58 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 262 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 60 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b id="stat-approved-count">256</b>
+                    <b id="stat-approved-count">262</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3);">
                     <span style="color:#fcd34d;">📁 Παλιά:</span>
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">58</b>
+                    <b style="color:#ef4444;">60</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -795,19 +795,19 @@
             <!-- Main View Tabs (Eligible vs Archived vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα (256)
+                    ✅ Εγκεκριμένα (262)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-archived" onclick="switchMainTab('archived')">
                     📁 Παλιά Αποθηκευμένα (13)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (58)
+                    🚫 Απορριφθέντα (60)
                 </button>
             </div>
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (256)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (262)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (58)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (60)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,26 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "xe-4282a930",
+    "title": "Πώληση, Μονοκατοικία, 95τ.μ. Ταμπούρια | €120,000",
+    "location": "95τ.μ. Ταμπούρια",
+    "type": "Μονοκατοικία",
+    "price": 120000,
+    "sqm": 95,
+    "url": "https://www.xe.gr/p/4282a930-0b21-40a8-9593-843c9946a43e",
+    "reason": "Χωρίς Parking σε περιοχή με οξύ πρόβλημα στάθμευσης (Ταμπούρια)"
+  },
+  {
+    "listing_id": "1120284217",
+    "title": "Πώληση, Μονοκατοικία, 134τ.μ. | €3,000",
+    "location": "134τ.μ.",
+    "type": "Μονοκατοικία",
+    "price": 3000,
+    "sqm": 134,
+    "url": "https://www.spitogatos.gr/aggelia/1120284217",
+    "reason": "Τιμή €3,000 < €50k (πιθανή ενοικίαση / ποσοστό)"
+  },
   {
     "listing_id": "1120977051",
     "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κορυδαλλός | €10,000",
@@ -12868,6 +12888,264 @@ const propertiesData = [
     "image_url": "https://m3.spitogatos.gr/374318864_150x110.jpg?v=20140916",
     "street_parking_ease": "MODERATE",
     "enfia": 286
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 97τ.μ. Κερατσίνι | xe-375ce468.html",
+    "listing_id": "xe-375ce468",
+    "title": "Πώληση, Διαμέρισμα, 97τ.μ. Κερατσίνι | xe-375ce468",
+    "location": "97τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 130000.0,
+    "sqm": 97.0,
+    "year": 1980,
+    "plot_sqm": 97.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 33950.0,
+    "renov_high": 53350.0,
+    "turnkey_low": 163950.0,
+    "turnkey_high": 183350.0,
+    "html_report": "property-xe-375ce468.html",
+    "spitogatos_url": "https://www.xe.gr/p/375ce468-286d-4ccb-a1ab-55573374a799",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-30 11:05:04",
+    "renov_diy": 40740.0,
+    "turnkey_diy": 170740.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 54.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 2,
+    "is_penthouse": false,
+    "thumb": "thumbs/xe-375ce468.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2026/09/23/7ccce739-260e-4d28-9bf5-454f820d5f71/7ccce739-260e-4d28-9bf5-454f820d5f71-source.png",
+    "street_parking_ease": "MODERATE",
+    "enfia": 277
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 125τ.μ. Κερατσίνι | xe-ff8450bf.html",
+    "listing_id": "xe-ff8450bf",
+    "title": "Πώληση, Διαμέρισμα, 125τ.μ. Κερατσίνι | xe-ff8450bf",
+    "location": "125τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 105000.0,
+    "sqm": 125.0,
+    "year": 1960,
+    "plot_sqm": 125.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 43750.0,
+    "renov_high": 68750.0,
+    "turnkey_low": 148750.0,
+    "turnkey_high": 173750.0,
+    "html_report": "property-xe-ff8450bf.html",
+    "spitogatos_url": "https://www.xe.gr/p/ff8450bf-0fc4-4de2-942e-c0f289749961",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-30 11:05:06",
+    "renov_diy": 52500.0,
+    "turnkey_diy": 157500.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 59.0,
+    "fit_grade": "B",
+    "fit_desc": "Μέτριο Ταίριασμα &bull; Απαιτεί συμβιβασμούς σε δάνειο, χώρους ή ρίσκο",
+    "fit_color": "#d97706",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 3,
+    "is_penthouse": false,
+    "thumb": "thumbs/xe-ff8450bf.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2026/09/23/7ccce739-260e-4d28-9bf5-454f820d5f71/7ccce739-260e-4d28-9bf5-454f820d5f71-source.png",
+    "street_parking_ease": "MODERATE",
+    "enfia": 357
+  },
+  {
+    "filename": "Πώληση, Μεζονέτα, 134τ.μ. Κερατσίνι | xe-4339252b.html",
+    "listing_id": "xe-4339252b",
+    "title": "Πώληση, Μεζονέτα, 134τ.μ. Κερατσίνι | xe-4339252b",
+    "location": "134τ.μ. Κερατσίνι",
+    "type": "Μεζονέτα",
+    "price": 91000.0,
+    "sqm": 134.0,
+    "year": 1976,
+    "plot_sqm": 134.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 46900.0,
+    "renov_high": 73700.0,
+    "turnkey_low": 137900.0,
+    "turnkey_high": 164700.0,
+    "html_report": "property-xe-4339252b.html",
+    "spitogatos_url": "https://www.xe.gr/p/4339252b-2939-44c5-96c0-333abb453d84",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-30 11:05:07",
+    "renov_diy": 56280.0,
+    "turnkey_diy": 147280.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 82.0,
+    "fit_grade": "A",
+    "fit_desc": "Πολύ Καλό Ταίριασμα &bull; Καλύπτει ανάγκες, λογικό δάνειο & ελεγχόμενο ρίσκο",
+    "fit_color": "#059669",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 1,
+    "beds": 3,
+    "is_penthouse": false,
+    "thumb": "thumbs/xe-4339252b.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2026/05/16/16c82ad8-9549-4869-b5bb-36f3abfdbb06/16c82ad8-9549-4869-b5bb-36f3abfdbb06-source.jpg",
+    "street_parking_ease": "MODERATE",
+    "enfia": 383
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 120τ.μ. Πειραιάς (Χατζηκυριάκειο) | 1121180258.html",
+    "listing_id": "1121180258",
+    "title": "Πώληση, Διαμέρισμα, 120τ.μ. Πειραιάς (Χατζηκυριάκειο) | 1121180258",
+    "location": "120τ.μ. Πειραιάς (Χατζηκυριάκειο)",
+    "type": "Διαμέρισμα",
+    "price": 160000.0,
+    "sqm": 120.0,
+    "year": 1975,
+    "plot_sqm": 120.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 42000.0,
+    "renov_high": 66000.0,
+    "turnkey_low": 202000.0,
+    "turnkey_high": 226000.0,
+    "html_report": "property-1121180258.html",
+    "spitogatos_url": "https://www.spitogatos.gr/aggelia/1121180258",
+    "lat": 37.935,
+    "lon": 23.635,
+    "processed_at": "2026-10-30 11:05:09",
+    "renov_diy": 50400.0,
+    "turnkey_diy": 210400.0,
+    "risk_score": 3.2,
+    "risk_level": "Χαμηλό Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 53.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 3,
+    "is_penthouse": false,
+    "thumb": "thumbs/1121180258.jpg",
+    "image_url": "https://m2.spitogatos.gr/374335624_150x110.jpg?v=20140916",
+    "street_parking_ease": "MODERATE",
+    "enfia": 343
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 104τ.μ. Κερατσίνι | 1121180151.html",
+    "listing_id": "1121180151",
+    "title": "Πώληση, Διαμέρισμα, 104τ.μ. Κερατσίνι | 1121180151",
+    "location": "104τ.μ. Κερατσίνι",
+    "type": "Διαμέρισμα",
+    "price": 160000.0,
+    "sqm": 104.0,
+    "year": 1975,
+    "plot_sqm": 104.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 36400.0,
+    "renov_high": 57200.0,
+    "turnkey_low": 196400.0,
+    "turnkey_high": 217200.0,
+    "html_report": "property-1121180151.html",
+    "spitogatos_url": "https://www.spitogatos.gr/aggelia/1121180151",
+    "lat": 37.9625,
+    "lon": 23.626,
+    "processed_at": "2026-10-30 11:05:10",
+    "renov_diy": 43680.0,
+    "turnkey_diy": 203680.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 48.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 2,
+    "is_penthouse": false,
+    "thumb": "thumbs/1121180151.jpg",
+    "image_url": "https://m1.spitogatos.gr/374331477_150x110.jpg?v=20140916",
+    "street_parking_ease": "MODERATE",
+    "enfia": 297
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 109τ.μ. Κορυδαλλός | xe-9301848f.html",
+    "listing_id": "xe-9301848f",
+    "title": "Πώληση, Διαμέρισμα, 109τ.μ. Κορυδαλλός | xe-9301848f",
+    "location": "109τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 175000.0,
+    "sqm": 109.0,
+    "year": 1980,
+    "plot_sqm": 109.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 38150.0,
+    "renov_high": 59950.0,
+    "turnkey_low": 213150.0,
+    "turnkey_high": 234950.0,
+    "html_report": "property-xe-9301848f.html",
+    "spitogatos_url": "https://www.xe.gr/p/9301848f-b44b-44c2-818f-b39143156b53",
+    "lat": 37.985,
+    "lon": 23.65,
+    "processed_at": "2026-10-30 11:05:11",
+    "renov_diy": 45780.0,
+    "turnkey_diy": 220780.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 48.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 2,
+    "is_penthouse": false,
+    "thumb": "thumbs/xe-9301848f.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2025/11/14/62abd306-893d-49d9-8f2c-ef699ae2fd7e/62abd306-893d-49d9-8f2c-ef699ae2fd7e-source.jpg",
+    "street_parking_ease": "MODERATE",
+    "enfia": 311
   }
 ];
         let currentMainTab = 'eligible'; // 'eligible', 'archived', or 'rejected'
