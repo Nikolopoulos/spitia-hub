@@ -160,8 +160,41 @@ def record_rejected_listing(url, reason, title="", price=0, sqm=0, ptype="Δια
     except Exception as e:
         logging.error(f"Failed to record rejected listing: {e}")
 
+def notify_and_wait_for_user_bot_solve(platform_name, url):
+    """
+    Brings Safari to front, triggers an audible & visible alert,
+    and pauses execution until the user solves the captcha/challenge in Safari and clicks OK.
+    """
+    logging.warning(f"🚨 [BOT DETECTED] Pausing execution for user to pass bot check on {platform_name}: {url}")
+    
+    # Update status file so menubar app immediately displays the warning state
+    try:
+        now_str = datetime.now().strftime("%H:%M:%S (%d/%m)")
+        update_status_file(now_str, 0, bot_challenge={"platform": platform_name, "url": url})
+    except Exception:
+        pass
+
+    # AppleScript to bring Safari forward, beep/alert, and block until user clicks OK
+    applescript_poke = f'''
+    tell application "Safari"
+        activate
+    end tell
+    display notification "Παρακαλώ λύσε το Bot Check / Captcha στο Safari και πάτησε ΟΚ." with title "⚠️ Bot Check: {platform_name}" sound name "Hero"
+    display alert "⚠️ Bot Challenge: {platform_name}" message "Εντοπίστηκε προστασία bot (Cloudflare / Captcha).
+
+Η καρτέλα είναι ανοιχτή στο Safari.
+Παρακαλώ λύσε το check στον browser και μετά πάτησε ΟΚ για να συνεχίσει το πρόγραμμα." as critical buttons {{"ΟΚ - Το πέρασα!"}} default button "ΟΚ - Το πέρασα!"
+    '''
+    try:
+        subprocess.run(['osascript', '-e', applescript_poke], check=True)
+    except Exception as e:
+        logging.warning(f"Alert dialog closed or error: {e}")
+
+    logging.info("✅ User confirmed bot check passed. Resuming script...")
+    time.sleep(2)
+
 def fetch_url_via_safari(url):
-    applescript = f'''
+    applescript_open = f'''
     tell application "Safari"
         set targetURL to "{url}"
         if (count of windows) = 0 then
@@ -187,11 +220,10 @@ def fetch_url_via_safari(url):
         try
             set pageText to (text of targetTab) as text
         end try
-        close targetTab
         return tabTitle & "|||SPLIT|||" & pageSource & "|||SPLIT|||" & pageText
     end tell
     '''
-    proc = subprocess.run(['osascript', '-e', applescript], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    proc = subprocess.run(['osascript', '-e', applescript_open], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if proc.returncode != 0:
         raise Exception(f"AppleScript error: {proc.stderr}")
     
@@ -199,6 +231,43 @@ def fetch_url_via_safari(url):
     title = parts[0].strip()
     html = parts[1].strip() if len(parts) > 1 else ""
     rendered_text = parts[2].strip() if len(parts) > 2 else ""
+
+    # Check if a bot challenge is present
+    is_bot, b_plat, b_url = check_bot_challenge(title, html, url)
+    if is_bot:
+        notify_and_wait_for_user_bot_solve(b_plat, url)
+        # Re-read page data from currentTab now that user completed the challenge
+        applescript_reread = '''
+        tell application "Safari"
+            set targetTab to current tab of window 1
+            set maxWait to 10
+            repeat with i from 1 to maxWait
+                delay 1
+                set src to (source of targetTab) as text
+                if (src contains "spitogatos" or src contains "xe.gr" or src contains "footer") and (src does not contain "Pardon Our Interruption") then
+                    exit repeat
+                end if
+            end repeat
+            set tabTitle to name of targetTab
+            set pageSource to (source of targetTab) as text
+            set pageText to ""
+            try
+                set pageText to (text of targetTab) as text
+            end try
+            close targetTab
+            return tabTitle & "|||SPLIT|||" & pageSource & "|||SPLIT|||" & pageText
+        end tell
+        '''
+        proc_re = subprocess.run(['osascript', '-e', applescript_reread], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if proc_re.returncode == 0:
+            re_parts = proc_re.stdout.split('|||SPLIT|||')
+            title = re_parts[0].strip()
+            html = re_parts[1].strip() if len(re_parts) > 1 else ""
+            rendered_text = re_parts[2].strip() if len(re_parts) > 2 else ""
+    else:
+        # No bot challenge: close tab cleanly
+        subprocess.run(['osascript', '-e', 'tell application "Safari" to close current tab of window 1'])
+
     return title, html, rendered_text
 
 
