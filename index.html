@@ -763,13 +763,13 @@
                 <span style="font-size: 1.5rem;">🏢</span>
                 <div>
                     <h1>Real Estate Portfolio 2026</h1>
-                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 296 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 84 Απορριφθέντα</div>
+                    <div style="font-size: 0.7rem; color: #94a3b8;">Custom Engineering & User Preferences Engine &bull; 297 Ενεργά Ακίνητα &bull; 13 Παλιά &bull; 85 Απορριφθέντα</div>
                 </div>
             </div>
             <div class="header-stats-strip">
                 <div class="stat-badge">
                     <span>Εγκεκριμένα:</span>
-                    <b id="stat-approved-count">296</b>
+                    <b id="stat-approved-count">297</b>
                 </div>
                 <div class="stat-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3);">
                     <span style="color:#fcd34d;">📁 Παλιά:</span>
@@ -777,7 +777,7 @@
                 </div>
                 <div class="stat-badge" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3);">
                     <span style="color:#fca5a5;">🚫 Απορρίφθηκαν:</span>
-                    <b style="color:#ef4444;">84</b>
+                    <b style="color:#ef4444;">85</b>
                 </div>
                 <div class="stat-badge stat-top-deal">
                     <span>🎯 Top Match:</span>
@@ -795,19 +795,19 @@
             <!-- Main View Tabs (Eligible vs Archived vs Rejected) -->
             <div class="nav-tabs-group">
                 <button type="button" class="nav-tab-btn active" id="tab-main-eligible" onclick="switchMainTab('eligible')">
-                    ✅ Εγκεκριμένα (296)
+                    ✅ Εγκεκριμένα (297)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-archived" onclick="switchMainTab('archived')">
                     📁 Παλιά Αποθηκευμένα (13)
                 </button>
                 <button type="button" class="nav-tab-btn" id="tab-main-rejected" onclick="switchMainTab('rejected')">
-                    🚫 Απορριφθέντα (84)
+                    🚫 Απορριφθέντα (85)
                 </button>
             </div>
 
             <!-- Mobile Toggle Tabs (Visible only on mobile/tablet) -->
             <div class="mobile-view-tabs">
-                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (296)</button>
+                <button type="button" class="tab-btn active" id="tab-btn-list" onclick="switchMobileTab('list')">📋 Λίστα (297)</button>
                 <button type="button" class="tab-btn" id="tab-btn-map" onclick="switchMobileTab('map')">🗺️ Χάρτης Αττικής</button>
             </div>
 
@@ -844,7 +844,7 @@
         <div id="rejected-pane" class="rejected-pane">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (84)</h2>
+                    <h2 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🚫 Απορριφθέντα (85)</h2>
                     <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Αγγελίες που απορρίφθηκαν αυτόματα από τα φίλτρα (έλλειψη parking σε δύσκολη περιοχή, πλειστηριασμοί, ανεπιθύμητες ζώνες).</p>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -883,6 +883,16 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const rejectedData = [
+  {
+    "listing_id": "xe-64264bcf",
+    "title": "Πώληση, Διαμέρισμα, 100τ.μ. Χαλάνδρι | €1,050",
+    "location": "100τ.μ. Χαλάνδρι",
+    "type": "Διαμέρισμα",
+    "price": 1050,
+    "sqm": 100,
+    "url": "https://www.xe.gr/p/64264bcf-d692-4edd-b3b3-16239b23ff67",
+    "reason": "Τιμή €1,050 < €50k (πιθανή ενοικίαση / ποσοστό)"
+  },
   {
     "listing_id": "xe-f7aa3022",
     "title": "Πώληση, Μεζονέτα, 320τ.μ. Μαρούσι | €6,100",
@@ -14872,6 +14882,49 @@ const propertiesData = [
     "image_url": "https://blob.cdn.xe.gr/live/2026/11/11/3ff8c695-a69a-4f7d-ab0b-cf9e4e4b397b/3ff8c695-a69a-4f7d-ab0b-cf9e4e4b397b-source.png",
     "street_parking_ease": "MODERATE",
     "enfia": 407
+  },
+  {
+    "filename": "Πώληση, Διαμέρισμα, 108τ.μ. Κορυδαλλός | xe-3435372b.html",
+    "listing_id": "xe-3435372b",
+    "title": "Πώληση, Διαμέρισμα, 108τ.μ. Κορυδαλλός | xe-3435372b",
+    "location": "108τ.μ. Κορυδαλλός",
+    "type": "Διαμέρισμα",
+    "price": 150000.0,
+    "sqm": 108.0,
+    "year": 1978,
+    "plot_sqm": 108.0,
+    "courtyard": "Αυλή / Βεράντα",
+    "renov_low": 37800.0,
+    "renov_high": 59400.0,
+    "turnkey_low": 187800.0,
+    "turnkey_high": 209400.0,
+    "html_report": "property-xe-3435372b.html",
+    "spitogatos_url": "https://www.xe.gr/p/3435372b-d262-4061-ba98-dc0262ad501a",
+    "lat": 37.985,
+    "lon": 23.65,
+    "processed_at": "2026-11-11 19:02:09",
+    "renov_diy": 45360.0,
+    "turnkey_diy": 195360.0,
+    "risk_score": 3.6,
+    "risk_level": "Μέτριο Ρίσκο",
+    "deal_score": 78.0,
+    "deal_grade": "A",
+    "deal_desc": "Πολύ Καλή Επιλογή",
+    "deal_color": "#059669",
+    "fit_score": 48.0,
+    "fit_grade": "C",
+    "fit_desc": "Οριακό Ταίριασμα &bull; Σημαντικές αποκλίσεις σε budget ή ασφάλεια",
+    "fit_color": "#ea580c",
+    "has_parking": false,
+    "parking_info": "Χωρίς Parking",
+    "baths": 1,
+    "wc": 0,
+    "beds": 2,
+    "is_penthouse": false,
+    "thumb": "thumbs/xe-3435372b.jpg",
+    "image_url": "https://blob.cdn.xe.gr/live/2026/11/11/8e1ac176-8c34-4db2-be92-f2c803e7e69f/8e1ac176-8c34-4db2-be92-f2c803e7e69f-source.jpg",
+    "street_parking_ease": "MODERATE",
+    "enfia": 308
   }
 ];
         let currentMainTab = 'eligible'; // 'eligible', 'archived', or 'rejected'
